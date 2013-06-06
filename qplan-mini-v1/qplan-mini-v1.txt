@@ -1,0 +1,9 @@
+QPlan-mini V1 Spec
+==================
+Rino Jose <rjose@linkedin.com>
+Jun 6, 2013: Initial spec
+
+Drafting effort [][][]
+
+Overview
+--------
