@@ -1,6 +1,8 @@
 --[[
+
 This module just provides some basic support for using an OO notation for
 calling functions on objects.
+
 ]]--
 
 local Object = {}
