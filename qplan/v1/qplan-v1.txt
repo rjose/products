@@ -120,3 +120,5 @@ it will go into a database/cache.
 .Getting started
 I want to get the tests in place first. I'll bring functionality over
 step-by-step, renaming and refactoring as we go.
+
+Let's try running tests from multiple files.
