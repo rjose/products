@@ -46,7 +46,7 @@ function TestPerson:test_getBandwidth()
 	local expected = {
 		["Native"] = 0.8*13, ["Apps"] = 0.2*13
 	}
-	local avail = self.person:get_skill_avail(13)
+	local avail = self.person:get_bandwidth(13)
 	check_skills(avail, expected)
 end
 
