@@ -2,8 +2,6 @@ local Work = require("work")
 
 TestWork = {}
 
--- TODO: Add tests for creating new work items and generating an ID
-
 -- SETUP ----------------------------------------------------------------------
 --
 function TestWork:setUp()
@@ -30,6 +28,21 @@ function TestWork:setUp()
 
 end
 
+
+-- ESTIMATE TESTS -------------------------------------------------------------
+--
+
+function TestWork:test_setEstimate1()
+	self.work[1]:set_estimate("Native", "S")
+	assertEquals(self.work[1].estimates["Native"], "S")
+end
+
+
+-- Make sure we handle bad input properly
+function TestWork:test_setEstimate2()
+	self.work[1]:set_estimate("Native", "!S")
+	assertEquals(self.work[1].estimates["Native"], "2L")
+end
 
 -- PARSING TESTS --------------------------------------------------------------
 --

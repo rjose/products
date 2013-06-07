@@ -19,31 +19,15 @@ function Work.new(options)
 	                 estimates = estimates, tags = tags}
 end
 
+function Work:set_estimate(skill_name, estimate_string)
+	-- Validate estimate string
+	if Work.translate_estimate(estimate_string) == 0 then
+		return
+	end
 
--- TODO: Add a test for this
--- function Work.add_work(work_item)
--- 	local new_id = max_work_item_id + 1
--- 	max_work_item_id = new_id
--- 	work_item.id = new_id .. ""
--- 
--- 	-- Add to global work list
--- 	Work.work[work_item.id] = work_item
--- end
+ 	self.estimates[skill_name] = estimate_string
+end
 
--- function Work.delete_work(id)
--- 	-- Delete work item from table
--- 	Work.work[id] = nil
--- end
-
-
--- TODO: Add tests for this
--- function Work:add_estimate(skill_name, estimate_string)
--- 	self.estimates[skill_name] = estimate_string
--- end
--- 
--- function Work:clear_estimate()
--- 	self.estimates = {}
--- end
 
 -- This converts a T-shirt estimate label into a number of weeks
 function Work.translate_estimate(est_string)

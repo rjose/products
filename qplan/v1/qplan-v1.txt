@@ -61,7 +61,8 @@ qplan-mini prototypes]. We'll organize the tests as follows:
   groupings
 
 Finally, we'll add our shell functions that will be used in an actual planning
-session.
+session. These are things like adding a new work item, setting the estimates,
+ranking items, displaying items.
 
 
 Infrastructure
