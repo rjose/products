@@ -113,6 +113,11 @@ Check TODOs
 .test_read_write
 - Test reading of tags and writing of tags
 
+Action Items
+~~~~~~~~~~~~
+- Document person.lua
+- Move tag selection tests to test_select
+
 
 
 

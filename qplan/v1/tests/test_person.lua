@@ -30,14 +30,6 @@ function check_skills(actual, expected)
 	end
 end
 
--- This is a filter used to select people with an NCG tag
-function is_ncg(person)
-	if person.tags["NCG"] == 1 then
-		return true
-	else
-		return false
-	end
-end
 
 -- BANDWIDTH TESTS ------------------------------------------------------------
 --
@@ -64,14 +56,4 @@ function TestPerson:test_sumBandwidth2()
 	}
 	local avail = Person.sum_bandwidth({self.person, self.person}, 13)
 	check_skills(avail, expected)
-end
-
--- TAGS TESTS -----------------------------------------------------------------
--- TODO: Move the functionality to a selection module
--- TODO: In the selection module, we should be able to select n items
-
-function TestPerson:test_tags()
-	local ncg_people = Select.select_items(self.people, is_ncg)
-	assertEquals(#ncg_people, 1)
-	assertEquals(ncg_people[1].name, "P1")
 end
