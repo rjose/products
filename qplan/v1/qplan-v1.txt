@@ -88,6 +88,23 @@ reading/writing tests.
 The one main hole is the tag mechanism. I may want to do a prototype pass on
 this before I really implement it.
 
+Check TODOs
+~~~~~~~~~~~
+- Need to maintain a list of people and a way to get the next ID
+- Look up clojure function name for applying an operation to multiple arrays
+- Adding a work item to a plan should take an existing work item. It shouldn't
+  create one. It's OK to have a shell function that does both steps
+- Hook up saving of data on change. May need to create a callback/publishing
+  mechanism. For now, may be OK to just explicitly save.
+- Get ranked items shouldn't return a cutline object in the result. The
+  reporting function can use the plan data to do this when creating output.  
+- When adding work to a plan, should be able to specify position in the list.
+  Should use same semantics as ranking.
+- When adding work to a plan, should be able to specify a tag (like triaging
+  info)
+- When creating work items for a test, use the Work constructor
+- Come up with better naming convention for running_totals functions
+
 
 Thoughts
 --------
@@ -121,4 +138,3 @@ it will go into a database/cache.
 I want to get the tests in place first. I'll bring functionality over
 step-by-step, renaming and refactoring as we go.
 
-Let's try running tests from multiple files.
