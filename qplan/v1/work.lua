@@ -19,17 +19,6 @@ function Work.new(options)
 	                 estimates = estimates, tags = tags}
 end
 
--- TODO: Move this to Writer
--- function Work:get_estimate_string()
--- 	local result = ""
--- 	estimates = self.estimates or {}
--- 	for skill, estimate in pairs(estimates) do
--- 		result = result .. string.format("%s: %s, ", skill, estimate)
--- 	end
--- 
--- 	-- Strip trailing comma
--- 	return result:sub(1, -3)
--- end
 
 -- TODO: Add a test for this
 -- function Work.add_work(work_item)
@@ -153,20 +142,5 @@ function Work.running_demand(work_items)
 end
 
 
--- TODO: Move this to a reports module
--- function Work.print_work_item(work_item)
--- 	io.write(string.format("%3s - %-40s %s\n", work_item.id,
--- 	                       work_item.name, work_item:get_estimate_string()))
--- end
--- 
--- function Work.print_work_items(work_items)
--- 	for i = 1,#work_items do
--- 		if type(work_items[i]) == "string" then
--- 			print(work_items[i])
--- 		else
--- 			Work.print_work_item(work_items[i])
--- 		end
--- 	end
--- end
 
 return Work
