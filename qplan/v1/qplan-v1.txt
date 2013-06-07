@@ -75,7 +75,7 @@ The proto4 tests are focused on ranking work items.
 
 The proto5 tests are focused on estimate string parsing and manipulation; this
 should be part of the work tests and maybe the reading/writing tests. The
-proto5 plan-tessts have functions for selecting work. These tests are in plan.
+proto5 plan-tests have functions for selecting work. These tests are in plan.
 
 The proto7 tests are focused on skills parsing. Seems like these should go
 into the reading/writing tests. The person tests are checking skill
@@ -116,7 +116,7 @@ Check TODOs
 Action Items
 ~~~~~~~~~~~~
 - Find some functional names
-
+- Document work functions
 
 
 Thoughts
