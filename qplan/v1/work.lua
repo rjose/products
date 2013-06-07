@@ -111,16 +111,14 @@ function Work.subtract_estimates(est1, est2)
 end
 
 
--- TODO: Have this return the running demand as well
+-- Sums the skill demand for an array of work items. Also returns the running
+-- totals.
 function Work.sum_demand(work_items)
-        local result = {}
-        for i = 1,#work_items do
-                result = Work.add_estimates(result,
-                                            work_items[i]:get_skill_demand())
-        end
-        return result
+	local running_demand = Work.running_demand(work_items)
+	return running_demand[#running_demand], running_demand
 end
 
+-- Computes the running demand totals for an array of work items.
 function Work.running_demand(work_items)
         -- Get an array of estimates
         local estimates = {}

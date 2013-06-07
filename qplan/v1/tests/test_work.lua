@@ -3,8 +3,6 @@ local Work = require("work")
 TestWork = {}
 
 -- TODO: Add tests for creating new work items and generating an ID
--- TODO: Should have the running total functions return their intermediate
--- results if it makes sense.
 
 -- SETUP ----------------------------------------------------------------------
 --
