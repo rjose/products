@@ -37,13 +37,12 @@ function Person:get_bandwidth(num_weeks)
 	return result
 end
 
-
--- TODO: Convert this into a functional version
-function add_bandwidth(a1, a2)
+-- Takes two bandwidth items and adds them together.
+function add_bandwidth(b1, b2)
 	local result = {}
-	for k, v in pairs(a1) do result[k] = v end
+	for k, v in pairs(b1) do result[k] = v end
 
-        for skill, avail in pairs(a2) do
+        for skill, avail in pairs(b2) do
                 if result[skill] then
 			result[skill] = result[skill] + avail
                 else

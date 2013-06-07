@@ -115,9 +115,7 @@ Check TODOs
 
 Action Items
 ~~~~~~~~~~~~
-- Document person.lua
-- Move tag selection tests to test_select
-
+- Find some functional names
 
 
 
