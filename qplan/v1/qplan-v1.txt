@@ -1,5 +1,5 @@
-QPlan-mini V1 Spec
-==================
+QPlan V1 Spec
+=============
 Rino Jose <rjose@linkedin.com>
 Jun 6, 2013: Initial spec
 
@@ -7,3 +7,116 @@ Drafting effort [][][]
 
 Overview
 --------
+This version of QPlan will be implemented in Lua. It will only implement
+functions that we'll access from a QPlan repl. We'll have the following
+functionality:
+
+- Read people, work, plans from file
+- Write work and plans to file
+- Add work items
+- Update work items (especially estimates)
+- Rank work items
+- Tag work items
+- Select work items by criteria
+- Set plan cutline and determine feasibility
+- Determine feasible line
+- Triage work and determine feasibility
+- Compute running demand and net availability totals
+- Print reports for selections of work items, plan summary, work item
+  groupings
+
+Implementation
+--------------
+We'll do TDD based on the work from our
+link:https://github.com/rjose/prototypes/blob/master/qplan-mini/qplan-mini.txt[
+qplan-mini prototypes]. We'll organize the tests as follows:
+
+.Read/write Data
+- Read people, work, plans from file
+- Write work and plans to file
+
+.People tests
+- Get skill availability
+
+.Work item manipulation
+- Add work items
+- Update work items (especially estimates)
+- Tag work items
+
+.Planning
+- Select plan work items by criteria
+- Rank work items
+- Compute running demand and net availability totals
+
+.Feasibility
+- Set plan cutline and determine feasibility
+- Determine feasible line
+
+.Triage
+- Triage work and determine feasibility
+- Assemble triaged work (a little unsure about this)
+
+.Reports
+- Print reports for selections of work items, plan summary, work item
+  groupings
+
+Finally, we'll add our shell functions that will be used in an actual planning
+session.
+
+
+Infrastructure
+~~~~~~~~~~~~~~
+We'll start by getting our data, test data, test directories, and utility
+files in place.
+
+Getting started
+~~~~~~~~~~~~~~~
+The proto4 tests are focused on ranking work items.
+
+The proto5 tests are focused on estimate string parsing and manipulation; this
+should be part of the work tests and maybe the reading/writing tests. The
+proto5 plan-tessts have functions for selecting work. These tests are in plan.
+
+The proto7 tests are focused on skills parsing. Seems like these should go
+into the reading/writing tests. The person tests are checking skill
+availability. These should go into person tests. The txt files here are the
+initial data. We need to augment with the tag mechanism.
+
+The proto8 tests are focused on reading/writing data. These obviously go into
+reading/writing tests.
+
+The one main hole is the tag mechanism. I may want to do a prototype pass on
+this before I really implement it.
+
+
+Thoughts
+--------
+There are a few patterns that I'd like to emphasize. One is that we should
+have functions that focus on selecting things, grouping things, and operating
+on arrays of things. We shouldn't combine these too much. For instance, we
+should group things that we've previously selected or that we've selected and
+then operated on.
+
+Another thing is that there should be no global module data. We should pass
+around tables and arrays to all functions.
+
+We should construct our data up front. We should create our test directories
+up front. We should have a directory for temporary files. We should write
+tests first based on all we know from our prototypes. Our tests should
+exercise happy paths and edge cases.
+
+We should take an inventory of all TODOs and make sure we either address them,
+note them for the future, or choose not to do them. This is also the time to
+come up with conventions for naming functions.
+
+Also, next time when we do vertical slices, we should treat each slice as a
+prototype rather than slicing across prototypes. This made it hard to refer to
+any particular prototype when we were done.
+
+For things like the maximum ID so far, we should create a function that gets
+and sets it. The actual variable will be in memory for now, but at some point,
+it will go into a database/cache.
+
+.Getting started
+I want to get the tests in place first. I'll bring functionality over
+step-by-step, renaming and refactoring as we go.
