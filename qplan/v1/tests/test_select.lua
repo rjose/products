@@ -40,7 +40,7 @@ function is_ncg(person)
 end
 
 -- TAGS TESTS -----------------------------------------------------------------
--- TODO: In the selection module, we should be able to select n items
+--
 
 function TestSelect:test_selectByTags()
 	local ncg_people = Select.select_items(self.people, is_ncg)
@@ -48,3 +48,19 @@ function TestSelect:test_selectByTags()
 	assertEquals(ncg_people[1].name, "P1")
 end
 
+-- SELECT N TESTS -------------------------------------------------------------
+--
+function TestSelect:test_selectNItems()
+	local people = Select.select_n_items(self.people, 4)
+	assertEquals(#people, 4)
+end
+
+function TestSelect:test_selectNItems_withFilter()
+	local not_ncg = function(item) return not is_ncg(item) end
+
+	local people = Select.select_n_items(self.people, 3, not_ncg)
+
+	-- NOTE that this is 1 and not 3 since we're filtering on the first 3
+	-- items first.
+	assertEquals(#people, 1)
+end

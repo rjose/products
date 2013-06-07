@@ -149,6 +149,10 @@ For things like the maximum ID so far, we should create a function that gets
 and sets it. The actual variable will be in memory for now, but at some point,
 it will go into a database/cache.
 
+We need to distinguish between arrays and tables. Arrays should be things that
+are ordered and indexed by an integer from 1 to n. Tables should be
+dictionaries that are indexed by arbitrary key.
+
 .Getting started
 I want to get the tests in place first. I'll bring functionality over
 step-by-step, renaming and refactoring as we go.
