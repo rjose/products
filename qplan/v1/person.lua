@@ -1,12 +1,7 @@
-local Person = {}
+Object = require('object')
 
--- TODO: See if I can pull this out
-function Person:_new(obj)
-        obj = obj or {}
-        setmetatable(obj, self)
-        self.__index = self
-        return obj
-end
+local Person = {}
+Person._new = Object._new
 
 function Person.new(options)
 	id = options.id or ""
