@@ -21,6 +21,9 @@ end
 -- This applies a function of 2 variables key-wise to two tables. The function f
 -- should handle nil values in a way that makes sense.
 function func.apply_keywise_2(f, t1, t2)
+        t1 = t1 or {}
+        t2 = t2 or {}
+
         local keys = func.key_union(t1, t2)
 
 	local result = {}
