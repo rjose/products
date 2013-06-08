@@ -73,19 +73,21 @@ files in place.
 
 Getting started
 ~~~~~~~~~~~~~~~
-The proto4 tests are focused on ranking work items.
+.Person
+- proto7: skill availability
 
-The proto5 tests are focused on estimate string parsing and manipulation; this
-should be part of the work tests and maybe the reading/writing tests. The
-proto5 plan-tests have functions for selecting work. These tests are in plan.
+.Plan
+- proto4: ranking work
+- proto5: selecting work in a plan
 
-The proto7 tests are focused on skills parsing. Seems like these should go
-into the reading/writing tests. The person tests are checking skill
-availability. These should go into person tests. The txt files here are the
-initial data. We need to augment with the tag mechanism.
+.Work
+- proto5: estimate string parsing
 
-The proto8 tests are focused on reading/writing data. These obviously go into
-reading/writing tests.
+.Read/write
+- proto5: estimates to string
+- proto7: parsing skill from disk
+- proto8: reading/writing data
+
 
 The one main hole is the tag mechanism. I may want to do a prototype pass on
 this before I really implement it.
@@ -121,6 +123,27 @@ Action Items
 - Document work functions
 
 
+Development
+-----------
+
+- Pass 1: Get infrastructure in place
+- Pass 2: TDD on work
+- Pass 3: Refactor work
+- Pass 4: TDD on plan [X][X][X][][][][]
+- Pass 5: Refactor plan
+- Pass 6: TDD on read/write
+- Pass 7: Shell functions
+- Pass 8: Reporting functions
+
+Pass 4: TDD on Plan
+~~~~~~~~~~~~~~~~~~~
+This is where we'll pull a work table out as something that we pass around. This
+should actually make testing a lot easier. I think a convention I'll make is
+that we'll always call *get_work_items* to get an array of work items, but we'll
+pass in some options to narrow the selection. For instance, we might just get
+work items above the cutline, or maybe work items above the cutline with a given
+tag.
+
 Thoughts
 --------
 There are a few patterns that I'd like to emphasize. One is that we should
@@ -154,6 +177,9 @@ are ordered and indexed by an integer from 1 to n. Tables should be
 dictionaries that are indexed by arbitrary key.
 
 I should write on the lifecycle of code: idea, prototype, product, library
+
+The next set of prototypes should be simpler because I'll have some of the
+modules pre-defined at that point (like the functional module).
 
 .Getting started
 I want to get the tests in place first. I'll bring functionality over
