@@ -62,7 +62,8 @@ qplan-mini prototypes]. We'll organize the tests as follows:
 
 Finally, we'll add our shell functions that will be used in an actual planning
 session. These are things like adding a new work item, setting the estimates,
-ranking items, displaying items.
+ranking items, displaying items. The shell functions have to be really smart
+about handling bad input. We need to test edge cases aggressively here.
 
 
 Infrastructure
