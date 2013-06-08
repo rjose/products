@@ -1,7 +1,10 @@
 -- For many of these functions to work, we need to have a work table set up and
 -- added to plan.
+--
+-- Plan includes work and team
 
 local func = require('functional')
+local Work = require('work')
 
 local Object = require('object')
 
@@ -16,6 +19,7 @@ function Plan.new(options)
 	work_items = options.work_items or {}
 	cutline = options.cutline or 1
         work_table = options.work_table or {}
+        default_supply = options.default_supply or {}
 
 	return Plan:_new{
                 id = id .. "",
@@ -24,19 +28,49 @@ function Plan.new(options)
 	        cutline = cutline,
                 work_items = work_items,
                 team_id = team_id .. "",
+                default_supply = default_supply,
                 work_table = work_table
         }
 end
 
-function Plan:get_work_items()
+-- Should be able to specify a predicate
+function Plan:get_work_items(options)
 	local work_ids = self.work_items or {}
 	local result = {}
+        options = options or {}
 
-        for i = 1,#work_ids do
+        local stop_index = #work_ids
+        
+        -- If specified, return work items above the cutline
+        if options.ABOVE_CUT then
+                stop_index = self.cutline
+        end
+
+        for i = 1, stop_index do
                 result[#result+1] = self.work_table[work_ids[i]]
         end
 
 	return result
+end
+
+
+function Plan:get_demand_totals(options)
+        local work_items = self:get_work_items(options)
+        return Work.sum_demand(work_items)
+end
+
+function Plan:get_supply_totals(options)
+        local demand_total, running_demand = self:get_demand_totals(options)
+
+        local running_supply = {}
+	for i = 1,#running_demand do
+		running_supply[#running_supply+1]= Work.subtract_skill_demand(
+                        self.default_supply,
+                        running_demand[i]
+                )
+	end
+
+	return running_supply[#running_supply], running_supply, running_demand
 end
 
 function position_from_options(options)

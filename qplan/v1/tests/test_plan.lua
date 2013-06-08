@@ -6,15 +6,9 @@ TestPlan = {}
 --[[
 - Adding a work item to a plan should take an existing work item. It shouldn't
   create one. It's OK to have a shell function that does both steps
-- Get ranked items shouldn't return a cutline object in the result. The
-  reporting function can use the plan data to do this when creating output.
 - When adding work to a plan, should be able to specify position in the list.
   Should use same semantics as ranking.
-- When adding work to a plan, should be able to specify a tag (like triaging
-  info)
-- When creating work items for a test, use the Work constructor
 - Come up with better naming convention for running_totals functions
-- Need to add tests for adding work items to plan, especially at a given position
 --]]
 --
 -- SETUP ----------------------------------------------------------------------
@@ -49,9 +43,11 @@ function TestPlan:setUp()
                 work_items = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '10'},
                 tags = {},
                 work_table = work,
+                default_supply = { ["Native"] = 10, ["Web"] = 8, ["BB"] = 3 },
                 cutline = 5
         }
 end
+
 
 function TestPlan.check_rankings(ranked_items, expected_rankings)
         local ranked_string = ""
@@ -65,6 +61,38 @@ function TestPlan.check_rankings(ranked_items, expected_rankings)
         end
 
         assertEquals(ranked_string, expected_string)
+end
+
+function TestPlan:test_workAboveCutline()
+	local expected_rankings = {1, 2, 3, 4, 5}
+	local ranked_items = self.plan:get_work_items({["ABOVE_CUT"] = 1})
+        TestPlan.check_rankings(ranked_items, expected_rankings)
+end
+
+function TestPlan:test_demandAboveCutline()
+        self.plan.cutline = 3
+	local expected = { ["Native"] = 9, ["Web"] = 6, ["BB"] = 3 }
+	local demand = self.plan:get_demand_totals({["ABOVE_CUT"] = 1})
+
+	for skill, weeks in pairs(expected) do
+		assertEquals(demand[skill], expected[skill])
+	end
+end
+
+function TestPlan:test_runningSupply()
+        self.plan.cutline = 3
+	local expected = {
+		{ ["Native"] = 7, ["Web"] = 6, ["BB"] = 2 },
+		{ ["Native"] = 4, ["Web"] = 4, ["BB"] = 1 },
+		{ ["Native"] = 1, ["Web"] = 2, ["BB"] = 0 }
+	}
+	local _, actual = self.plan:get_supply_totals({["ABOVE_CUT"] = 1})
+	for i = 1,#expected do
+		local expected_total = expected[i]
+		for skill, avail in pairs(expected_total) do
+			assertEquals(actual[i][skill], avail)
+		end
+	end
 end
 
 function TestPlan:test_initialRankings()
@@ -125,3 +153,5 @@ function TestPlan:test_applyRanking7()
         local ranked_items = self.plan:get_work_items()
         TestPlan.check_rankings(ranked_items, expected_rankings)
 end
+
+

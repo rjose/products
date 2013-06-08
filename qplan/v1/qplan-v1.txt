@@ -117,6 +117,14 @@ Check TODOs
 .test_read_write
 - Test reading of tags and writing of tags
 
+.Reporting
+- Should be able to print a plan with a cutline
+
+.Shell functions
+- Should be able to specify a tag when adding work from shell
+- Should be able to sum available skills up front
+
+
 Action Items
 ~~~~~~~~~~~~
 - Find some functional names
