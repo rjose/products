@@ -153,6 +153,8 @@ We need to distinguish between arrays and tables. Arrays should be things that
 are ordered and indexed by an integer from 1 to n. Tables should be
 dictionaries that are indexed by arbitrary key.
 
+I should write on the lifecycle of code: idea, prototype, product, library
+
 .Getting started
 I want to get the tests in place first. I'll bring functionality over
 step-by-step, renaming and refactoring as we go.

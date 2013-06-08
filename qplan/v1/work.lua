@@ -1,9 +1,32 @@
 --[[
 
+Work is something that needs to be done as part of a project or plan. Work is
+not a specific task for one person; it's a higher level estimate of a feature
+that may require multiple skills. Likewise, there is no assignment to any
+person. That will be done as part of dev cycle planning.
+
+Estimates for work items are specified using T-shirt sizing: S, M, L, Q.  These
+correspond to 1w, 2w, 3w, and 13w tasks, respectively. An optional scaling
+integer may precede these estimates. For instance, "4S" would mean a 4 week
+effort. The presence of a scale factor sometimes implies multiple people's
+effort (e.g., 3S might mean 1 week each of Android, iOS, and mobile web). There
+is no space between the factor and the estimate label. Each estimate is
+specified as part of a skills table. For example: {["Native"] = "L", ["Apps"] =
+"2S"}.
+
+Estimates can be converted to weeks of effort using *get_skill_demand*. The
+total demand for an array of work items can be computd using *sum_demand*.  To
+get running demand totals for an array of work items, use *running_demand*.
+
+Work often needs to be categorized into different groups. This is handled
+through our "tag" mechanism. For instance, to set the track for a work item w1,
+we'd do 'w1.tags.track = "money"'. To set the triage group, we'd do
+'w1.tags.priority = 1'.
 
 ]]--
 
-Object = require('object')
+local Object = require('object')
+local func = require('functional')
 
 local Work = {}
 Work._new = Object._new
@@ -12,13 +35,14 @@ function Work.new(options)
 	id = options.id or ""
 	estimates = options.estimates or {}
         name = options.name or ""
-        track = options.track or ""
 	tags = options.tags or {}
 
-	return Work:_new{id = id .. "", name = name, track = track,
+	return Work:_new{id = id .. "", name = name,
 	                 estimates = estimates, tags = tags}
 end
 
+-- ESTIMATES AND SKILL DEMAND -------------------------------------------------
+--
 function Work:set_estimate(skill_name, estimate_string)
 	-- Validate estimate string
 	if Work.translate_estimate(estimate_string) == 0 then
@@ -62,36 +86,15 @@ function Work:get_skill_demand()
 end
 
 
--- TODO: Find the right lisp function name for this and rename
-function apply_op_to_work_arrays(op, a1, a2)
-	-- Start by copying a1 into result
-	local result = {}
-	for k, v in pairs(a1) do result[k] = v end
-
-        for skill, num_weeks in pairs(a2) do
-                if result[skill] then
-			result[skill] = op(result[skill], num_weeks)
-                else
-                        result[skill] = num_weeks
-                end
-        end
-        return result
-end
-
-function add_weeks(w1, w2)
-	return w1 + w2
-end
-
-function subtract_weeks(w1, w2)
-	return w1 - w2
-end
+-- SUMMING SKILL DEMAND -------------------------------------------------------
+--
 
 function Work.add_estimates(est1, est2)
-	return apply_op_to_work_arrays(add_weeks, est1, est2)
+	return func.apply_keywise_2(func.add, est1, est2)
 end
 
 function Work.subtract_estimates(est1, est2)
-	return apply_op_to_work_arrays(subtract_weeks, est1, est2)
+	return func.apply_keywise_2(func.subtract, est1, est2)
 end
 
 
