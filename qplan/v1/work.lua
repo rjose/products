@@ -41,7 +41,7 @@ function Work.new(options)
 	                 estimates = estimates, tags = tags}
 end
 
--- ESTIMATES AND SKILL DEMAND -------------------------------------------------
+-- ESTIMATES -> SKILL DEMAND --------------------------------------------------
 --
 function Work:set_estimate(skill_name, estimate_string)
 	-- Validate estimate string
@@ -89,12 +89,12 @@ end
 -- SUMMING SKILL DEMAND -------------------------------------------------------
 --
 
-function Work.add_estimates(est1, est2)
-	return func.apply_keywise_2(func.add, est1, est2)
+function Work.add_skill_demand(skill_demand1, skill_demand2)
+	return func.apply_keywise_2(func.add, skill_demand1, skill_demand2)
 end
 
-function Work.subtract_estimates(est1, est2)
-	return func.apply_keywise_2(func.subtract, est1, est2)
+function Work.subtract_skill_demand(skill_demand1, skill_demand2)
+	return func.apply_keywise_2(func.subtract, skill_demand1, skill_demand2)
 end
 
 
@@ -107,25 +107,24 @@ end
 
 -- Computes the running demand totals for an array of work items.
 function Work.running_demand(work_items)
-        -- Get an array of estimates
-        local estimates = {}
 
+        -- "map" get_skill_demand over work_items
+        local skill_demand = {}
 	for i = 1,#work_items do
-                estimates[#estimates+1] = work_items[i]:get_skill_demand()
+                skill_demand[#skill_demand+1] = work_items[i]:get_skill_demand()
 	end
 
         -- Compute running totals
         local result = {}
         local cur_total = {}
 
-	for i = 1,#estimates do
-                cur_total = Work.add_estimates(cur_total, estimates[i])
+	for i = 1,#skill_demand do
+                cur_total = Work.add_skill_demand(cur_total, skill_demand[i])
                 result[#result+1] = cur_total
 	end
 
         return result
 end
-
 
 
 return Work
