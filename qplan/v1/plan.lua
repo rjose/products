@@ -1,6 +1,8 @@
 -- For many of these functions to work, we need to have a work table set up and
 -- added to plan.
 
+local func = require('functional')
+
 local Object = require('object')
 
 local Plan = {}
@@ -50,34 +52,6 @@ function position_from_options(options)
 	return result
 end
 
--- TODO: Move this to functional
-function concat(...)
-        local arrays = {...}
-        local result = {}
-
-        for i = 1,#arrays do
-                local a = arrays[i]
-                for j = 1,#a do
-                        result[#result+1] = a[j]
-                end
-        end
-
-        return result
-end
-
--- TODO: Move this to functional
-function split_at(n, a)
-        local result1, result2 = {}, {}
-        if n > #a then n = #a end
-
-        for i = 1,n do
-                result1[#result1+1] = a[i]
-        end
-        for i = n+1, #a do
-                result2[#result2+1] = a[i]
-        end
-        return result1, result2
-end
 
 function Plan:rank(input_items, options)
         -- Make sure item elements are all strings and then add them to an
@@ -89,8 +63,8 @@ function Plan:rank(input_items, options)
 	end
 
         -- Separate work items into unchanged and changed items.  We're
-        -- iterating over the self.work_items and check against the input_set in
-        -- order to filter out garbage.
+        -- iterating over the self.work_items and checking against the input_set
+        -- so we can filter out garbage.
 	local unchanged_array = {}
 	local changed_set = {}
 	for rank, id in pairs(self.work_items) do
@@ -101,7 +75,7 @@ function Plan:rank(input_items, options)
 		end
 	end
 
-	-- Put changed items back into order they were specified
+	-- Put changed items back in order they were specified
 	local changed_array = {}
         for i = 1,#input_items do
                 local id = input_items[i]
@@ -110,11 +84,10 @@ function Plan:rank(input_items, options)
 		end
         end
 
-	-- Put changed items into position
-        -- Figure out where to put the items in the list.
+        -- Insert the ranked items into position
 	local position = position_from_options(options)
-        local front, back = split_at(position-1, unchanged_array)
-        self.work_items = concat(front, changed_array, back)
+        local front, back = func.split_at(position-1, unchanged_array)
+        self.work_items = func.concat(front, changed_array, back)
 end
 
 return Plan

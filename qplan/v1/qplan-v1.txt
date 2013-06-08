@@ -130,7 +130,7 @@ Development
 - Pass 2: TDD on work
 - Pass 3: Refactor work
 - Pass 4: TDD on plan [X][X][X][][][][]
-- Pass 5: Refactor plan
+- Pass 5: Refactor plan and document
 - Pass 6: TDD on read/write
 - Pass 7: Shell functions
 - Pass 8: Reporting functions
