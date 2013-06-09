@@ -127,7 +127,10 @@ Check TODOs
 
 Action Items
 ~~~~~~~~~~~~
--- Document plan and test_plan
+- Read work items (tags and no tags)
+- Read people (tags and no tags)
+- Add edge case testing for parsing tags
+- Document Reader
 
 Development
 -----------
@@ -137,7 +140,7 @@ Development
 - Pass 3: Refactor work
 - Pass 4: TDD on plan [X][X][X][X][X][][]
 - Pass 5: Refactor plan and document [X][X][]
-- Pass 6: TDD on read/write [X][][][][]
+- Pass 6: TDD on read/write [X][X][][][]
 - Pass 7: Shell functions [][][][][]
 - Pass 8: Reporting functions [][][][][]
 

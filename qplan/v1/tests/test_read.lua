@@ -28,6 +28,23 @@ function TestRead:test_readPlan()
 		assertEquals(plans[1].work_items[i], expected_work_items[i])
 	end
 
-        for k, v in pairs(plans[1].tags) do print("test_readPlan", k, v) end
         assertEquals(plans[1].tags, {["importance"] = "HIGH"})
 end
+
+function TestRead:test_readWork()
+	local expected_names = {"Do work item 1", "Do work item 2"}
+	local work = Reader.read_work("./data/work1.txt")
+
+	assertEquals(#work, 2)
+	for i = 1,#expected_names do
+		assertEquals(work[i].name, expected_names[i])
+	end
+
+        -- Check tags
+        assertEquals(work[1].tags.track, "Track1")
+        assertEquals(work[1].tags.priority, 1)
+
+	local estimates = work[1]:get_skill_demand()
+	assertEquals(estimates["Web"], 2)
+end
+

@@ -1,5 +1,6 @@
 require('string_utils')
 local Plan = require('plan')
+local Work = require('work')
 
 local Reader = {}
 
@@ -68,6 +69,26 @@ end
 
 function Reader.read_plans(filename)
 	return construct_objects_from_file(filename, construct_plan)
+end
+
+
+function construct_work(str)
+	local id, name, estimate_str, tags_str = unpack(str:split("\t"))
+
+        local estimates = Reader.parse_tags(estimate_str) 
+        local tags = Reader.parse_tags(tags_str)
+
+	local result = Work.new{
+		id = id,
+		name = name,
+		estimates = estimates,
+                tags = tags
+	}
+	return result
+end
+
+function Reader.read_work(filename)
+	return construct_objects_from_file(filename, construct_work)
 end
 
 return Reader
