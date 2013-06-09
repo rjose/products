@@ -124,4 +124,22 @@ function Plan:rank(input_items, options)
         self.work_items = func.concat(front, changed_array, back)
 end
 
+function is_any_skill_negative(skills)
+	local result = false
+	for skill, avail in pairs(skills) do
+		if avail < 0 then
+			result = true
+			break
+		end
+	end
+	return result
+end
+
+function Plan:is_feasible()
+	local net_supply = self:get_supply_totals({["ABOVE_CUT"] = 1})
+	local is_feasible = not is_any_skill_negative(net_supply)
+	return is_feasible, net_supply
+end
+
+
 return Plan

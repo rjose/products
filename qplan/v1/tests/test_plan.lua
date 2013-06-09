@@ -155,3 +155,12 @@ function TestPlan:test_applyRanking7()
 end
 
 
+function TestPlan:test_isFeasible()
+        self.plan.cutline = 3
+	local is_feasible, avail_skills
+	is_feasible, avail_skills = self.plan:is_feasible()
+	assertEquals(is_feasible, false)
+	assertEquals(avail_skills, { ["Native"] = 1, ["Web"] = 2,
+                                     ["BB"] = 0, ["Server"] = -39 })
+end
+
