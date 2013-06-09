@@ -34,6 +34,14 @@ local Object = require('object')
 local Plan = {}
 Plan._new = Object._new
 
+-- A Plan maintains a ranked list of work items in work_items. The
+-- work_table field is a pointer to a Work database where info about each item
+-- can be looked up.
+--
+-- The default timespan of a plan is 13 weeks (i.e., a quarter). The number of
+-- weeks and the team set the "default supply" of skills. For now, the
+-- default_supply is pre-computed, but this could be updated when the team or
+-- the number of weeks changed.
 function Plan.new(options)
 	id = options.id or ""
 	name = options.name or ""
@@ -59,7 +67,13 @@ end
 -- SELECTING WORK ITEMS -------------------------------------------------------
 --
 
--- Should be able to specify a predicate
+-- By default, this returns _all_ of the work items of a plan. These are actual
+-- work item objects. Passing in options enables filtering of the work items.
+-- Here are the available options:
+--
+--      ABOVE_CUT: If set to truthy value, only work above the cutline will be
+--      returned
+--
 function Plan:get_work_items(options)
 	local work_ids = self.work_items or {}
 	local result = {}
@@ -83,17 +97,29 @@ end
 -- COMPUTE RUNNING TOTALS -----------------------------------------------------
 --
 
+-- This returns the demand total (by skill) associated with an array of work
+-- items. The options passed into this function will be used as per
+-- get_work_items to generate this array.
+--
+-- The second result is the running demand totals, one per work item.
 function Plan:get_demand_totals(options)
         local work_items = self:get_work_items(options)
         return Work.sum_demand(work_items)
 end
 
+-- This returns the net supply total (by skill) associated with an array of work
+-- items and the default skill supply. The options passed into this function
+-- will be used as per get_work_items to generate this array.
+--
+-- The first result is the total net supply, the second is the running net
+-- supply totals, and the third is the running net demand totals. The running
+-- totals are per work item.
 function Plan:get_supply_totals(options)
         local demand_total, running_demand = self:get_demand_totals(options)
 
         local running_supply = {}
 	for i = 1,#running_demand do
-		running_supply[#running_supply+1]= Work.subtract_skill_demand(
+		running_supply[#running_supply+1] = Work.subtract_skill_demand(
                         self.default_supply,
                         running_demand[i]
                 )
@@ -106,6 +132,11 @@ end
 -- PRIORITIZING WORK ----------------------------------------------------------
 --
 
+-- This is a helper function used to convert an options table into a position
+-- in a ranked work list. The following options are supported:
+--
+--      at: The specified number is the position of interest.
+--
 function position_from_options(options)
 	local result = 1
 	if options == nil then
@@ -120,6 +151,11 @@ function position_from_options(options)
 end
 
 
+-- This takes an array of work ids (input_items) and an options hash that is
+-- used per position_from_options to determine a position to place input_items.
+-- In the resulting work items list, the input items will appear in contiguous
+-- order starting at the determined position. Any items in input_items not in
+-- the work_items list will be ignored.
 function Plan:rank(input_items, options)
         -- Make sure item elements are all strings and then add them to an
         -- input_set so we can look them up.
@@ -161,6 +197,8 @@ end
 -- PLAN FEASIBILITY -----------------------------------------------------------
 --
 
+-- This is a helper function used to check if any skill values are < 0. Such a
+-- case implies an infeasible plan.
 function is_any_skill_negative(skills)
 	local result = false
 	for skill, avail in pairs(skills) do
@@ -172,12 +210,17 @@ function is_any_skill_negative(skills)
 	return result
 end
 
+-- Checks if the cutline and the associated skill supply result in a feasible
+-- plan.
 function Plan:is_feasible()
 	local net_supply = self:get_supply_totals({["ABOVE_CUT"] = 1})
 	local is_feasible = not is_any_skill_negative(net_supply)
 	return is_feasible, net_supply
 end
 
+
+-- Given a default supply and a set of work, this finds the lowest cutline for
+-- which the plan is feasible.
 function Plan:find_feasible_line()
 	local work_items = self:get_work_items()
 	local feasible_line = #work_items
