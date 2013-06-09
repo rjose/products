@@ -164,3 +164,29 @@ function TestPlan:test_isFeasible()
                                      ["BB"] = 0, ["Server"] = -39 })
 end
 
+
+function TestPlan:test_findFeasibleLine()
+        self.plan.default_supply["Server"] = 30
+	local feas_line, demand_totals, supply_totals = self.plan:find_feasible_line()
+
+	assertEquals(feas_line, 2)
+	assertEquals(#demand_totals, 10)
+	assertEquals(#supply_totals, 10)
+end
+
+function TestPlan:test_findFeasibleLine2()
+	local feas_line = self.plan:find_feasible_line()
+	assertEquals(feas_line, 0)
+end
+
+function TestPlan:test_findFeasibleLine3()
+        self.plan.default_supply = {
+                ["Native"] = 500,
+                ["Web"] = 500,
+                ["BB"] = 500,
+                ["Server"] = 500
+        }
+	local feas_line = self.plan:find_feasible_line()
+	assertEquals(feas_line, 10)
+end
+

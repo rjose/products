@@ -137,7 +137,7 @@ Development
 - Pass 1: Get infrastructure in place
 - Pass 2: TDD on work
 - Pass 3: Refactor work
-- Pass 4: TDD on plan [X][X][X][][][][]
+- Pass 4: TDD on plan [X][X][X][X][X][][]
 - Pass 5: Refactor plan and document
 - Pass 6: TDD on read/write
 - Pass 7: Shell functions

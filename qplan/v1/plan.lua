@@ -141,5 +141,21 @@ function Plan:is_feasible()
 	return is_feasible, net_supply
 end
 
+function Plan:find_feasible_line()
+	local work_items = self:get_work_items()
+	local feasible_line = #work_items
+
+	local _, running_supply, running_demand = self:get_supply_totals()
+
+	for i = 1,#running_supply do
+		if is_any_skill_negative(running_supply[i]) then
+			feasible_line = i - 1
+			break
+		end
+	end
+
+	return feasible_line, running_demand, running_supply
+end
+
 
 return Plan
