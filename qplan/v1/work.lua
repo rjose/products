@@ -41,8 +41,7 @@ function Work.new(options)
 	                 estimates = estimates, tags = tags}
 end
 
--- ESTIMATES -> SKILL DEMAND --------------------------------------------------
---
+
 function Work:set_estimate(skill_name, estimate_string)
 	-- Validate estimate string
 	if Work.translate_estimate(estimate_string) == 0 then
@@ -52,6 +51,9 @@ function Work:set_estimate(skill_name, estimate_string)
  	self.estimates[skill_name] = estimate_string
 end
 
+
+-- PARSE ESTIMATES ------------------------------------------------------------
+--
 
 -- This converts a T-shirt estimate label into a number of weeks
 function Work.translate_estimate(est_string)
