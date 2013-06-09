@@ -137,7 +137,7 @@ Development
 - Pass 3: Refactor work
 - Pass 4: TDD on plan [X][X][X][X][X][][]
 - Pass 5: Refactor plan and document [X][X][]
-- Pass 6: TDD on read/write [][][][][]
+- Pass 6: TDD on read/write [X][][][][]
 - Pass 7: Shell functions [][][][][]
 - Pass 8: Reporting functions [][][][][]
 
@@ -158,7 +158,8 @@ rearrange and document plan.lua.
 Pass 6: Read/write
 ~~~~~~~~~~~~~~~~~~
 The first thing we should do is parse out tags. We should use the same format
-for skills as we do for tags so we can reuse this code.
+for skills as we do for tags so we can reuse this code. Done. Next, we should
+implement reading of work items. We'll create a test file and compare.
 
 Thoughts
 --------

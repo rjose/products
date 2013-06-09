@@ -51,6 +51,7 @@ function Plan.new(options)
 	cutline = options.cutline or 1
         work_table = options.work_table or {}
         default_supply = options.default_supply or {}
+        tags = options.tags or {}
 
 	return Plan:_new{
                 id = id .. "",
@@ -60,6 +61,7 @@ function Plan.new(options)
                 work_items = work_items,
                 team_id = team_id .. "",
                 default_supply = default_supply,
+                tags = tags,
                 work_table = work_table
         }
 end
