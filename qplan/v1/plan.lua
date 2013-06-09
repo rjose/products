@@ -1,7 +1,30 @@
--- For many of these functions to work, we need to have a work table set up and
--- added to plan.
---
--- Plan includes work and team
+--[[
+
+A Plan is used to figure out how much work a team can commit to. A Plan has
+access to information about relevant Work items and maintains information about
+the relative priority of each work item. This is stored in the work_items field,
+which is a ranked list of work IDs. A Plan also has a cutline that separates the
+list into things that will be committed to and things that won't be.
+
+A Plan provides an array of work items in priority order via get_work_items. We
+pass an options table to this function to filter the selected work items. For
+instance, by passing in {["ABOVE_CUT" = 1}, we select work that's above the
+cutline. This is a convention we follow for all types of selections.
+
+An important feature of Plans is that they enable us to re-rank items. We rank
+items by specifying an array of work IDs (not necessarily contiguous) and a
+position that the first item should start at. By default, items are placed at
+the top of the list. The rest of the list maintains its relative order.
+
+Another feature of Plans is that they can compute running demand totals (by
+skill) and net supply totals (also by skill). The demand totals are presented in
+the work item ranking order. This information can be used to determine if a plan
+is feasible (i.e., the net supply of items above the cutline is >= 0 for all
+skills). This can also be used to determine the "feasible line" -- the lowest
+feasible cutline.
+
+]]--
+
 
 local func = require('functional')
 local Work = require('work')
@@ -33,6 +56,9 @@ function Plan.new(options)
         }
 end
 
+-- SELECTING WORK ITEMS -------------------------------------------------------
+--
+
 -- Should be able to specify a predicate
 function Plan:get_work_items(options)
 	local work_ids = self.work_items or {}
@@ -54,6 +80,9 @@ function Plan:get_work_items(options)
 end
 
 
+-- COMPUTE RUNNING TOTALS -----------------------------------------------------
+--
+
 function Plan:get_demand_totals(options)
         local work_items = self:get_work_items(options)
         return Work.sum_demand(work_items)
@@ -72,6 +101,10 @@ function Plan:get_supply_totals(options)
 
 	return running_supply[#running_supply], running_supply, running_demand
 end
+
+
+-- PRIORITIZING WORK ----------------------------------------------------------
+--
 
 function position_from_options(options)
 	local result = 1
@@ -123,6 +156,10 @@ function Plan:rank(input_items, options)
         local front, back = func.split_at(position-1, unchanged_array)
         self.work_items = func.concat(front, changed_array, back)
 end
+
+
+-- PLAN FEASIBILITY -----------------------------------------------------------
+--
 
 function is_any_skill_negative(skills)
 	local result = false
