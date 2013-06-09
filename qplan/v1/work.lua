@@ -89,17 +89,19 @@ end
 -- SUMMING SKILL DEMAND -------------------------------------------------------
 --
 
+-- Adds two skill demand tables together
 function Work.add_skill_demand(skill_demand1, skill_demand2)
 	return func.apply_keywise_2(func.add, skill_demand1, skill_demand2)
 end
 
+-- Subtracts skill_demand2 from skill_demand1
 function Work.subtract_skill_demand(skill_demand1, skill_demand2)
 	return func.apply_keywise_2(func.subtract, skill_demand1, skill_demand2)
 end
 
 
--- Sums the skill demand for an array of work items. Also returns the running
--- totals.
+-- Sums the skill demand for an array of work items. Returns the running
+-- totals as a second result.
 function Work.sum_demand(work_items)
 	local running_demand = Work.running_demand(work_items)
 	return running_demand[#running_demand], running_demand
