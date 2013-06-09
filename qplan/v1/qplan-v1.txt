@@ -127,9 +127,7 @@ Check TODOs
 
 Action Items
 ~~~~~~~~~~~~
-- Find some functional names
-- Document work functions
-
+-- Document plan and test_plan
 
 Development
 -----------
@@ -138,10 +136,10 @@ Development
 - Pass 2: TDD on work
 - Pass 3: Refactor work
 - Pass 4: TDD on plan [X][X][X][X][X][][]
-- Pass 5: Refactor plan and document
-- Pass 6: TDD on read/write
-- Pass 7: Shell functions
-- Pass 8: Reporting functions
+- Pass 5: Refactor plan and document [][][]
+- Pass 6: TDD on read/write [][][][]
+- Pass 7: Shell functions [][][][][]
+- Pass 8: Reporting functions [][][][][]
 
 Pass 4: TDD on Plan
 ~~~~~~~~~~~~~~~~~~~
@@ -151,6 +149,11 @@ that we'll always call *get_work_items* to get an array of work items, but we'll
 pass in some options to narrow the selection. For instance, we might just get
 work items above the cutline, or maybe work items above the cutline with a given
 tag.
+
+Pass 5: Refactor plan and document
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I'm going to start by cleaning up and documenting test_plan. After that, we'll
+rearrange and document plan.lua.
 
 Thoughts
 --------
