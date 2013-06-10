@@ -33,8 +33,8 @@ Here are the scenarios we need to handle:
 - Compute default skill supply (done)
 - Find feasibility line (done)
 - Report feasibility and net supply for a set of items (done)
+- Show running totals for plan (done)
 
-- Show running totals for plan
 - Group work items by track
 - Save data
 - Show help

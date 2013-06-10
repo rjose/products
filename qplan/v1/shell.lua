@@ -252,14 +252,14 @@ end
 function rrt()
 	print(string.format("%-5s|%-9s|%-20s|%-30s|%-30s",
 		"Rank", "Track", "Item", "Estimate", "Supply left"))
-	print("----------------------------------------------------------------------------------------------")
+	print("-----|---------|--------------------|------------------------------|--------------------------")
 	local work = pl:get_work_items()
 	local feasible_line, _, supply_totals = pl:find_feasible_line()
 
 	for i = 1,#work do
 		local w = work[i]
 		print(string.format("%-5s|%-9s|%-20s|%-30s|%-30s",
-			w.rank,
+			"#" .. w.rank,
 			w.tags.track,
 			w.name,
 			Writer.tags_to_string(w.estimates),
@@ -272,6 +272,56 @@ function rrt()
 			print("----- CUTLINE -----------")
 		elseif i == feasible_line then
 			print("----- FEASIBLE LINE -----")
+		end
+	end
+end
+
+-- TODO: Move this to a utils module
+function get_table_keys(t)
+	local result = {}
+	for k, _ in pairs(t) do
+		result[#result+1] = k
+	end
+	return result
+end
+
+-- Report by track
+function rbt()
+	local work = pl:get_work_items()
+	local track_hash = {}
+	for i = 1,#work do
+		local track = work[i].tags.track
+		if not track then
+			track = "<no track>"
+		end
+
+		track_hash[track] = track_hash[track] or {}
+		local work_array = track_hash[track]
+		work_array[#work_array+1] = work[i]
+	end
+
+	local track_tags = get_table_keys(track_hash)
+	table.sort(track_tags)
+
+	for j = 1,#track_tags do
+		local cutline_shown = false
+		local track = track_tags[j]
+		local track_items = track_hash[track]
+
+		print(track)
+
+		print(string.format("     %-5s|%-20s|%6s", "Rank", "Item", "Triage"))
+		print("     -----|--------------------|------")
+		for i = 1,#track_items do
+			local w = track_items[i]
+			if w.rank > pl.cutline and cutline_shown == false then
+				print("     ----- CUTLINE -----------")
+				cutline_shown = true
+			end
+			print(string.format("     %-5s|%-20s|%-10s",
+				"#" .. w.rank,
+				w.name,
+				w.tags.Triage))
 		end
 	end
 end
