@@ -232,6 +232,11 @@ function wac()
 	return pl:get_work_items{["ABOVE_CUT"] = 1}
 end
 
+-- All work
+function wall()
+	return pl:get_work_items{}
+end
+
 -- Computes feasible line
 function rfl()
 	local fl, demand, supply = pl:find_feasible_line()

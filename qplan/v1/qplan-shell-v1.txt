@@ -34,10 +34,20 @@ Here are the scenarios we need to handle:
 - Find feasibility line (done)
 - Report feasibility and net supply for a set of items (done)
 - Show running totals for plan (done)
+- Group work items by track (done)
 
-- Group work items by track
+- Need info around how much resource is needed for each track
 - Save data
 - Show help
+
+.Describe some scenarios
+- Show current plan with feasible line and cutline
+- Show plan by track
+
+- Rank work
+- Triage work
+- Rough sort by triage
+- Set cutline
 
 
 Development
@@ -102,6 +112,8 @@ the reporting later.
 Not sure what we want for this. We could show the demand for the work item and
 the net supply together. We want to show the rank of the item, the name, the
 estimate for that item (string version), and the net supply.
+
+.Pass 8: Add saving and reading using prefix
 
 
 Thoughts
