@@ -6,6 +6,9 @@ local Writer = require('writer')
 
 TestWrite = {}
 
+-- SETUP ----------------------------------------------------------------------
+--
+
 function TestWrite:setUp()
         -- Set up work and a plan
         local work = {}
@@ -45,6 +48,9 @@ function TestWrite:setUp()
 end
 
 
+-- TEST WRITING PLANS OUT -----------------------------------------------------
+--
+
 function TestWrite:test_writePlan()
 	Writer.write_plans({self.plan}, "./tmp/plan_out.txt")
 
@@ -63,6 +69,9 @@ function TestWrite:test_writePlan()
         assertEquals(plans[1].tags.importance, "HIGH")
 end
 
+
+-- TEST WRITING WORK OUT ------------------------------------------------------
+--
 
 function TestWrite:test_writeWork()
 	Writer.write_work(self.work, "./tmp/work_out.txt")

@@ -1,6 +1,19 @@
+--[[
+
+The Writer's job is to serialize a set of objects out to disk in a format that
+can be read by the Reader. Nothing too fancy here. The only interesting work is
+writing out the tags tables and the skills tables. Since they have the same
+format, they go through the same code.
+
+]]--
+
+
 string_utils = require('string_utils')
 local Writer = {}
 
+
+-- TAG SERIALIZATION ----------------------------------------------------------
+--
 
 function tags_to_string(tags)
         if not tags then
@@ -15,6 +28,10 @@ function tags_to_string(tags)
         -- Strip trailing comma
         return result:sub(1, -2)
 end
+
+
+-- SERIALIZING PLANS AND WORK -------------------------------------------------
+--
 
 function Writer.write_plans(plans, filename)
 	local file = assert(io.open(filename, "w"))
