@@ -1,19 +1,19 @@
 --[[
+
+The Reader's job is to read files line-by-line, returning an array of the
+specified objects. Because the Reader knows the format of the data, it must also
+know how to interpret it. Therefore, the Reader has certain "constructor"
+functions like construct_plan for each type of object that needs to be read in.
+There's a generic function called construct_objects_from_file which takes a
+filename and constructor and applies the constructor to each line of data.
+
+Each object type can have tags associated with it. This is essentially a table
+of metadata that can be used by the application to do things like filter data
+and group it. The Reader has a generic tag parsing function to handle this. This
+means that tag syntax across all objects is the same.
+
 ]]--
 
--- The Reader's job is to read files line-by-line, returning an array of
--- the specified objects. Because the Reader knows the format of the data, it
--- must also know how to interpret it. Therefore, the Reader has certain
--- "constructor" functions like construct_plan for each type of object that
--- needs to be read in.
---
--- There's a generic function called construct_objects_from_file which takes a
--- filename and constructor and applies the constructor to each line of data.
---
--- Each object type can have tags associated with it. This is essentially a
--- table of metainformation that can be used by the application to do things
--- like filter data and group it. The Reader has a generic tag parsing function
--- to handle this. This means that tag syntax across all objects is the same.
 
 require('string_utils')
 local Plan = require('plan')
