@@ -1,3 +1,5 @@
+local string_utils = {}
+
 function string:split(sSeparator, nMax, bRegexp)
 	assert(sSeparator ~= '')
 	assert(nMax == nil or nMax >= 1)
@@ -23,3 +25,17 @@ function string:split(sSeparator, nMax, bRegexp)
 	return aRecord
 end
 
+function string_utils.join(items, sep)
+	local result = ""
+
+	for _, item in pairs(items) do
+		result = result .. item .. sep
+	end
+
+	-- Remove trailing sep
+	result = result:sub(1, -sep:len()-1)
+
+	return result
+end
+
+return string_utils
