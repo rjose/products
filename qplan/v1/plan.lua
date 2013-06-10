@@ -69,6 +69,10 @@ end
 -- SELECTING WORK ITEMS -------------------------------------------------------
 --
 
+function is_any(work_item)
+	return true
+end
+
 -- By default, this returns _all_ of the work items of a plan. These are actual
 -- work item objects. Passing in options enables filtering of the work items.
 -- Here are the available options:
@@ -88,8 +92,20 @@ function Plan:get_work_items(options)
                 stop_index = self.cutline
         end
 
+	-- Specify filter
+	local filter
+	if options.filter then
+		filter = options.filter
+	else
+		filter = is_any
+	end
+
         for i = 1, stop_index do
-                result[#result+1] = self.work_table[work_ids[i]]
+		local w = self.work_table[work_ids[i]]
+		if filter(w) then
+			w.rank = i
+			result[#result+1] = w
+		end
         end
 
 	return result

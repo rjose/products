@@ -46,7 +46,6 @@ end
 function triage_work(rank, level, tag_key)
 	local work = r(rank)
 	if not work then
-		io.stderr:write(string.format("Couldn't find work for rank: %d\n", rank))
 		return
 	end
 
@@ -55,7 +54,7 @@ end
 
 -- Triage work for Product
 function twp(rank, level)
-	triage_work(rank, level, 'ProductTriage')
+	triage_work(rank, level, 'ProdTriage')
 end
 
 -- Triage work for Engineering
@@ -77,6 +76,140 @@ function aw(name)
 
 	-- Add work to plan's ranked work_items
 	pl.work_items[#pl.work_items+1] = new_work.id
+end
+
+-- Add estimates
+SA = "Apps"
+SN = "Native"
+SW = "Web"
+SS = "SET"
+SU = "UX"
+SB = "BB"
+
+function est(rank, ...)
+	local work = r(rank)
+	if not work then
+		return
+	end
+
+	local est_pairs = table.pack(...)
+
+	if (#est_pairs % 2) == 1 then
+		io.stderr:write("Must have an even number of estimate pairs")
+		return
+	end
+
+	for i = 1, #est_pairs-1, 2 do
+		local skill = est_pairs[i]
+		local estimate = est_pairs[i+1]
+		work:set_estimate(skill, estimate)
+	end
+
+end
+
+-- Selection
+
+function is_triage1(work_item)
+	local value = work_item.tags.Triage
+	if not value then value = 100 end
+	return (value >= 1) and (value < 2)
+end
+
+function is_triage2(work_item)
+	local value = work_item.tags.Triage
+	if not value then value = 100 end
+	return (value >= 2) and (value < 3)
+end
+
+function is_prod_triage1(work_item)
+	local value = work_item.tags.ProdTriage
+	if not value then value = 100 end
+	return (value >= 1) and (value < 2)
+end
+
+function is_prod_triage2(work_item)
+	local value = work_item.tags.ProdTriage
+	if not value then value = 100 end
+	return (value >= 2) and (value < 3)
+end
+
+function is_eng_triage1(work_item)
+	local value = work_item.tags.EngTriage
+	if not value then value = 100 end
+	return (value >= 1) and (value < 2)
+end
+
+function is_eng_triage2(work_item)
+	local value = work_item.tags.EngTriage
+	if not value then value = 100 end
+	return (value >= 2) and (value < 3)
+end
+
+-- Returns true if there's a conflict between the Eng and Product 1 priorities
+function is_conflict1(work_item)
+	local prod_triage = work_item.tags.ProdTriage
+	local eng_triage = work_item.tags.EngTriage
+
+	if (prod_triage == 1) and (eng_triage == nil) then
+		return false
+	elseif (prod_triage == 1) and (eng_triage ~= 1) then
+		return true
+	elseif (prod_triage == nil) and (eng_triage == 1) then
+		return false
+	elseif (prod_triage ~= 1) and (eng_triage == 1) then
+		return true
+	else
+		return false
+	end
+end
+
+-- Returns all work items whose ProdTriage value is 1
+function w1()
+	return pl:get_work_items{["filter"] = is_triage1}
+end
+
+-- Returns all work items whose ProdTriage value is 1
+function w2()
+	return pl:get_work_items{["filter"] = is_triage2}
+end
+
+-- Returns all work items whose ProdTriage value is 1
+function wprod1()
+	return pl:get_work_items{["filter"] = is_prod_triage1}
+end
+
+-- Returns all work items whose ProdTriage value is 1
+function wprod2()
+	return pl:get_work_items{["filter"] = is_prod_triage2}
+end
+
+-- Returns all work items whose EngTriage value is 1
+function weng1()
+	return pl:get_work_items{["filter"] = is_eng_triage1}
+end
+
+-- Returns all work items whose EngTriage value is 1
+function weng2()
+	return pl:get_work_items{["filter"] = is_eng_triage2}
+end
+
+-- Returns all items where there is conflict between Prod and Eng over 1s
+function wc1()
+	return pl:get_work_items{["filter"] = is_conflict1}
+end
+
+-- Work above cutline
+function wac()
+	return pl:get_work_items{["ABOVE_CUT"] = 1}
+end
+
+-- Printing
+function pw(work_items)
+	for i = 1,#work_items do
+		local w = work_items[i]
+		print(string.format("ID:%3s %20s %s", w.id, w.name,
+			Writer.tags_to_string(w.tags)))
+	end
 end
 
 print("READY")
