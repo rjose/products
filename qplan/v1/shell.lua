@@ -45,6 +45,11 @@ function r(rank)
 	return pl:get_work(rank)
 end
 
+-- Rank work
+function rank(work_items, position)
+	pl:rank(work_items, {["at"] = position})
+end
+
 
 function triage_work(rank, level, tag_key)
 	local work = r(rank)
@@ -225,6 +230,50 @@ end
 -- Work above cutline
 function wac()
 	return pl:get_work_items{["ABOVE_CUT"] = 1}
+end
+
+-- Computes feasible line
+function rfl()
+	local fl, demand, supply = pl:find_feasible_line()
+	-- TODO: Pretty this up
+	print(string.format("Feasible line: %d", fl))
+	print(string.format("Cutline: %d", pl.cutline))
+	print(string.format("Items below feasible line: %d", #pl.work_items-fl))
+
+	local total_supply = supply[#supply]
+	print("Net supply")
+	print("----------")
+	for skill, net in pairs(total_supply) do
+		print(string.format("%10s %.1f", skill, net))
+	end
+end
+
+-- Report running totals
+function rrt()
+	print(string.format("%-5s|%-9s|%-20s|%-30s|%-30s",
+		"Rank", "Track", "Item", "Estimate", "Supply left"))
+	print("----------------------------------------------------------------------------------------------")
+	local work = pl:get_work_items()
+	local feasible_line, _, supply_totals = pl:find_feasible_line()
+
+	for i = 1,#work do
+		local w = work[i]
+		print(string.format("%-5s|%-9s|%-20s|%-30s|%-30s",
+			w.rank,
+			w.tags.track,
+			w.name,
+			Writer.tags_to_string(w.estimates),
+			Writer.tags_to_string(supply_totals[i])
+		))
+
+		if (i == pl.cutline) and (i == feasible_line) then
+			print("CUTLINE/FEASIBLE LINE -----")
+		elseif i == pl.cutline then
+			print("----- CUTLINE -----------")
+		elseif i == feasible_line then
+			print("----- FEASIBLE LINE -----")
+		end
+	end
 end
 
 -- Printing

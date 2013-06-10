@@ -57,7 +57,7 @@ function Plan.new(options)
                 id = id .. "",
                 name = name,
                 num_weeks = num_weeks,
-	        cutline = cutline,
+	        cutline = cutline + 0,
                 work_items = work_items,
                 team_id = team_id .. "",
                 default_supply = default_supply,

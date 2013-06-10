@@ -31,11 +31,10 @@ Here are the scenarios we need to handle:
 - Specify estimates for work items (done)
 - Pull all 1's to the top of the list (done)
 - Compute default skill supply (done)
+- Find feasibility line (done)
+- Report feasibility and net supply for a set of items (done)
 
-- Find feasibility line
-- Report feasibility and net supply for a set of items
-- Report info on plan (list of items, running demand and net supply, cutline,
-  feasibility line)
+- Show running totals for plan
 - Group work items by track
 - Save data
 - Show help
@@ -94,6 +93,16 @@ QPlan core. They're specific to a particular group.
 What we need to do here is sum up all of the skills for people and add them to
 the plan. We're already doing something similar for the running totals. I
 think the code should be very similar.
+
+.Pass 6: Find feasibility line []
+Let's just call the line and return the value for now. We can get fancier with
+the reporting later.
+
+.Pass 7: Show running totals
+Not sure what we want for this. We could show the demand for the work item and
+the net supply together. We want to show the rank of the item, the name, the
+estimate for that item (string version), and the net supply.
+
 
 Thoughts
 --------
