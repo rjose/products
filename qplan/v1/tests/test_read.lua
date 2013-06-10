@@ -6,6 +6,8 @@ local Reader = require('reader')
 
 TestRead = {}
 
+-- TEST TAG PARSING -----------------------------------------------------------
+--
 function TestRead:test_parseTags()
 	local tag_string = "Apps:1"
 	local tag_table = Reader.parse_tags(tag_string)
@@ -19,6 +21,9 @@ function TestRead:test_parseTags2()
 	assertEquals(tag_table["Server"], 0)
 end
 
+
+-- TEST READING DATA FROM FILE ------------------------------------------------
+--
 function TestRead:test_readPlan()
 	local plans = Reader.read_plans("./data/plan1.txt")
 	local expected_work_items = {"2", "1"}

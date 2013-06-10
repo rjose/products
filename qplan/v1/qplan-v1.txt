@@ -127,9 +127,6 @@ Check TODOs
 
 Action Items
 ~~~~~~~~~~~~
-- Read work items (tags and no tags)
-- Read people (tags and no tags)
-- Add edge case testing for parsing tags
 - Document Reader
 
 Development
@@ -140,7 +137,7 @@ Development
 - Pass 3: Refactor work
 - Pass 4: TDD on plan [X][X][X][X][X][][]
 - Pass 5: Refactor plan and document [X][X][]
-- Pass 6: TDD on read/write [X][X][X][][]
+- Pass 6: TDD on read/write [X][X][X][][][][]
 - Pass 7: Shell functions [][][][][]
 - Pass 8: Reporting functions [][][][][]
 
@@ -162,7 +159,8 @@ Pass 6: Read/write
 ~~~~~~~~~~~~~~~~~~
 The first thing we should do is parse out tags. We should use the same format
 for skills as we do for tags so we can reuse this code. Done. Next, we should
-implement reading of work items. We'll create a test file and compare.
+implement reading of work items. We'll create a test file and compare. OK, I can
+read everything from disk. Let's document and rearrange.
 
 Thoughts
 --------
@@ -200,6 +198,10 @@ I should write on the lifecycle of code: idea, prototype, product, library
 
 The next set of prototypes should be simpler because I'll have some of the
 modules pre-defined at that point (like the functional module).
+
+When saving, we should create new files each time. There should be a way to
+combine all fo the files into a single state file that can be read on init. More
+on this later.
 
 .Getting started
 I want to get the tests in place first. I'll bring functionality over
