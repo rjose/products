@@ -29,17 +29,16 @@ Here are the scenarios we need to handle:
 - Triage items (done)
   - Tag 1's, 2's, and 3's (done)
 - Specify estimates for work items (done)
+- Pull all 1's to the top of the list (done)
+- Compute default skill supply (done)
 
-- Pull all 1's to the top of the list (rough sort list)
-- Compute default skill supply
-- Report feasibility and net supply for a set of items
 - Find feasibility line
+- Report feasibility and net supply for a set of items
 - Report info on plan (list of items, running demand and net supply, cutline,
   feasibility line)
-- Show items above cutline
-  - Group by track
+- Group work items by track
 - Save data
-- Need help instructions
+- Show help
 
 
 Development
@@ -75,7 +74,7 @@ strings. Should take an arbitrary number of estimate pairs.
 What we need is a way to print a straight list of work items. When selecting
 items from a plan, we should include their rank in the results. Done.
 
-.Pass 4: Rough sort by triage [X][][]
+.Pass 4: Rough sort by triage [X][X][]
 Let's assume that we have a Product triage and an Eng triage and that at some
 point, we need to combine the two into a Triage tag. Once this is in place, we
 can rough sort on the Triage tag.
@@ -86,6 +85,15 @@ can rough sort on the Triage tag.
 
 If one group specifies a triage priority, but another group does not, we'll
 default to the first group's priority.
+
+Alright, I'm ready to try the rough sort now. We can grab all of the 1s from
+triage and rank them at the top. I like how these things are outside of the
+QPlan core. They're specific to a particular group.
+
+.Pass 5: Compute default skill supply [X][][]
+What we need to do here is sum up all of the skills for people and add them to
+the plan. We're already doing something similar for the running totals. I
+think the code should be very similar.
 
 Thoughts
 --------

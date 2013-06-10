@@ -27,6 +27,9 @@ end
 -- TODO: Find a better way to hook this up
 pl.work_table = work_table
 
+-- Compute default skill supply
+pl.default_supply = Person.sum_bandwidth(ppl, 13)
+
 
 
 -- TODO: Move shell functions to a shell_funcs.lua file
@@ -60,6 +63,11 @@ end
 -- Triage work for Engineering
 function twe(rank, level)
 	triage_work(rank, level, 'EngTriage')
+end
+
+-- Triage work
+function tw(rank, level)
+	triage_work(rank, level, 'Triage')
 end
 
 -- Add work
@@ -196,6 +204,22 @@ end
 -- Returns all items where there is conflict between Prod and Eng over 1s
 function wc1()
 	return pl:get_work_items{["filter"] = is_conflict1}
+end
+
+
+function get_ids(work_items)
+	local result = {}
+	for i = 1,#work_items do
+		result[#result+1] = work_items[i].id
+	end
+	return result
+end
+
+-- This just pulls all of the items Triaged to 1 to the top of the list
+function tsort()
+	-- Get IDs of all 1s
+	local ids = get_ids(w1())
+	pl:rank(ids)
 end
 
 -- Work above cutline
