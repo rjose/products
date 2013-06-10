@@ -27,6 +27,8 @@ local Reader = {}
 function Reader.parse_tags(tag_string)
 	local result = {}
 
+	if not tag_string then return result end
+
 	-- First split on multiple tags
 	tags = tag_string:split(",")
 	for _, str in pairs(tags) do

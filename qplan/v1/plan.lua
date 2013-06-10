@@ -95,6 +95,16 @@ function Plan:get_work_items(options)
 	return result
 end
 
+function Plan:get_work(rank)
+	if rank > #self.work_items then
+		io.stderr:write(string.format("%d out of range 1-%d\n", rank, #pl.work_items))
+		return
+	end
+
+	local result = self.work_table[self.work_items[rank]]
+	return result
+end
+
 
 -- COMPUTE RUNNING TOTALS -----------------------------------------------------
 --

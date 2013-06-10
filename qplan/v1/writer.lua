@@ -28,7 +28,7 @@ function tags_to_string(tags)
         -- Strip trailing comma
         return result:sub(1, -2)
 end
-
+Writer.tags_to_string = tags_to_string
 
 -- SERIALIZING PLANS AND WORK -------------------------------------------------
 --

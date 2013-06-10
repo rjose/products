@@ -1,0 +1,89 @@
+QPlan V1 Shell
+==============
+Rino Jose <rjose@linkedin.com>
+Jun 10, 2013: Initial spec
+
+Drafting effort [X][]
+
+Overview
+--------
+The shell functions for QPlan need to be short, maybe even 1 character.
+Everything should emphasize quick typing and access. On startup, the app
+should load people, plan, and work data and figure out the default skill
+supply based on the people info.
+
+We need to organize functionality around selecting things, grouping things,
+and printing things. The selecting things and grouping things should plug
+directly into an HTTP endpoint for this data. The shell functions should guide
+the development of the API.
+
+Saving should be done manually. We should create a backup of the files before
+we start.
+
+Scenarios
+~~~~~~~~~
+Here are the scenarios we need to handle:
+
+- Read data and create backups (done)
+- Add a work item (done)
+- Specify estimates for work items (done)
+- Triage items (done)
+  - Tag 1's, 2's, and 3's (done)
+
+- Need reporting on work items in general
+- Pull all 1's to the top of the list (rough sort list)
+- Report feasibility and net supply for a set of items
+- Find feasibility line
+- Report info on plan (list of items, running demand and net supply, cutline,
+  feasibility line)
+- Show items above cutline
+  - Group by track
+- Save data
+- Need help instructions
+
+
+Development
+-----------
+
+.Pass 1: Initialization and printing [X][][]
+We'll start by making backups of the files and reading data in. Should every
+save backup the files? Should we use git for each step? Going to assume that
+the number of work items can be used to get the next work id.
+
+Should we refer to work by ID or by rank? Let's try rank for now.
+
+.Pass 2: Triage item/add work item [X][X][X]
+Alright, what I want to do here is triage by product and by engineering. After
+that we can specify the triage value when adding. Hmmm. It seems to be getting
+messy between the work id and the plan work rank. I think I need to pick one.
+Let's always use the plan rank.
+
+Adding work should create a new work item, add it to the plan work table with
+the appropriate ID. Where should it be in the list? Top of list, bottom of
+list just below cutline, just above cutline, at a specific position? Let's
+just add it to the end of the work items for now.
+
+.Pass 3: Add estimates [][]
+Let me try this at the shell and see how it feels. How about something like
+this:
+
+	est(1, SA, "4L", SN, "M", SBB, "S")
+
+I'll have global abbreviations for the skill types. Estimates need to be
+strings. Should take an arbitrary number of estimate pairs.
+
+Thoughts
+--------
+There are a few patterns that I'd like to emphasize. One is that we should
+have functions that focus on selecting things, grouping things, and operating
+on arrays of things. We shouldn't combine these too much. For instance, we
+should group things that we've previously selected or that we've selected and
+then operated on.
+
+For things like the maximum ID so far, we should create a function that gets
+and sets it. The actual variable will be in memory for now, but at some point,
+it will go into a database/cache.
+
+When saving, we should create new files each time. There should be a way to
+combine all fo the files into a single state file that can be read on init. More
+on this later.
