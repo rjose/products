@@ -331,10 +331,10 @@ function rfl()
 	print(string.format("Items below feasible line: %d", #pl.work_items-fl))
 
 	local total_supply = supply[#supply]
-	print("Net supply")
-	print("----------")
+	print("People Left")
+	print("-----------")
 	for skill, net in pairs(total_supply) do
-		print(string.format("%10s %.1f", skill, net))
+		print(string.format("%10s %.1f", skill, net/pl.num_weeks))
 	end
 end
 
@@ -377,6 +377,7 @@ end
 
 -- "Report by track"
 function rbt()
+	-- Identify tracks, and put work into tracks
 	local work = pl:get_work_items()
 	local track_hash = {}
 	for i = 1,#work do
@@ -390,6 +391,7 @@ function rbt()
 		work_array[#work_array+1] = work[i]
 	end
 
+	-- Sort track tags
 	local track_tags = func.get_table_keys(track_hash)
 	table.sort(track_tags)
 
@@ -398,7 +400,12 @@ function rbt()
 		local track = track_tags[j]
 		local track_items = track_hash[track]
 
-		print(track)
+		-- Sum the track items
+		local demand = Work.sum_demand(track_items)
+		local demand_str = Writer.tags_to_string(
+			to_num_people(demand, pl.num_weeks), ", ")
+
+		print("== " .. track)
 
 		print(string.format("     %-5s|%-20s|%6s", "Rank", "Item", "Triage"))
 		print("     -----|--------------------|------")
@@ -413,6 +420,9 @@ function rbt()
 				w.name,
 				w.tags.Triage))
 		end
+		print("     ---------------------------------")
+		print(string.format("     Required people: %s", demand_str))
+		print()
 	end
 end
 

@@ -18,10 +18,12 @@ local Writer = {}
 --
 
 
-function tags_to_string(tags)
+function tags_to_string(tags, sep)
         if not tags then
                 return ""
         end
+
+	sep = sep or ","
 
 	local keys = func.get_table_keys(tags)
 	table.sort(keys)
@@ -29,11 +31,11 @@ function tags_to_string(tags)
 
         local result = ""
 	for _, key in ipairs(keys) do
-                result = result .. string.format("%s:%s,", key, tags[key])
+                result = result .. string.format("%s:%s" .. sep, key, tags[key])
         end
 
         -- Strip trailing comma
-        return result:sub(1, -2)
+        return result:sub(1, -(1 + string.len(sep)))
 end
 Writer.tags_to_string = tags_to_string
 
