@@ -121,6 +121,18 @@ function Plan:get_work(rank)
 	return result
 end
 
+function Plan:get_work_array(rank_array)
+	local result = {}
+	for _, rank in ipairs(rank_array) do
+		local w = self:get_work(rank)
+		if w ~= nil then
+			w.rank = rank
+			result[#result+1] = w
+		end
+	end
+	return result
+end
+
 
 -- COMPUTE RUNNING TOTALS -----------------------------------------------------
 --

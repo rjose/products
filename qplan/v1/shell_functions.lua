@@ -15,6 +15,7 @@ local data_dir = "./data/"
 -- Used to figure out the next work id
 local num_work_items
 
+
 function load_data(prefix)
 	local prefix = prefix or ""
 
@@ -65,9 +66,11 @@ end
 
 -- "Print workitems"
 function pw(work_items)
+	print("Rank\tID\tName\tTags")
 	for i = 1,#work_items do
 		local w = work_items[i]
-		print(string.format("ID:%3s %20s %s", w.id, w.name,
+		local rank = w.rank or "--"
+		print(string.format("#%-4s\t%3s\t%20s\t%s", rank, w.id, w.name,
 			Writer.tags_to_string(w.tags)))
 	end
 end
@@ -103,6 +106,7 @@ end
 function tw(rank, level)
 	triage_work(rank, level, 'Triage')
 end
+
 
 -- TRIAGE FILTERS -------------------------------------------------------------
 -- These are used for filtering work items by triage grouping.
@@ -177,17 +181,26 @@ function wall()
 	return pl:get_work_items{}
 end
 
--- Select single work item by rank
+-- Select work items by rank. If an array is specified, returns an array of
+-- work items (ignoring any value out of range)
 function r(rank)
-	return pl:get_work(rank)
+	if type(rank) == "number" then
+		return pl:get_work(rank)
+	elseif type(rank) == "table" then
+		return pl:get_work_array(rank)
+	else
+		print("Couldn't interpret input")
+	end
 end
 
--- Returns all work items whose ProdTriage value is 1
+
+
+-- Returns all work items whose Triage value is 1
 function w1()
 	return pl:get_work_items{["filter"] = is_triage1}
 end
 
--- Returns all work items whose ProdTriage value is 1
+-- Returns all work items whose Triage value is 1
 function w2()
 	return pl:get_work_items{["filter"] = is_triage2}
 end
@@ -271,8 +284,14 @@ function get_ids(work_items)
 	return result
 end
 
--- Rank work
+-- Rank work. work_items can be either ids or work objects
 function rank(work_items, position)
+	if #work_items == 0 then return end
+
+	-- If we have work objects, get the ids
+	if type(work_items[1]) == "table" then
+		work_items = get_ids(work_items)
+	end
 	pl:rank(work_items, {["at"] = position})
 end
 
@@ -395,4 +414,51 @@ function rbt()
 				w.tags.Triage))
 		end
 	end
+end
+
+
+-- HELP -----------------------------------------------------------------------
+--
+
+function help()
+	print(
+[[
+-- Reading/Writing
+load(n):	Loads data from disk. Suffix "n" is optional.
+wrd(n):		Writes data to file with suffix "n"
+
+-- Printing
+p():		Alias for print
+pw(ws):		Print work items "ws"
+
+-- Triage
+twp(r,l):	Triage work at rank 'r' and level 'l' (1, 2, 3) for Product
+twe(r,l):	Triage work at rank 'r' and level 'l' (1, 2, 3) for Eng
+tw(r,l):	Triage work at rank 'r' and level 'l' (1, 2, 3) for Overall
+
+-- Select work
+r(rank):	Selects work item at rank 'rank'. May also take an array of ranks.
+wall():		Selects all work in plan
+wac():		Selects work above cutline
+w1():		Work with overall triage of 1
+w2():		Work with overall triage of 2
+wprod1():	Work with Product triage of 1
+wprod2():	Work with Product triage of 2
+weng1():	Work with Eng triage of 1
+weng2():	Work with Eng triage of 2
+wc1():		Work with conflicts of 1s between Prod and Eng
+
+-- Updating work
+est(r, s, e):	Set estimate of work ranked at 'r'. Takes pairs of skill/T-shirt pairs
+
+-- Updating plan
+rank(ws, p):	Ranks work items "ws" at position "p". May use work items or IDs.
+aw(name):	Adds work to plan.
+
+-- Reports
+rfl():		Report feasible line.
+rrt():		Report running totals
+rbt():		Report by track
+]]
+	)
 end

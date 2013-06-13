@@ -113,7 +113,12 @@ Not sure what we want for this. We could show the demand for the work item and
 the net supply together. We want to show the rank of the item, the name, the
 estimate for that item (string version), and the net supply.
 
-.Pass 8: Add saving and reading using prefix
+.Pass 9: Clean up shell functions [][]
+I want to organize the shell functions so they're more orderly. The shell.lua
+file should require the shell functions. The shell functions should be in the
+global scope.
+
+.Pass 10: Add saving and reading using prefix
 
 
 Thoughts
