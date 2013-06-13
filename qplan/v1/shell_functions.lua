@@ -424,6 +424,12 @@ function rbt()
 		print(string.format("     Required people: %s", demand_str))
 		print()
 	end
+	
+	-- Print overall demand total
+	local total_demand = Work.sum_demand(work)
+	print(string.format("TOTAL Required People: %s", Writer.tags_to_string(
+		to_num_people(total_demand, pl.num_weeks), ", "
+	)))
 end
 
 
