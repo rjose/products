@@ -8,21 +8,28 @@ format, they go through the same code.
 ]]--
 
 
-string_utils = require('string_utils')
+local string_utils = require('string_utils')
+local func = require('functional')
+
 local Writer = {}
 
 
 -- TAG SERIALIZATION ----------------------------------------------------------
 --
 
+
 function tags_to_string(tags)
         if not tags then
                 return ""
         end
 
+	local keys = func.get_table_keys(tags)
+	table.sort(keys)
+
+
         local result = ""
-        for key, value in pairs(tags) do
-                result = result .. string.format("%s:%s,", key, value)
+	for _, key in ipairs(keys) do
+                result = result .. string.format("%s:%s,", key, tags[key])
         end
 
         -- Strip trailing comma
@@ -59,15 +66,14 @@ function Writer.write_work(work_items, filename)
 	local file = assert(io.open(filename, "w"))
 
 	-- Write headers first
-	file:write("ID\tName\tTrack\tEstimate\tTags\n")
+	file:write("ID\tName\tTrack\tTags\n")
 	file:write("-----\n")
 
 	-- Write work next
 	for _, w in pairs(work_items) do
-		file:write(string.format("%s\t%s\t%s\t%s\t%s\n", 
+		file:write(string.format("%s\t%s\t%s\t%s\n", 
 			w.id,
                         w.name,
-                        w.track,
                         tags_to_string(w.estimates),
                         tags_to_string(w.tags)
 		))
