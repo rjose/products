@@ -375,6 +375,7 @@ function rrt()
 end
 
 
+-- TODO: Report totals only by those above the cutline
 -- "Report by track"
 function rbt()
 	-- Identify tracks, and put work into tracks
