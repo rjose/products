@@ -18,8 +18,9 @@ void list_init(List *list, void (*destroy)(void *data))
         return;
 }
 
-void list_init_with_match(List *list, void (*destroy)(void *data),
-     			       int (*match)(const void *key1, const void *key2))
+void list_init_with_match(List *list,
+                          int (*match)(const void *key1, const void *key2),
+                          void (*destroy)(void *data))
 {
         list->size = 0;
         list->destroy = destroy;

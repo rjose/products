@@ -30,8 +30,9 @@ typedef struct DList_ {
 
 void dlist_init(DList *list, void (*destroy)(void *data));
 
-void dlist_init_with_match(DList *list, void (*destroy)(void *data),
-			       int (*match)(const void *key1, const void *key2));
+void dlist_init_with_match(DList *list,
+                           int (*match)(const void *key1, const void *key2),
+                           void (*destroy)(void *data));
 
 void dlist_destroy(DList *list);
 

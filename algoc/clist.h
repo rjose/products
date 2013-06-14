@@ -28,8 +28,10 @@ typedef struct CList_ {
 
 void clist_init(CList *list, void (*destroy)(void *data));
 
-void clist_init_with_match(CList *list, void (*destroy)(void *data),
-  		              int (*match)(const void *key1, const void *key2));
+void clist_init_with_match(CList *list,
+                           int (*match)(const void *key1, const void *key2),
+                           void (*destroy)(void *data));
+
 void clist_destroy(CList *list);
 
 int clist_ins_next(CList *list, CListElmt *element, const void *data);
