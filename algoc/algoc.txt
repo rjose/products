@@ -1,0 +1,16 @@
+Algorithms in C
+===============
+Rino Jose <rjose@ejorp.com>
+v1, June 13, 2013: Initial verison
+
+Overview
+--------
+
+Thoughts
+--------
+
+Reference
+---------
+From link:http://www.amazon.com/Mastering-Algorithms-with-C-ebook/dp/B0043EWV5Q[
+Mastering Algorithms in C].
+
