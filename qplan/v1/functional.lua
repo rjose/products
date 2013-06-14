@@ -18,6 +18,15 @@ function func.key_union(...)
         return result
 end
 
+-- Returns all the keys in a table
+function func.get_table_keys(t)
+	local result = {}
+	for k, _ in pairs(t) do
+		result[#result+1] = k
+	end
+	return result
+end
+
 -- This applies a function of 2 variables key-wise to two tables. The function f
 -- should handle nil values in a way that makes sense.
 function func.apply_keywise_2(f, t1, t2)
