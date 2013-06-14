@@ -41,11 +41,11 @@ void list_destroy(List *list)
         while (list_size(list) > 0) {
 
 		if (list_rem_next(list, NULL, (void **)&data) != 0) {
-			fprintf(stderr, "Problem removing element from dlist\n");
+			fprintf(stderr, "Problem removing element from List\n");
 			return;
 		}
 
-		if (list_destroy != NULL)
+		if (list->destroy != NULL)
 			list->destroy(data);
         }
 
