@@ -1,6 +1,16 @@
 -- TODO: Document this
 local func = {}
 
+function func.filter(items, filter)
+	local result = {}
+	for _, item in ipairs(items) do
+		if filter(item) then
+			result[#result+1] = item
+		end
+	end
+	return result
+end
+
 -- Returns an array of keys being the union of t1 and t2
 function func.key_union(...)
         local result = {}

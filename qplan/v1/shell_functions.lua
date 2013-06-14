@@ -148,6 +148,14 @@ function is_eng_triage2(work_item)
 	return (value >= 2) and (value < 3)
 end
 
+function is_above_cutline(work_item)
+	if not work_item.rank then
+		return false
+	else
+		return work_item.rank <= pl.cutline
+	end
+end
+
 -- Returns true if there's a conflict between the Eng and Product 1 priorities
 function is_conflict1(work_item)
 	local prod_triage = work_item.tags.ProdTriage
@@ -402,7 +410,7 @@ function rbt()
 		local track_items = track_hash[track]
 
 		-- Sum the track items
-		local demand = Work.sum_demand(track_items)
+		local demand = Work.sum_demand(func.filter(track_items, is_above_cutline))
 		local demand_str = Writer.tags_to_string(
 			to_num_people(demand, pl.num_weeks), ", ")
 
@@ -427,7 +435,7 @@ function rbt()
 	end
 	
 	-- Print overall demand total
-	local total_demand = Work.sum_demand(work)
+	local total_demand = Work.sum_demand(func.filter(work, is_above_cutline))
 	print(string.format("TOTAL Required People: %s", Writer.tags_to_string(
 		to_num_people(total_demand, pl.num_weeks), ", "
 	)))
