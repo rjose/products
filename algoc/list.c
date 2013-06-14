@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "list.h"
 
@@ -10,6 +11,19 @@ void list_init(List *list, void (*destroy)(void *data))
 {
         list->size = 0;
         list->destroy = destroy;
+        list->head = NULL;
+        list->tail = NULL;
+
+	list->match = NULL;
+        return;
+}
+
+void list_init_with_match(List *list, void (*destroy)(void *data),
+     			       int (*match)(const void *key1, const void *key2))
+{
+        list->size = 0;
+        list->destroy = destroy;
+	list->match = match;
         list->head = NULL;
         list->tail = NULL;
         return;
@@ -25,13 +39,20 @@ void list_destroy(List *list)
 
         /* Remove each element (and its payload) */
         while (list_size(list) > 0) {
-                if (list_rem_next(list, NULL, (void **)&data) == 0 &&
-                                             list_destroy != NULL)
-                        list->destroy(data);
+
+		if (list_rem_next(list, NULL, (void **)&data) != 0) {
+			fprintf(stderr, "Problem removing element from dlist\n");
+			return;
+		}
+
+		if (list_destroy != NULL)
+			list->destroy(data);
         }
 
         /* Zero list out */
         memset(list, 0, sizeof(List));
+
+	return;
 }
 
 /* ============================================================================
@@ -42,7 +63,7 @@ int list_ins_next(List *list, ListElmt *element, const void *data)
         ListElmt *new_element;
 
         /*
-         * Allocate storage and set payload
+         * Allocate storage for element and set payload
          */
         if ((new_element = (ListElmt *)malloc(sizeof(ListElmt))) == NULL)
                 return -1;

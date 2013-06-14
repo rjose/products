@@ -30,6 +30,9 @@ typedef struct List_ {
 
 void list_init(List *list, void (*destroy)(void *data));
 
+void list_init_with_match(List *list, void (*destroy)(void *data),
+     			       int (*match)(const void *key1, const void *key2));
+
 void list_destroy(List *list);
 
 /* Insert a new ListElmt after 'element' and sets its data to 'data'. If element
