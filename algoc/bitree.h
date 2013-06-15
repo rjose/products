@@ -50,6 +50,8 @@ int bitree_merge(BiTree *merge, BiTree *left, BiTree *right, const void *data);
 
 #define bitree_is_leaf(node) ((node)->left == NULL && (node)->right == NULL)
 
+#define bitree_data(node) ((node)->data)
+
 #define bitree_left(node) ((node)->left)
 
 #define bitree_right(node) ((node)->right)
