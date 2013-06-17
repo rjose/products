@@ -21,6 +21,19 @@ function TestRead:test_parseTags2()
 	assertEquals(tag_table["Server"], 0)
 end
 
+function TestRead:test_parseTagsWithSpaces()
+	local tag_string = "Track:Team Scrooge,Description:Continuous improvement & testing"
+	local tag_table = Reader.parse_tags(tag_string)
+	assertEquals(tag_table["Track"], "Team Scrooge")
+	assertEquals(tag_table["Description"], "Continuous improvement & testing")
+end
+
+function TestRead:test_parseTagsWithBlanks()
+	local tag_string = "Apps:1,Server:"
+	local tag_table = Reader.parse_tags(tag_string)
+	assertEquals(tag_table["Apps"], 1)
+	assertEquals(tag_table["Server"], "")
+end
 
 -- TEST READING DATA FROM FILE ------------------------------------------------
 --

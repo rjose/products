@@ -9,21 +9,23 @@ function TestWork:setUp()
         self.work[1] = Work.new{name = "Do work item 1",
                                 track = "Track1",
 				tags = {["track"] = "Track1",
-				        ["PP"] = 1, ["EP"] = 2},
+				        ["PP"] = 1,
+                                        ["EP"] = 2},
                                 estimates = {["Native"] = "2L",
-                                           ["Web"] = "M",
-                                           ["Server"] = "Q",
-                                           ["BB"] = "S"}}
+                                             ["Web"] = "M",
+                                             ["Server"] = "Q",
+                                             ["BB"] = "S"}}
 
         -- Add a few more work items
         for i = 2, 4 do
                 self.work[i] = Work.new{name = "Task" .. i,
 				tags = {["track"] = "Track1",
-				        ["PP"] = 2, ["EP"] = 3},
+				        ["PP"] = 2,
+                                        ["EP"] = 3},
                                 estimates = {["Native"] = "L",
-                                           ["Web"] = i .. "M",
-                                           ["Server"] = "Q",
-                                           ["BB"] = "S"}}
+                                             ["Web"] = i .. "M",
+                                             ["Server"] = "Q",
+                                             ["BB"] = "S"}}
         end
 
 end
@@ -44,9 +46,11 @@ function TestWork:test_setEstimate2()
 	assertEquals(self.work[1].estimates["Native"], "2L")
 end
 
+
 -- PARSING TESTS --------------------------------------------------------------
 --
 
+-- Used to translate the estimate string for a work item (like "4L")
 function TestWork:test_translateEstimate()
         assertEquals(Work.translate_estimate("S"), 1)
         assertEquals(Work.translate_estimate("M"), 2)
@@ -54,6 +58,10 @@ function TestWork:test_translateEstimate()
         assertEquals(Work.translate_estimate("Q"), 13)
         assertEquals(Work.translate_estimate("3L"), 9)
         assertEquals(Work.translate_estimate("2Q"), 26)
+end
+
+function TestWork:test_translateBlankEstimate()
+        assertEquals(Work.translate_estimate(""), 0)
 end
 
 function TestWork:test_skillDemand()
