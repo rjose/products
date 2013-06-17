@@ -339,15 +339,8 @@ function rfl()
 	local fl, demand, supply = pl:find_feasible_line()
 	-- TODO: Pretty this up
 	print(string.format("Feasible line: %d", fl))
-	print(string.format("Cutline: %d", pl.cutline))
 	print(string.format("Items below feasible line: %d", #pl.work_items-fl))
-
-	local total_supply = supply[#supply]
-	print("People Left")
-	print("-----------")
-	for skill, net in pairs(total_supply) do
-		print(string.format("%10s %.1f", skill, net/pl.num_weeks))
-	end
+	print(string.format("Cutline: %d", pl.cutline))
 end
 
 -- Converts skill_totals in man-weeks into num-people
@@ -442,17 +435,17 @@ function rbt()
 
 		print("== " .. track)
 
-		print(string.format("     %-5s|%-20s|%6s", "Rank", "Item", "Triage"))
-		print("     -----|--------------------|------")
+		print(string.format("     %-5s|%-40s|%6s", "Rank", "Item", "Triage"))
+		print("     -----|----------------------------------------|------")
 		for i = 1,#track_items do
 			local w = track_items[i]
 			if w.rank > pl.cutline and cutline_shown == false then
 				print("     ----- CUTLINE -----------")
 				cutline_shown = true
 			end
-			print(string.format("     %-5s|%-20s|%-10s",
+			print(string.format("     %-5s|%-40s|%-10s",
 				"#" .. w.rank,
-				w.name,
+				truncate(w.name, 40, {["ellipsis"] = true}),
 				w.tags.Triage))
 		end
 		print("     ---------------------------------")
