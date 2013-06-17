@@ -354,20 +354,38 @@ function to_num_people(skill_totals, num_weeks)
 	return skill_totals
 end
 
+function truncate(s, l, options)
+        if s:len() <= l then
+                return s
+        end
+
+        options = options or {}
+        result = s:sub(1, l)
+        
+        if options.ellipsis then
+                result = result:sub(1, -4) .. "..."
+        end
+
+
+        return result
+
+end
+
 -- "Report running totals"
 function rrt()
-	print(string.format("%-5s|%-9s|%-20s|%-30s|%-30s",
+	print(string.format("%-5s|%-9s|%-40s|%-30s|%-30s",
 		"Rank", "Track", "Item", "Estimate", "Supply left"))
-	print("-----|---------|--------------------|------------------------------|--------------------------")
+	print("-----|---------|----------------------------------------|" ..
+              "------------------------------|--------------------------")
 	local work = pl:get_work_items()
 	local feasible_line, _, supply_totals = pl:find_feasible_line()
 
 	for i = 1,#work do
 		local w = work[i]
-		print(string.format("%-5s|%-9s|%-20s|%-30s|%-30s",
+		print(string.format("%-5s|%-9s|%-40s|%-30s|%-30s",
 			"#" .. w.rank,
 			w.tags.track,
-			w.name,
+			truncate(w.name, 40, {["ellipsis"] = true}),
 			Writer.tags_to_string(w.estimates),
 			Writer.tags_to_string(to_num_people(supply_totals[i], pl.num_weeks))
 		))
