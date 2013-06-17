@@ -455,9 +455,22 @@ function rbt()
 	
 	-- Print overall demand total
 	local total_demand = Work.sum_demand(func.filter(work, is_above_cutline))
-	print(string.format("TOTAL Required (for cutline): %s", Writer.tags_to_string(
+	print(string.format("%-30s %s", "TOTAL Required (for cutline):", Writer.tags_to_string(
 		to_num_people(total_demand, pl.num_weeks), ", "
 	)))
+
+        -- Print total supply
+        local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
+	print(string.format("%-30s %s", "TOTAL Skill Supply:", Writer.tags_to_string(
+		to_num_people(total_bandwidth, pl.num_weeks), ", "
+	)))
+
+        -- Print net supply
+        -- NOTE: This is a hack, but to_num_people has already converted
+        -- total_bandwidth and total_demand to num people!
+        local net_supply = Work.subtract_skill_demand(total_bandwidth, total_demand);
+	print(string.format("%-30s %s", "TOTAL Net Supply:", Writer.tags_to_string(net_supply, ", ")))
+        
 end
 
 -- Prints available people by skill
