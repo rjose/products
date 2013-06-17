@@ -551,6 +551,7 @@ function help()
 -- Reading/Writing
 load(n):	Loads data from disk. Suffix "n" is optional.
 wrd(n):		Writes data to file with suffix "n"
+export():	Writes data to "data/output.txt" in a form for Google Docs
 
 -- Printing
 p():		Alias for print
