@@ -12,6 +12,9 @@ I think we should have an init function in list that also sets the match
 function. It seems that if you declare something like match in the data
 structure, you should do something with it.
 
+The first thing we should do is get everything to compile. After that, we should
+add tests one-by-one.
+
 Reference
 ---------
 From link:http://www.amazon.com/Mastering-Algorithms-with-C-ebook/dp/B0043EWV5Q[
