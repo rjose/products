@@ -7,7 +7,7 @@ func = require('functional')
 
 -- TODO: Talk about naming conventions
 
--- DATA READ/WRITE ------------------------------------------------------------
+-- READ/WRITE DATA ------------------------------------------------------------
 --
 
 local data_dir = "./data/"
@@ -48,6 +48,44 @@ function wrd(prefix)
 	-- NOTE: Assuming pl, ppl are global
 	Writer.write_plans({pl}, data_dir .. "plan" .. prefix .. ".txt")
 	Writer.write_work(pl.work_table, data_dir .. "work" .. prefix .. ".txt")
+end
+
+function tagvalue_to_string(tagvalue)
+        local result = tagvalue
+        if tagvalue == 0 then
+                result = ""
+        end
+        return result
+end
+
+
+-- Export into a form that's suitable for Google Docs
+function export()
+        local file = assert(io.open("./data/output.txt", "w"))
+        file:write("Product Priority\tEngineering Priority\t" ..
+                   "Merged Priority\tMobile Track\tProject Name\t" ..
+                   "Description\tRequesting Team\tDependencies\t" ..
+                   "Tee Shirt Sizes\tNative Wks\tWeb Wks\tApps Wks\t" ..
+                   "Notes\n")
+
+        for _, work_id in ipairs(pl.work_items) do
+                work = pl.work_table[work_id]
+                file:write(string.format("%s\t%s\t%s\t%s\t%s\t" ..
+                     "%s\t%s\t%s\t\t%s\t%s\t%s\n", 
+                           tagvalue_to_string(work.tags.ProdTriage),
+                           tagvalue_to_string(work.tags.EngTriage),
+                           tagvalue_to_string(work.tags.Triage),
+                           work.tags.track,
+                           work.name,
+
+                           work.tags.Description,
+                           work.tags.RequestingTeam,
+                           work.tags.Dependencies,
+                           work.estimates.Native,
+                           work.estimates.Web,
+                           work.estimates.Apps
+                           ))
+        end
 end
 
 
