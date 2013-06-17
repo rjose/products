@@ -5,7 +5,7 @@ ID	Name	Skills	Tags
 3	Adrian N	Web:1	
 4	Adrian L	UX:1	
 5	Akhilesh	Apps:1
-6	Alex C.		Web:1	
+6	Alex C.	Web:1	
 7	Amanda	UX:1	
 8	Amol	Apps:1	
 9	Andrew	Web:1	

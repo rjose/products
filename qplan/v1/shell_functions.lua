@@ -455,7 +455,7 @@ function rbt()
 	
 	-- Print overall demand total
 	local total_demand = Work.sum_demand(func.filter(work, is_above_cutline))
-	print(string.format("TOTAL Required People: %s", Writer.tags_to_string(
+	print(string.format("TOTAL Required (for cutline): %s", Writer.tags_to_string(
 		to_num_people(total_demand, pl.num_weeks), ", "
 	)))
 end
