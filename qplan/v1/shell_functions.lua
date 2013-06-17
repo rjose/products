@@ -326,6 +326,10 @@ function tsort()
 	pl:rank(ids)
 end
 
+function sc(cutline)
+        pl.cutline = cutline
+end
+
 
 -- QPLAN REPORTS --------------------------------------------------------------
 --
@@ -348,6 +352,10 @@ end
 
 -- Converts skill_totals in man-weeks into num-people
 function to_num_people(skill_totals, num_weeks)
+        if skill_totals == nil then
+                return {}
+        end
+
 	for k, _ in pairs(skill_totals) do
 		skill_totals[k] = string.format("%.1f", skill_totals[k] / num_weeks)
 	end
@@ -459,6 +467,36 @@ function rbt()
 	)))
 end
 
+-- Prints available people by skill
+function rs()
+        local people_by_skill = {}
+
+        for _, person in ipairs(ppl) do
+                local skill_tag = Writer.tags_to_string(person.skills):split(":")[1]
+                skill_tag = skill_tag or "_UNSPECIFIED"
+                people_list = people_by_skill[skill_tag] or {}
+                people_list[#people_list+1] = person
+                people_by_skill[skill_tag] = people_list
+        end
+
+	local skill_tags = func.get_table_keys(people_by_skill)
+	table.sort(skill_tags)
+
+	for i = 1,#skill_tags do
+                local skill = skill_tags[i]
+                local people_list = people_by_skill[skill]
+                print(string.format("%s ==", skill))
+                for j = 1,#people_list do
+                        print(string.format("     %3d. %s", j, people_list[j].name))
+                end
+        end
+
+        local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
+	print(string.format("TOTAL Skill Supply: %s", Writer.tags_to_string(
+		to_num_people(total_bandwidth, pl.num_weeks), ", "
+	)))
+end
+
 
 -- HELP -----------------------------------------------------------------------
 --
@@ -497,11 +535,13 @@ est(r, s, e):	Set estimate of work ranked at 'r'. Takes pairs of skill/T-shirt p
 -- Updating plan
 rank(ws, p):	Ranks work items "ws" at position "p". May use work items or IDs.
 aw(name):	Adds work to plan.
+sc(num):	Sets cutline
 
 -- Reports
 rfl():		Report feasible line.
 rrt():		Report running totals
 rbt():		Report by track
+rs():		Report available supply
 ]]
 	)
 end

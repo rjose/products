@@ -69,7 +69,7 @@ function Work.translate_estimate(est_string)
 
         -- If couldn't find a unit, then return 0
         if unit == nil then
-                io.stderr:write("Unable to parse: ", est_string)
+                -- io.stderr:write(string.format("Unable to parse: %s\n", est_string))
                 return 0
         end
 

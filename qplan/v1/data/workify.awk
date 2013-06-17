@@ -11,7 +11,7 @@ BEGIN {
 }
 
 NR > 1        {printf("%d\t%s\tNative:%s,Web:%s,Apps:%s\t"\
-               "ProdTriage:%d,EngTriage:%d,Triage:%d,Track:%s,Description:%s,"\
+               "ProdTriage:%d,EngTriage:%d,Triage:%d,track:%s,Description:%s,"\
                "RequestingTeam:%s,Dependencies:%s,Notes:%s\n",\
                           NR-1, $5, $10, $11, $12,\
                           $1, $2, $3, $4, $6,\
