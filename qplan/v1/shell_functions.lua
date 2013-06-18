@@ -120,14 +120,21 @@ end
 --
 
 -- This is an internal helper function to support different types of work
--- triage.
+-- triage. Can take either a single rank or an array of ranks.
 function triage_work(rank, level, tag_key)
-	local work = r(rank)
-	if not work then
-		return
-	end
+        local ranks = {}
+        if type(rank) == "table" then
+                ranks = rank
+        else
+                ranks = {rank}
+        end
 
-	work.tags[tag_key] = level
+        for _, ranking in ipairs(ranks) do
+                local work = r(ranking)
+                if work then
+                        work.tags[tag_key] = level
+                end
+        end
 end
 
 -- Triage work for Product
@@ -439,12 +446,38 @@ function rrt()
 	end
 end
 
+function make_track_filter(t)
+        local tracks = {}
+        if type(t) == "table" then
+                tracks = t
+        else
+                tracks[#tracks+1] = t
+        end
+
+        result = function(work_item)
+                for _, track in pairs(tracks) do
+                        if (work_item.tags.track:lower():find(track:lower())) then
+                                return true
+                        end
+                end
+                return false
+        end
+
+        return result
+end
+
 
 -- TODO: Report totals only by those above the cutline
--- "Report by track"
-function rbt()
+-- "Report by track". Takes an optional track or array of tracks.
+function rbt(t)
+        -- Construct options
+        local options = {}
+        if t then
+                options.filter = make_track_filter(t)
+        end
+
 	-- Identify tracks, and put work into tracks
-	local work = pl:get_work_items()
+	local work = pl:get_work_items(options)
 	local track_hash = {}
 	for i = 1,#work do
 		local track = work[i].tags.track
@@ -490,6 +523,12 @@ function rbt()
 		print(string.format("     Required people: %s", demand_str))
 		print()
 	end
+
+        -- If we're filtering the results, return now since there's no point in
+        -- printing total stats.
+        if options.filter ~= nil then
+                return
+        end
 	
 	-- Print overall demand total
 	local total_demand = Work.sum_demand(func.filter(work, is_above_cutline))
