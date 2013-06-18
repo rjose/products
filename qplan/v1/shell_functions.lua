@@ -524,18 +524,19 @@ function rbt(t)
 		print()
 	end
 
-        -- If we're filtering the results, return now since there's no point in
-        -- printing total stats.
-        if options.filter ~= nil then
-                return
-        end
-	
+
 	-- Print overall demand total
 	local total_demand = Work.sum_demand(func.filter(work, is_above_cutline))
 	print(string.format("%-30s %s", "TOTAL Required (for cutline):", Writer.tags_to_string(
 		to_num_people(total_demand, pl.num_weeks), ", "
 	)))
 
+        -- If we're filtering the results, return now since there's no point in
+        -- printing total supply stats.
+        if options.filter ~= nil then
+                return
+        end
+	
         -- Print total supply
         local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
 	print(string.format("%-30s %s", "TOTAL Skill Supply:", Writer.tags_to_string(
@@ -624,7 +625,7 @@ sc(num):	Sets cutline
 -- Reports
 rfl():		Report feasible line.
 rrt():		Report running totals
-rbt():		Report by track
+rbt(t):		Report by track. Takes optional track(s) "t" to filter on
 rs():		Report available supply
 ]]
 	)
