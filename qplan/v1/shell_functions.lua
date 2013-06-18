@@ -20,7 +20,7 @@ function load_data(prefix)
 	local prefix = prefix or ""
 
 	-- NOTE: Right now, we don't write people out
-	local ppl = Reader.read_people(data_dir .. "people" .. ".txt")
+	local ppl = Reader.read_people(data_dir .. "people" .. prefix .. ".txt")
 
 	-- NOTE: For now, assuming only one plan
 	local pl = Reader.read_plans(data_dir .. "plan" .. prefix .. ".txt")[1]
