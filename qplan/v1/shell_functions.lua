@@ -71,7 +71,7 @@ function export()
         for _, work_id in ipairs(pl.work_items) do
                 work = pl.work_table[work_id]
                 file:write(string.format("%s\t%s\t%s\t%s\t%s\t" ..
-                     "%s\t%s\t%s\t\t%s\t%s\t%s\n", 
+                     "%s\t%s\t%s\t\t%s\t%s\t%s\t%s\n", 
                            tagvalue_to_string(work.tags.ProdTriage),
                            tagvalue_to_string(work.tags.EngTriage),
                            tagvalue_to_string(work.tags.Triage),
@@ -83,7 +83,8 @@ function export()
                            work.tags.Dependencies,
                            work.estimates.Native,
                            work.estimates.Web,
-                           work.estimates.Apps
+                           work.estimates.Apps,
+                           work.tags.Notes
                            ))
         end
 end
