@@ -11,4 +11,6 @@ int mgsort(void *data, int esize, int i, int k,
                              int (*compare)(const void *key1, const void *key2));
 
 int ctsort(int *data, int size, int k);
+
+int rxsort(int *data, int size, int p, int k);
 #endif
