@@ -463,8 +463,7 @@ function make_track_filter(t, triage)
                 for _, track in pairs(tracks) do
                         if (work_item.tags.track:lower():find(track:lower()) and
                             (triage == nil or
-                            (work_item.tags.ProdTriage == triage or
-                             work_item.tags.EngTriage == triage))) then
+                            (work_item.tags.Triage == triage))) then
                                 return true
                         end
                 end
@@ -526,7 +525,7 @@ function rbt(t, triage)
 			print(string.format("     %-5s|%-40s|%-10s|%s",
 				"#" .. w.rank,
 				truncate(w.name, 40, {["ellipsis"] = true}),
-				w.tags.ProdTriage,
+				w.tags.Triage,
                                 Writer.tags_to_string(w.estimates, ", ")))
 		end
 		print("     ---------------------------------")
@@ -563,8 +562,7 @@ end
 
 function make_triage_filter(triage)
         result = function(work_item)
-		if work_item.tags.ProdTriage == triage or 
-                   work_item.tags.EngTriage == triage then
+		if work_item.tags.Triage == triage then
                 	return true
 		else
 			return false
