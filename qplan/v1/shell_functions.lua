@@ -20,7 +20,7 @@ function load_data(prefix)
 	local prefix = prefix or ""
 
 	-- NOTE: Right now, we don't write people out
-	local ppl = Reader.read_people(data_dir .. "people" .. ".txt")
+	local ppl = Reader.read_people(data_dir .. "people" .. prefix .. ".txt")
 
 	-- NOTE: For now, assuming only one plan
 	local pl = Reader.read_plans(data_dir .. "plan" .. prefix .. ".txt")[1]
@@ -71,7 +71,7 @@ function export()
         for _, work_id in ipairs(pl.work_items) do
                 work = pl.work_table[work_id]
                 file:write(string.format("%s\t%s\t%s\t%s\t%s\t" ..
-                     "%s\t%s\t%s\t\t%s\t%s\t%s\n", 
+                     "%s\t%s\t%s\t\t%s\t%s\t%s\t%s\n", 
                            tagvalue_to_string(work.tags.ProdTriage),
                            tagvalue_to_string(work.tags.EngTriage),
                            tagvalue_to_string(work.tags.Triage),
@@ -83,7 +83,8 @@ function export()
                            work.tags.Dependencies,
                            work.estimates.Native,
                            work.estimates.Web,
-                           work.estimates.Apps
+                           work.estimates.Apps,
+                           work.tags.Notes
                            ))
         end
 end
@@ -120,14 +121,21 @@ end
 --
 
 -- This is an internal helper function to support different types of work
--- triage.
+-- triage. Can take either a single rank or an array of ranks.
 function triage_work(rank, level, tag_key)
-	local work = r(rank)
-	if not work then
-		return
-	end
+        local ranks = {}
+        if type(rank) == "table" then
+                ranks = rank
+        else
+                ranks = {rank}
+        end
 
-	work.tags[tag_key] = level
+        for _, ranking in ipairs(ranks) do
+                local work = r(ranking)
+                if work then
+                        work.tags[tag_key] = level
+                end
+        end
 end
 
 -- Triage work for Product
@@ -439,12 +447,38 @@ function rrt()
 	end
 end
 
+function make_track_filter(t)
+        local tracks = {}
+        if type(t) == "table" then
+                tracks = t
+        else
+                tracks[#tracks+1] = t
+        end
+
+        result = function(work_item)
+                for _, track in pairs(tracks) do
+                        if (work_item.tags.track:lower():find(track:lower())) then
+                                return true
+                        end
+                end
+                return false
+        end
+
+        return result
+end
+
 
 -- TODO: Report totals only by those above the cutline
--- "Report by track"
-function rbt()
+-- "Report by track". Takes an optional track or array of tracks.
+function rbt(t)
+        -- Construct options
+        local options = {}
+        if t then
+                options.filter = make_track_filter(t)
+        end
+
 	-- Identify tracks, and put work into tracks
-	local work = pl:get_work_items()
+	local work = pl:get_work_items(options)
 	local track_hash = {}
 	for i = 1,#work do
 		local track = work[i].tags.track
@@ -490,13 +524,20 @@ function rbt()
 		print(string.format("     Required people: %s", demand_str))
 		print()
 	end
-	
+
+
 	-- Print overall demand total
 	local total_demand = Work.sum_demand(func.filter(work, is_above_cutline))
 	print(string.format("%-30s %s", "TOTAL Required (for cutline):", Writer.tags_to_string(
 		to_num_people(total_demand, pl.num_weeks), ", "
 	)))
 
+        -- If we're filtering the results, return now since there's no point in
+        -- printing total supply stats.
+        if options.filter ~= nil then
+                return
+        end
+	
         -- Print total supply
         local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
 	print(string.format("%-30s %s", "TOTAL Skill Supply:", Writer.tags_to_string(
@@ -585,7 +626,7 @@ sc(num):	Sets cutline
 -- Reports
 rfl():		Report feasible line.
 rrt():		Report running totals
-rbt():		Report by track
+rbt(t):		Report by track. Takes optional track(s) "t" to filter on
 rs():		Report available supply
 ]]
 	)
