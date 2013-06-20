@@ -14,5 +14,11 @@ end
 -- Load data (at some point, use a prefix to specify a version)
 pl, ppl = load_data(version)
 
+-- Set up areas
+phone = {"austin", "felix", "soprano", "money"}
+tablet = {"tablet"}
+rel = {"rapportive", "contacts"}
+
+
 
 print("READY")
