@@ -91,10 +91,13 @@ v2 Implementation
 ------------------
 We'll do TDD and follow this rough plan:
 
-.Make triage columns explicit [][][][]
+.Make triage columns explicit [X][X][][]
 We'll redesign Work so that triage is a "first class field" separate from the
 other tags. We'll support "1.5" and "2.5" values consistently. We'll add some
 explicit functions for filtering by triage and for merging triage columns.
+
+We'll start by bringing the work tests over and splitting the triage columns
+out.
 
 .Support filtering better [][][][][][]
 I want to support the combining of filters better. It should be able to get all
@@ -102,6 +105,10 @@ items from a certain track and with a certain triage level. In writing the
 actual tests, we'll figure out what policies make the most sense. I also want to
 set/clear a globally default filter (maybe even have an array of filters?). We
 might want to make filters into proper objects.
+
+.Stronger tests [][][][]
+We should use the Q3 spreadsheet to help develop stronger, more realistic unit
+tests.
 
 .Support dynamic slicing of data [][][][][][][]
 This will provide something similar to what pivot tables can do. We need to
@@ -116,9 +123,6 @@ or data render. The main purpose of the shell functions should be to interface
 with spreadsheet data and add custom functionality (which may make its way back
 to the QPlan module).
 
-.Stronger tests [][][][]
-We should use the Q3 spreadsheet to help develop stronger, more realistic unit
-tests.
 
 .Better support for exporting results [][][][]
 Slicing data and exporting it back to the spreadsheet was awkward. I need some
