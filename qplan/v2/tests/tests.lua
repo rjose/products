@@ -6,8 +6,8 @@ local LuaUnit = require('luaunit')
 -- require('test_select')
 -- require('test_work')
 -- require('test_plan')
-require('test_read')
--- require('test_write')
+-- require('test_read')
+require('test_write')
 
 -- Shell functions
 -- require('test_triage')
