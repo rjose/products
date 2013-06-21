@@ -122,7 +122,13 @@ slice by track and triage. We want to sometimes show detail and sometimes just
 summary info. The data needs to be in a form that we can render to a console or
 to JSON for external client consumption.
 
-Let's examine the rbt function and see what we can tease out.
+Let's examine the rbt function and see what we can tease out. We pass in a
+triage value to filter the work items against. Instead of this, we should pass
+in a filter/array of filters. The track filter is useful. We should have it
+just filter on the track. After applying the filters, we separate the work by
+track. It seems like we should be able to pass in a function that maps the
+work item to the key we want to slice on. Let's see if we can get this to
+work.
 
 .Clean up shell functions [X][X][][][][]
 We should move some of the shell functions into the QPlan module. We should also

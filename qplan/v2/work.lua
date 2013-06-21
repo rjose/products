@@ -81,6 +81,11 @@ end
 -- This is used to select select items that are 1-1.5, 2-2.5, etc.
 function Work.triage_xx_filter(triage_value, work_item)
         local triage = work_item:merged_triage()
+
+        if type(triage) ~= "number" then
+                return false
+        end
+
         return triage >= triage_value and triage < triage_value + 1
 end
 

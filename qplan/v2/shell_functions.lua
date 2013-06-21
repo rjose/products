@@ -276,20 +276,42 @@ function rrt()
 end
 
 
-function make_track_filter(t, triage)
+-- TODO: Delete this
+-- function make_track_filter(t, triage)
+--         local tracks = {}
+--         if type(t) == "table" then
+--                 tracks = t
+--         else
+--                 tracks[#tracks+1] = t
+--         end
+-- 
+--         result = function(work_item)
+--                 for _, track in pairs(tracks) do
+--                         if (work_item.tags.track:lower():find(track:lower()) and
+--                             (triage == nil or
+--                             (work_item.tags.ProdTriage == triage or
+--                              work_item.tags.EngTriage == triage))) then
+--                                 return true
+--                         end
+--                 end
+--                 return false
+--         end
+-- 
+--         return result
+-- end
+
+function make_track_filter(t)
         local tracks = {}
         if type(t) == "table" then
                 tracks = t
         else
-                tracks[#tracks+1] = t
+                tracks[1] = t
         end
 
+        local result
         result = function(work_item)
                 for _, track in pairs(tracks) do
-                        if (work_item.tags.track:lower():find(track:lower()) and
-                            (triage == nil or
-                            (work_item.tags.ProdTriage == triage or
-                             work_item.tags.EngTriage == triage))) then
+                        if (work_item.tags.track:lower():find(track:lower())) then
                                 return true
                         end
                 end
@@ -299,52 +321,51 @@ function make_track_filter(t, triage)
         return result
 end
 
+function get_track(work_item)
+        return work_item.tags.track
+end
 
--- TODO: Make this more generic
--- TODO: Add filter by triage
--- "Report by track". Takes an optional track or array of tracks.
-function rbt(t, triage)
-        -- Construct options
-        local options = {}
-        if t then
-                options.filter = make_track_filter(t, triage)
-        end
+-- Groups items into buckets defined by applying "get_bucket" to each one
+function group_items(items, get_bucket)
+	local groupings = {}
 
-	-- Identify tracks, and put work into tracks
-	local work = pl:get_work_items(options)
-	local track_hash = {}
-	for i = 1,#work do
-		local track = work[i].tags.track
-		if not track then
-			track = "<no track>"
+        for _, item in ipairs(items) do
+		local bucket = get_bucket(item)
+		if not bucket then
+			bucket = "??"
 		end
 
-		track_hash[track] = track_hash[track] or {}
-		local work_array = track_hash[track]
-		work_array[#work_array+1] = work[i]
+                -- Put stuff into the bucket list :-)
+		groupings[bucket] = groupings[bucket] or {}
+                local bucket_list = groupings[bucket]
+		bucket_list[#bucket_list+1] = item
 	end
 
-	-- Sort track tags
-	local track_tags = func.get_table_keys(track_hash)
-	table.sort(track_tags)
+	-- Sort buckets
+	local bucket_names = func.get_table_keys(groupings)
+	table.sort(bucket_names)
 
-	for j = 1,#track_tags do
+        return groupings, bucket_names
+end
+
+function print_work_by_grouping(groupings, work_hash)
+	for j = 1,#groupings do
 		local cutline_shown = false
-		local track = track_tags[j]
-		local track_items = track_hash[track]
+		local group = groupings[j]
+		local group_items = work_hash[group]
 
-		-- Sum the track items
-		local demand = Work.sum_demand(func.filter(track_items, above_cutline_filter))
+		-- Sum the group items
+		local demand = Work.sum_demand(func.filter(group_items, above_cutline_filter))
 		local demand_str = Writer.tags_to_string(
 			to_num_people(demand, pl.num_weeks), ", ")
 
-		print("== " .. track)
+		print("== " .. group)
 
 		print(string.format("     %-5s|%-40s|%6s|", "Rank", "Item", "Triage"))
 		print("     -----|----------------------------------------|" ..
                       "----------|")
-		for i = 1,#track_items do
-			local w = track_items[i]
+		for i = 1,#group_items do
+			local w = group_items[i]
 			if w.rank > pl.cutline and cutline_shown == false then
 				print("     ----- CUTLINE -----------")
 				cutline_shown = true
@@ -361,6 +382,40 @@ function rbt(t, triage)
 	end
 
 
+end
+
+function rbt(t, triage)
+        -- Construct options
+        local options = {}
+        options.filter = {}
+
+        -- Make a track filter, if necessary
+        if t then
+                print(type(t))
+                if type(t) == "number" then
+                        triage = t
+                else
+                        options.filter[#options.filter+1] = make_track_filter(t)
+                end
+        end
+
+        -- Make a triage filter, if necessary
+        if triage then
+                options.filter[#options.filter+1] = function(work_item)
+                        return Work.triage_xx_filter(triage, work_item)
+                end
+        end
+
+        -- Get relevant work
+	local work = pl:get_work_items(options)
+
+        -- Group work
+        local track_hash, track_tags = group_items(work, get_track)
+
+        -- Print work by grouping
+        print_work_by_grouping(track_tags, track_hash, options)
+
+
 	-- Print overall demand total
 	local total_demand = Work.sum_demand(func.filter(work, above_cutline_filter))
 	print(string.format("%-30s %s", "TOTAL Required (for cutline):", Writer.tags_to_string(
@@ -369,7 +424,7 @@ function rbt(t, triage)
 
         -- If we're filtering the results, return now since there's no point in
         -- printing total supply stats.
-        if options.filter ~= nil then
+        if options.filter ~= {} then
                 return
         end
 	
@@ -384,8 +439,8 @@ function rbt(t, triage)
         -- total_bandwidth and total_demand to num people!
         local net_supply = Work.subtract_skill_demand(total_bandwidth, total_demand);
 	print(string.format("%-30s %s", "TOTAL Net Supply:", Writer.tags_to_string(net_supply, ", ")))
-        
 end
+
 
 function make_triage_filter(triage)
         result = function(work_item)

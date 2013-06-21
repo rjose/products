@@ -90,6 +90,10 @@ function TestPlan:test_multipleFilters()
         TestPlan.check_ids(work_items, expected_ids)
 end
 
+function TestPlan:test_noFilter()
+	local work_items = self.plan:get_work_items({["filter"] = {}})
+        assertEquals(10, #work_items)
+end
 
 -- TODO: Test some work filters (more for illustration and documentation)
 
