@@ -107,20 +107,18 @@ actual tests, we'll figure out what policies make the most sense. I also want to
 set/clear a globally default filter (maybe even have an array of filters?). We
 might want to make filters into proper objects.
 
-Anything that takes a filter should also take an array of filters.
-
-Filters are typically applied to selecting work from plans. I need to make
-sure that I clean up all the hackiness that was added during planning.
-
-Let's start by testing that Plan:get_work_items can take a filter or array of
-filters. Done.
+Anything that takes a filter should also take an array of filters.  Filters
+are typically applied to selecting work from plans. I need to make sure that I
+clean up all the hackiness that was added during planning.  Let's start by
+testing that Plan:get_work_items can take a filter or array of filters. Done.
 
 I think we'll also want to add tests to test_work to exercise the specific
 work filters individually.
 
+
 .Stronger tests [][][][]
 We should use the Q3 spreadsheet to help develop stronger, more realistic unit
-tests.
+tests. First, let's start by making sure all the tests run...Done.
 
 .Support dynamic slicing of data [][][][][][][]
 This will provide something similar to what pivot tables can do. We need to
@@ -134,6 +132,8 @@ factor many of these functions into other functions that focus on data retrieval
 or data render. The main purpose of the shell functions should be to interface
 with spreadsheet data and add custom functionality (which may make its way back
 to the QPlan module).
+
+Let's also add some global filters to the shell functions. No tests on these.
 
 
 .Better support for exporting results [][][][]
