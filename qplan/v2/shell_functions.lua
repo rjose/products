@@ -325,29 +325,6 @@ function get_track(work_item)
         return work_item.tags.track
 end
 
--- Groups items into buckets defined by applying "get_bucket" to each one
-function group_items(items, get_bucket)
-	local groupings = {}
-
-        for _, item in ipairs(items) do
-		local bucket = get_bucket(item)
-		if not bucket then
-			bucket = "??"
-		end
-
-                -- Put stuff into the bucket list :-)
-		groupings[bucket] = groupings[bucket] or {}
-                local bucket_list = groupings[bucket]
-		bucket_list[#bucket_list+1] = item
-	end
-
-	-- Sort buckets
-	local bucket_names = func.get_table_keys(groupings)
-	table.sort(bucket_names)
-
-        return groupings, bucket_names
-end
-
 function print_work_by_grouping(groupings, work_hash)
 	for j = 1,#groupings do
 		local cutline_shown = false
@@ -410,7 +387,7 @@ function rbt(t, triage)
 	local work = pl:get_work_items(options)
 
         -- Group work
-        local track_hash, track_tags = group_items(work, get_track)
+        local track_hash, track_tags = func.group_items(work, get_track)
 
         -- Print work by grouping
         print_work_by_grouping(track_tags, track_hash, options)
