@@ -116,17 +116,15 @@ I think we'll also want to add tests to test_work to exercise the specific
 work filters individually.
 
 
-.Stronger tests [][][][]
-We should use the Q3 spreadsheet to help develop stronger, more realistic unit
-tests. First, let's start by making sure all the tests run...Done.
-
 .Support dynamic slicing of data [][][][][][][]
 This will provide something similar to what pivot tables can do. We need to
 slice by track and triage. We want to sometimes show detail and sometimes just
 summary info. The data needs to be in a form that we can render to a console or
 to JSON for external client consumption.
 
-.Clean up shell functions [][][][][][]
+Let's examine the rbt function and see what we can tease out.
+
+.Clean up shell functions [X][X][][][][]
 We should move some of the shell functions into the QPlan module. We should also
 factor many of these functions into other functions that focus on data retrieval
 or data render. The main purpose of the shell functions should be to interface
@@ -135,6 +133,10 @@ to the QPlan module).
 
 Let's also add some global filters to the shell functions. No tests on these.
 
+.Stronger tests [][][][]
+We should use the Q3 spreadsheet to help develop stronger, more realistic unit
+tests. First, let's start by making sure all the tests run...Done. Now, let's
+review the spreadsheet data to see if anything weird should be tested.
 
 .Better support for exporting results [][][][]
 Slicing data and exporting it back to the spreadsheet was awkward. I need some
