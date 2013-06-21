@@ -32,6 +32,15 @@ function TestWork:setUp()
                                              ["BB"] = "S"}}
         end
 
+        -- Set up work with different triage levels
+        levels = {1, 1.5, 2, 2.5, 3, 3.5}
+        self.triaged_work = {}
+        for i, triage in ipairs(levels) do
+                self.triaged_work[i] = Work.new{name = "TWork" .. i,
+                                                triage = {["Triage"] = triage}
+                                       }
+        end
+
 end
 
 -- TRIAGE TESTS ---------------------------------------------------------------
@@ -81,6 +90,26 @@ function TestWork:test_mergeTriage()
         assertEquals(work:merged_triage(), 1.5)
 end
 
+-- FILTER TESTS ---------------------------------------------------------------
+--
+
+-- This tests that we can filter on the main categories 1, 2, 3
+function TestWork:test_filterTriage1()
+        -- The triaged_work items have the following Triage values:
+        --      {1, 1.5, 2, 2.5, 3, 3.5}
+        assertEquals(true, Work.triage_filter(1, self.triaged_work[1]))
+        assertEquals(false, Work.triage_filter(1, self.triaged_work[2]))
+        assertEquals(true, Work.triage_filter(1.5, self.triaged_work[2]))
+end
+
+-- This tests that we can filter on subcategories 1-1.5, 2-2.5, 3-3.5
+function TestWork:test_filterTriage1()
+        -- The triaged_work items have the following Triage values:
+        --      {1, 1.5, 2, 2.5, 3, 3.5}
+        assertEquals(true, Work.triage_xx_filter(1, self.triaged_work[1]))
+        assertEquals(true, Work.triage_xx_filter(1, self.triaged_work[2]))
+        assertEquals(false, Work.triage_xx_filter(1, self.triaged_work[3]))
+end
 
 -- ESTIMATE TESTS -------------------------------------------------------------
 --

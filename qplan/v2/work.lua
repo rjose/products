@@ -74,6 +74,17 @@ end
 -- TRIAGING FUNCTIONS ---------------------------------------------------------
 --
 
+function Work.triage_filter(triage_value, work_item)
+        return work_item:merged_triage() == triage_value
+end
+
+-- This is used to select select items that are 1-1.5, 2-2.5, etc.
+function Work.triage_xx_filter(triage_value, work_item)
+        local triage = work_item:merged_triage()
+        return triage >= triage_value and triage < triage_value + 1
+end
+
+
 -- If triage_tag is not specified, this sets the "Triage" field in triage
 function Work:set_triage(val, triage_tag)
         triage_tag = triage_tag or "Triage"

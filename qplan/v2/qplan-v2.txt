@@ -100,7 +100,7 @@ We'll start by bringing the work tests over and splitting the triage columns
 out. OK, work.lua is done. Let's make sure our reading, writing, and export
 work properly.
 
-.Support filtering better [X][][][][][]
+.Support filtering better [X][X][][][][]
 I want to support the combining of filters better. It should be able to get all
 items from a certain track and with a certain triage level. In writing the
 actual tests, we'll figure out what policies make the most sense. I also want to
