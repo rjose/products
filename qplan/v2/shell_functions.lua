@@ -7,6 +7,10 @@ func = require('functional')
 
 require('string_utils')
 
+-- Global environment
+env = {}
+env.summaries = false
+
 -- TODO: Talk about naming conventions
 
 -- READ/WRITE DATA ------------------------------------------------------------
@@ -338,24 +342,26 @@ function print_work_by_grouping(groupings, work_hash)
 
 		print("== " .. group)
 
-		print(string.format("     %-5s|%-40s|%6s|", "Rank", "Item", "Triage"))
-		print("     -----|----------------------------------------|" ..
-                      "----------|")
-		for i = 1,#group_items do
-			local w = group_items[i]
-			if w.rank > pl.cutline and cutline_shown == false then
-				print("     ----- CUTLINE -----------")
-				cutline_shown = true
-			end
-			print(string.format("     %-5s|%-40s|%-10s|%s",
-				"#" .. w.rank,
-				w.name:truncate(40, {["ellipsis"] = true}),
-				w:merged_triage(),
-                                Writer.tags_to_string(w.estimates, ", ")))
-		end
-		print("     ---------------------------------")
-		print(string.format("     Required people: %s", demand_str))
-		print()
+                if env.summaries then
+                        print(string.format("     %-5s|%-40s|%6s|", "Rank", "Item", "Triage"))
+                        print("     -----|----------------------------------------|" ..
+                              "----------|")
+                        for i = 1,#group_items do
+                                local w = group_items[i]
+                                if w.rank > pl.cutline and cutline_shown == false then
+                                        print("     ----- CUTLINE -----------")
+                                        cutline_shown = true
+                                end
+                                print(string.format("     %-5s|%-40s|%-10s|%s",
+                                        "#" .. w.rank,
+                                        w.name:truncate(40, {["ellipsis"] = true}),
+                                        w:merged_triage(),
+                                        Writer.tags_to_string(w.estimates, ", ")))
+                        end
+                        print("     ---------------------------------")
+                end
+                print(string.format("     Required people: %s", demand_str))
+                print()
 	end
 
 
@@ -433,59 +439,6 @@ function make_triage_filter(triage)
 end
 
 
--- TODO: Make this more generic
-function rbts(prod_triage)
-        -- Construct options
-        local options = {}
-        if prod_triage then
-                options.filter = make_triage_filter(prod_triage)
-        end
-
-	-- Identify tracks, and put work into tracks
-	local work = pl:get_work_items(options)
-	local track_hash = {}
-	for i = 1,#work do
-		local track = work[i].tags.track
-		if not track then
-			track = "<no track>"
-		end
-
-		track_hash[track] = track_hash[track] or {}
-		local work_array = track_hash[track]
-		work_array[#work_array+1] = work[i]
-	end
-
-	-- Sort track tags
-	local track_tags = func.get_table_keys(track_hash)
-	table.sort(track_tags)
-
-	for j = 1,#track_tags do
-		local cutline_shown = false
-		local track = track_tags[j]
-		local track_items = track_hash[track]
-
-		-- Sum the track items
-		local demand = Work.sum_demand(func.filter(track_items, above_cutline_filter))
-		local demand_str = Writer.tags_to_string(
-			to_num_people(demand, pl.num_weeks), ", ")
-
-		-- print(string.format('%s', track))
-		-- print("     ---------------------------------")
-		-- print(string.format("     Required people: %s", demand_str))
-                
-                
-	end
-
-
-	-- Print overall demand total
-	local total_demand = Work.sum_demand(func.filter(work, above_cutline_filter))
-	print(string.format("%-30s %s", "TOTAL Required (for cutline):", Writer.tags_to_string(
-		to_num_people(total_demand, pl.num_weeks), ", "
-	)))
-
-	-- TODO: Figure out how to handle supply
-	
-end
 
 -- TODO: Tie this into a more generic call
 -- TODO: Make this export more nicely (esp with missing fields)
