@@ -55,6 +55,22 @@ function Work:set_estimate(skill_name, estimate_string)
  	self.estimates[skill_name] = estimate_string
 end
 
+-- HELPER FUNCTIONS -----------------------------------------------------------
+-- 
+
+-- This is a helper function that essentially maps "get_id" over a set of work
+-- items. This is necessary when we need to work with actual work IDs rather
+-- than work rankings.
+function Work.get_ids(work_items)
+	local result = {}
+	for i = 1,#work_items do
+		result[#result+1] = work_items[i].id
+	end
+	return result
+end
+
+
+
 -- TRIAGING FUNCTIONS ---------------------------------------------------------
 --
 
