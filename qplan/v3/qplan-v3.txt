@@ -1,0 +1,46 @@
+QPlan v3
+=============
+Rino Jose <@rjose>
+v1, Jun 22, 2013: Initial version
+
+Overview
+--------
+The v3 will be implemented in C. We will develop this in such a way that it is
+multithreaded and is built to handle web requests. A lua repl will be available.
+Its interface will be the same as for v1 and v2, but the underlying QPlan code
+will be written in C and exposed to lua through the interop.
+
+We'll add support for generating and parsing JSON. This will be the main way to
+communicate information across the lua boundary (for complex structures). This
+is also required for the web interface.
+
+Implementation Strategy
+-----------------------
+We'll start by bringing over the unit tests one-by-one and running them through
+gnustep-tests. Here's the sequence:
+
+- test_work
+- test_plan
+- test_person
+- test_select
+- test_triage
+- test_reports
+- test_feasibility
+- test_read
+- test write
+
+In bringing these tests over, we may decide to dramatically change them or even
+drop them altogether.
+
+Design Choices
+~~~~~~~~~~~~~~
+For the tag-like structures, we'll use linked lists instead of hashes. The
+number of items is relatively small (probably 3 to 5 items in most cases), so I
+think this will be fine.
+
+Details
+-------
+
+.Port test_work
+Alright, the first thing we'll do is get the shell of the test running via
+gnustep-tests.
