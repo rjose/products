@@ -9,7 +9,7 @@ require('string_utils')
 
 -- Global environment
 env = {}
-env.summaries = false
+env.summaries = true
 
 -- TODO: Talk about naming conventions
 
@@ -280,30 +280,7 @@ function rrt()
 end
 
 
--- TODO: Delete this
--- function make_track_filter(t, triage)
---         local tracks = {}
---         if type(t) == "table" then
---                 tracks = t
---         else
---                 tracks[#tracks+1] = t
---         end
--- 
---         result = function(work_item)
---                 for _, track in pairs(tracks) do
---                         if (work_item.tags.track:lower():find(track:lower()) and
---                             (triage == nil or
---                             (work_item.tags.ProdTriage == triage or
---                              work_item.tags.EngTriage == triage))) then
---                                 return true
---                         end
---                 end
---                 return false
---         end
--- 
---         return result
--- end
-
+-- Filters on one or more track labels
 function make_track_filter(t)
         local tracks = {}
         if type(t) == "table" then
@@ -439,69 +416,87 @@ function make_triage_filter(triage)
 end
 
 
+function get_triage(work_item)
+        return work_item:merged_triage()
+end
 
--- TODO: Tie this into a more generic call
--- TODO: Make this export more nicely (esp with missing fields)
-function rbte(prod_triage)
-        -- Construct options
-        local options = {}
-        if prod_triage then
-                options.filter = make_triage_filter(prod_triage)
-        end
+function print_by_triage_and_track(file, triage_tags, all_tracks, demand_hash)
+        for _, tri in ipairs(triage_tags) do
+                -- Print triage
+                file:write(string.format("Triage: %s\n", tri))
 
-	-- Identify tracks, and put work into tracks
-	local work = pl:get_work_items(options)
-	local track_hash = {}
-	for i = 1,#work do
-		local track = work[i].tags.track
-		if not track then
-			track = "<no track>"
-		end
+                -- Print track column headings
+                file:write("\t")
+                for _, track in ipairs(all_tracks) do
+                        file:write(string.format("%s\t", track))
+                end
+                file:write("\n")
 
-		track_hash[track] = track_hash[track] or {}
-		local work_array = track_hash[track]
-		work_array[#work_array+1] = work[i]
-	end
-
-	-- Sort track tags
-	local track_tags = func.get_table_keys(track_hash)
-	table.sort(track_tags)
-        local track_string = "" 
-        local demand_string_table = {}
-
-	for j = 1,#track_tags do
-		local track = track_tags[j]
-		local track_items = track_hash[track]
-
-		-- Sum the track items
-		local demand = Work.sum_demand(func.filter(track_items, above_cutline_filter))
-		local demand_str = Writer.tags_to_string(
-			to_num_people(demand, pl.num_weeks), ", ")
-
-                track_string = track_string .. track .. "\t"
-		local demand_array = demand_str:split(", ")
-		for _, val in ipairs(demand_array) do
-                        local demand_pair = val:split(":")
-                        local d = demand_string_table[demand_pair[1]]
-                        if d then
-                                d = d .. demand_pair[2] .. "\t"
-                        else
-                                d = demand_pair[2] .. "\t"
+                -- Print Native values
+                for _, skill in ipairs{"Apps", "Native", "Web"} do
+                        file:write(string.format("%s\t", skill))
+                        for _, track in ipairs(all_tracks) do
+                                local val = demand_hash[tri][track][skill] or 0
+                                file:write(string.format("%.1f\t", val))
                         end
-                        demand_string_table[demand_pair[1]] = d
-		end
-	end
-
-        -- Print result and also export to rbte.txt
-        prod_triage = prod_triage or ""
-        local file = assert(io.open("./data/rbte" .. prod_triage .. ".txt", "w"))
-        file:write(string.format("%s\n", track_string))
-        print(track_string)
-        for t, s in pairs(demand_string_table) do
-                local str = string.format("%s\t%s\n", t, s)
-                file:write(str)
-                print(str)
+                        file:write("\n")
+                end
         end
+end
+
+-- This reports demand by triage and track and exports it to disk (to
+-- "export.txt")
+function rde()
+        -- 
+        -- Get work items and group by triage and by track
+        --
+	local work = pl:get_work_items()
+        local triage_hash, triage_tags = func.group_items(work, get_triage)
+
+        for _, t in ipairs(triage_tags) do
+                local track_hash, track_tags =
+                                     func.group_items(triage_hash[t], get_track)
+
+                -- Stuff track groupings back into triage_hash
+                triage_hash[t] = {track_hash, track_tags}
+        end
+
+        --
+        -- Get the union of all track tags
+        --
+        local all_tracks = {}
+        for _, t in ipairs(triage_tags) do
+                local track_tags = triage_hash[t][2]
+                for _, tag in ipairs(track_tags) do
+                        all_tracks[tag] = 1
+                end
+        end
+	all_tracks = func.get_table_keys(all_tracks)
+	table.sort(all_tracks)
+
+        --
+        -- Map work items into total demand
+        --
+        local demand_hash = {}
+        for _, tri in ipairs(triage_tags) do
+                demand_hash[tri] = demand_hash[tri] or {}
+                for _, track in ipairs(all_tracks) do
+                        demand_hash[tri][track] = demand_hash[tri][track] or {}
+                        local work_items = triage_hash[tri][1][track] or {}
+                        for _, work in ipairs(work_items) do
+                                demand_hash[tri][track] = 
+                                to_num_people(Work.sum_demand(work_items), pl.num_weeks)
+                        end
+                end
+        end
+
+
+        -- Print demand by triage/track
+        print_by_triage_and_track(io.stdout, triage_tags, all_tracks, demand_hash)
+
+        -- Also print to file
+        local file = assert(io.open("./data/export.txt", "w"))
+        print_by_triage_and_track(file, triage_tags, all_tracks, demand_hash)
         file:close()
 end
 
@@ -567,7 +562,7 @@ sc(num):	Sets cutline
 rfl():		Report feasible line.
 rrt():		Report running totals
 rbt(t):		Report by track. Takes optional track(s) "t" to filter on
-rbte(p):	Report by track export with optional triage "p"
+rde():		Report data export (demand by triage and track)
 rs():		Report available supply
 ]]
 	)

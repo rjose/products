@@ -116,7 +116,7 @@ I think we'll also want to add tests to test_work to exercise the specific
 work filters individually.
 
 
-.Support dynamic slicing of data [][][][][][][]
+.Support dynamic slicing of data [X][X][][][][][]
 This will provide something similar to what pivot tables can do. We need to
 slice by track and triage. We want to sometimes show detail and sometimes just
 summary info. The data needs to be in a form that we can render to a console or
@@ -149,3 +149,7 @@ Slicing data and exporting it back to the spreadsheet was awkward. I need some
 better support here, especially how it ties into the dynamic slicing. This should
 require a single export to file and a single import into the spreadsheet. This
 will speed things up *a lot*.
+
+Alright, let's use the group_items function that we wrote above and then see
+if we can tease out a function to print by columns. I think we want to group
+items by triage first and then by track.

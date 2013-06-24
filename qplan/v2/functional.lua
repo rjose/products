@@ -32,7 +32,7 @@ end
 function func.get_table_keys(t)
 	local result = {}
 	for k, _ in pairs(t) do
-		result[#result+1] = k
+		result[#result+1] = k .. ""
 	end
 	return result
 end
@@ -98,7 +98,7 @@ function func.group_items(items, get_bucket)
 	local groupings = {}
 
         for _, item in ipairs(items) do
-		local bucket = get_bucket(item)
+		local bucket = get_bucket(item) .. ""
 		if not bucket then
 			bucket = "??"
 		end
