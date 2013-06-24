@@ -11,7 +11,9 @@ typedef struct Work_ {
 } Work;
 
 
-int work_init(Work *w, const char *name, const char *triage_string,
+int Work_init(Work *w, const char *name, const char *triage_string,
                             const char *estimate_string, const char *tag_string);
+
+double Work_translate_estimate(const char *est_string);
 
 #endif
