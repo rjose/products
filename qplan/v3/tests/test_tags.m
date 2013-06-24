@@ -13,7 +13,7 @@ void test_tag_parse_string()
 {
         Tag *tags;
 
-        // TODO: Free memory
+        // NOTE: *Not* freeing memory here. In production code, use Tag_free
         START_SET("Parse tag string");
         pass(Tag_parse_string("Prod:1,Eng:2", &tags) == 2, "Check valid tag 2");
         pass(strcmp("Eng", tags->key) == 0, "Check key 1");
@@ -33,13 +33,53 @@ void test_tag_parse_string()
         END_SET("Parse tag string");
 }
 
-// TODO: Test freeing tags
-// TODO: Test converting tag values
+
+void test_tag_free()
+{
+        Tag *tags = NULL;
+        int num_tags = 0;
+
+        START_SET("Tag free");
+        
+        num_tags = Tag_parse_string("Prod:1,Eng:2", &tags);
+        pass(tags != NULL, "Should have some tags");
+
+        pass(Tag_free(&tags) == 0, "Tag_free should run properly");
+        pass(tags == NULL, "After freeing tags, pointer should be NULL");
+
+        END_SET("Tag free");
+}
+
+void test_tag_store_value()
+{
+        Tag *tags = NULL;
+        Tag *t;
+
+        START_SET("Tag store value");
+        
+        Tag_parse_string("Prod:1,Native:0.15", &tags);
+
+        /* Store tag value as int */
+        t = tags;
+        Tag_store_value(t, DOUBLE); 
+        pass(EQ(t->v.dval, 0.15), "Check double value");
+
+        /* Store tag value as double */
+        t = t->next;
+        Tag_store_value(t, LONG);
+        pass(t->v.lval == 1, "Check int value");
+
+        Tag_free(&tags);
+
+        END_SET("Tag store value");
+}
 
 
 int main()
 {
         test_tag_parse_string();
+        test_tag_store_value();
+        test_tag_free();
         
         return 0;
 }

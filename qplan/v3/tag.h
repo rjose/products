@@ -1,8 +1,9 @@
 #ifndef TAG_H
 #define TAG_H
 
+// TODO: Add some documentation
 typedef enum {
-        INT, FLOAT
+        LONG, DOUBLE
 } tag_val_type;
 
 typedef struct Tag_ {
@@ -10,7 +11,7 @@ typedef struct Tag_ {
         char *val;
         tag_val_type type;
         union {
-                int ival;
+                long lval;
                 double dval;
         } v;
 
@@ -18,5 +19,7 @@ typedef struct Tag_ {
 } Tag;
 
 int Tag_parse_string(const char *tag_string, Tag **tags);
+int Tag_store_value(Tag *tag, tag_val_type type);
+int Tag_free(Tag **tags);
 
 #endif

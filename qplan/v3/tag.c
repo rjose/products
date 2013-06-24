@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -106,4 +107,46 @@ int Tag_parse_string(const char *tag_string, Tag **tags)
 
         *tags = tag_head;
         return num_tags;
+}
+
+int Tag_store_value(Tag *tag, tag_val_type type)
+{
+        char *tmp;
+
+        switch (type) {
+                case LONG:
+                        tag->v.lval = strtol(tag->val, &tmp, 10);
+                        if (errno != 0) {
+                                // TODO: Log something
+                                return -1;
+                        }
+                        break;
+
+                case DOUBLE:
+                        tag->v.dval = strtod(tag->val, &tmp);
+                        if (errno != 0) {
+                                // TODO: Log something
+                                return -1;
+                        }
+                        break;
+        }
+        return 0;
+}
+
+int Tag_free(Tag **tags)
+{
+        Tag *head = *tags;
+        Tag *cur;
+
+        while(head) {
+                cur = head;
+                head = head->next;
+
+                free(cur->key);
+                free(cur->val);
+                free(cur);
+        }
+        *tags = NULL;
+
+        return 0;
 }
