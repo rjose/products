@@ -521,7 +521,8 @@ function rs()
                 local people_list = people_by_skill[skill]
                 print(string.format("%s ==", skill))
                 for j = 1,#people_list do
-                        print(string.format("     %3d. %s", j, people_list[j].name))
+                        print(string.format("     %3d. %15s %.1f", j, people_list[j].name,
+                                                             people_list[j].skills[skill]))
                 end
         end
 
