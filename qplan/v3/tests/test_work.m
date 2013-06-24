@@ -9,7 +9,7 @@
 
 static Work m_work[NUM_WORK_ITEMS];
 
-void test_create_work()
+static void test_create_work()
 {
         Tag *tag;
 
@@ -31,12 +31,16 @@ void test_create_work()
         tag = m_work[0].tags;
         pass(strcmp("pm", tag->key) == 0, "Tag key matches");
         pass(strcmp("John", tag->val) == 0, "Tag val matches");
+
+        tag = m_work[0].estimate_tags->next->next->next;
+        pass(EQ(6, tag->v.dval), "Estimate is auto computed");
+
         END_SET("Create work");
 
         // TODO: Clean up memory
 }
 
-void test_translate_estimate()
+static void test_translate_estimate()
 {
         START_SET("Translate work estimates");
         pass(EQ(1, Work_translate_estimate("S")), "Translate S");
@@ -48,11 +52,27 @@ void test_translate_estimate()
         END_SET("Translate work estimates");
 }
 
+static void test_sum_estimates()
+{
+        Work_init(&m_work[1], "Item 1",
+                      "",
+                      "Native:2L,Web:M,Apps:Q",
+                      "");
+        Work_init(&m_work[2], "Item 2",
+                      "",
+                      "Native:5L,Web:2M,Apps:S",
+                      "");
+
+        START_SET("Sum estimates");
+        Work_sum_estimates(&m_work[1], 2);
+        END_SET("Sum estimates");
+}
 
 int main()
 {
         test_create_work();
         test_translate_estimate();
+        test_sum_estimates();
         
         return 0;
 }

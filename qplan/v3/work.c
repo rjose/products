@@ -25,8 +25,8 @@ static int construct_estimate_tags(Work *w, const char *estimate_string)
         Tag_parse_string(estimate_string, &w->estimate_tags);
         tmp = w->estimate_tags;
         while (tmp) {
-                // TODO: translate estimate tags
-                //Tag_store_value(tmp, DOUBLE);
+                Work_translate_estimate();
+                // Tag_store_value(tmp, DOUBLE);
                 tmp = tmp->next;
         }
         return 0;
