@@ -1,0 +1,66 @@
+QPlan v3
+=============
+Rino Jose <@rjose>
+v1, Jun 22, 2013: Initial version
+
+Overview
+--------
+The v3 will be implemented in C. We will develop this in such a way that it is
+multithreaded and is built to handle web requests. A lua repl will be available.
+Its interface will be the same as for v1 and v2, but the underlying QPlan code
+will be written in C and exposed to lua through the interop.
+
+We'll add support for generating and parsing JSON. This will be the main way to
+communicate information across the lua boundary (for complex structures). This
+is also required for the web interface.
+
+Implementation Strategy
+-----------------------
+We'll start by bringing over the unit tests one-by-one and running them through
+gnustep-tests. Here's the sequence:
+
+- test_work
+- test_plan
+- test_person
+- test_select
+- test_triage
+- test_reports
+- test_feasibility
+- test_read
+- test write
+
+In bringing these tests over, we may decide to dramatically change them or even
+drop them altogether.
+
+Design Choices
+~~~~~~~~~~~~~~
+For the tag-like structures, we'll use linked lists instead of hashes. The
+number of items is relatively small (probably 3 to 5 items in most cases), so I
+think this will be fine.
+
+Details
+-------
+
+.Port test_work [X][X][X][X][][][]
+Alright, the first thing we'll do is get the shell of the test running via
+gnustep-tests. Done. I got part of the work init function coded up. Before I go
+on, I want to implement generic tag parsing. For this, we want to split on ","
+to get the pairs, and then split each pair on ":".
+
+I'll code up storing the tag values and then walk through both this and the
+Tag_free function in gdb. Done!
+
+Alright, let's code up the work test functions now. We'll need to define a
+structure and a function to build a work item. Done. I also added the ability to
+translate estimates into weeks.
+
+The last part of this is summing the work estimates. Not sure what the best way
+to do this is. I think we can scan through all work items and then through all
+of their tags to construct an array of keys. We should sort these keys, too. As
+we do this, we should note the index into the array for each tag (we may need to
+create some utility fields in tags for this purpose). Once this is done, we can
+allocate the memory required for the operation and take another pass through
+using the noted indices to update the data. When collecting the keys for the
+first time, we could allocate 10 fields and then realloc if we need more. I
+wonder if there's a way to do this functionally as well? We're basically doing
+reduce operations in both cases. That might be a good way to structure this.
