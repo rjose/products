@@ -48,4 +48,7 @@ on, I want to implement generic tag parsing. For this, we want to split on ","
 to get the pairs, and then split each pair on ":".
 
 I'll code up storing the tag values and then walk through both this and the
-Tag_free function in gdb.
+Tag_free function in gdb. Done!
+
+Alright, let's code up the work test functions now. We'll need to define a
+structure and a function to build a work item.
