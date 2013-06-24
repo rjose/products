@@ -51,4 +51,16 @@ I'll code up storing the tag values and then walk through both this and the
 Tag_free function in gdb. Done!
 
 Alright, let's code up the work test functions now. We'll need to define a
-structure and a function to build a work item.
+structure and a function to build a work item. Done. I also added the ability to
+translate estimates into weeks.
+
+The last part of this is summing the work estimates. Not sure what the best way
+to do this is. I think we can scan through all work items and then through all
+of their tags to construct an array of keys. We should sort these keys, too. As
+we do this, we should note the index into the array for each tag (we may need to
+create some utility fields in tags for this purpose). Once this is done, we can
+allocate the memory required for the operation and take another pass through
+using the noted indices to update the data. When collecting the keys for the
+first time, we could allocate 10 fields and then realloc if we need more. I
+wonder if there's a way to do this functionally as well? We're basically doing
+reduce operations in both cases. That might be a good way to structure this.
