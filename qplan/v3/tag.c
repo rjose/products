@@ -38,7 +38,7 @@ static int find_tag_sep_index(const char *tag_string, int start)
 /*
  * Creates a tag and makes it the new head.
  */
-static Tag *create_tag(const Tag *head, const char *str, int tag_start,
+static int create_tag(AssocArray *array, const char *str, int tag_start,
                                                 int tag_end, int pair_sep_index)
 {
         char *key = NULL;
@@ -60,20 +60,26 @@ static Tag *create_tag(const Tag *head, const char *str, int tag_start,
         strncpy(val, str+pair_sep_index+1, val_len);
         val[val_len] = '\0';
 
+        /* Store element in assoc array */
         tag->key = key;
         tag->val = val;
-        tag->next = (Tag *)head;
-        return tag;
+
+        AssocArrayElem elem;
+        elem.key.sval = key;
+        elem.val.vval = (void *)tag;
+        aa_set_element(array, &elem);
+
+        return 0;
 
 error:
         // TODO: Log error
         free(key);
         free(val);
         free(tag);
-        return (Tag *)head;
+        return -1;
 }
 
-int Tag_parse_string(const char *tag_string, Tag **tags)
+int tag_parse_string(const char *tag_string, AssocArray *result)
 {
         int num_tags = 0;
         int tag_start = 0;
@@ -95,8 +101,8 @@ int Tag_parse_string(const char *tag_string, Tag **tags)
                 if (pair_sep_index <= tag_start)
                         return 0;
 
-                if ((tag_head = create_tag(tag_head, tag_string, tag_start,
-                                              tag_end, pair_sep_index)) == NULL)
+                if (create_tag(result, tag_string, tag_start,
+                                        tag_end, pair_sep_index) != 0)
                         return 0;
 
 
@@ -105,16 +111,15 @@ int Tag_parse_string(const char *tag_string, Tag **tags)
 
         } while (tag_string[tag_sep_index] != '\0');
 
-        *tags = tag_head;
         return num_tags;
 }
 
-int Tag_store_value(Tag *tag, tag_val_type type)
+int tag_store_value(Tag *tag, tag_val_type type)
 {
         char *tmp;
 
         switch (type) {
-                case LONG:
+                case TAG_LONG:
                         tag->v.lval = strtol(tag->val, &tmp, 10);
                         if (errno != 0) {
                                 // TODO: Log something
@@ -122,7 +127,7 @@ int Tag_store_value(Tag *tag, tag_val_type type)
                         }
                         break;
 
-                case DOUBLE:
+                case TAG_DOUBLE:
                         tag->v.dval = strtod(tag->val, &tmp);
                         if (errno != 0) {
                                 // TODO: Log something

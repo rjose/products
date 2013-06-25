@@ -1,9 +1,11 @@
 #ifndef TAG_H
 #define TAG_H
 
+#include "assoc_array.h"
+
 // TODO: Add some documentation
 typedef enum {
-        LONG, DOUBLE
+        TAG_LONG, TAG_DOUBLE
 } tag_val_type;
 
 typedef struct Tag_ {
@@ -15,11 +17,12 @@ typedef struct Tag_ {
                 double dval;
         } v;
 
+        // TODO: Get rid of this
         struct Tag_ *next;
 } Tag;
 
-int Tag_parse_string(const char *tag_string, Tag **tags);
-int Tag_store_value(Tag *tag, tag_val_type type);
+int tag_parse_string(const char *tag_string, AssocArray *result);
+int tag_store_value(Tag *tag, tag_val_type type);
 int Tag_free(Tag **tags);
 
 #endif
