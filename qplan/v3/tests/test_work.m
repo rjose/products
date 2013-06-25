@@ -31,6 +31,7 @@ static void test_create_work()
 
 
         /* Test estimate tags */
+        pass(4 == work_num_estimates(&m_work[0]), "Know number of estimate elements");
         elem = work_estimate_elem(&m_work[0], 2);
         tag = (Tag *)elem->val.vval;
         pass(strcmp("Server", elem->key.sval) == 0, "Know third estimate element");

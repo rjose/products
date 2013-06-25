@@ -16,7 +16,7 @@ static int construct_triage_tags(Work *w, const char *triage_string)
         for (i = 0; i < work_num_triage(w); i++) {
                 elem = work_triage_elem(w, i);
                 tag = (Tag *)elem->val.vval;
-                tag_store_value(tag, TAG_DOUBLE);
+                tag->val.dval = strtod(tag->sval, NULL);
         }
         return 0;
 }
@@ -29,7 +29,7 @@ static int construct_estimate_tags(Work *w, const char *estimate_string)
         Tag *tag;
 
         tag_parse_string(estimate_string, &w->estimate_tags);
-        aa_sort_keys(&w->estimate_tags);
+        //aa_sort_keys(&w->estimate_tags);
 
         for (i = 0; i < work_num_estimates(w); i++) {
                 elem = work_estimate_elem(w, i);

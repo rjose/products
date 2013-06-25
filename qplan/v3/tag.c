@@ -86,7 +86,6 @@ int tag_parse_string(const char *tag_string, AssocArray *result)
         int tag_end;
         int tag_sep_index;
         int pair_sep_index;
-        Tag *tag_head = NULL;
 
         /*
          * Find separation between tags and then construct tags from pairs until
@@ -114,45 +113,22 @@ int tag_parse_string(const char *tag_string, AssocArray *result)
         return num_tags;
 }
 
-int tag_store_value(Tag *tag, tag_val_type type)
-{
-        char *tmp;
-
-        switch (type) {
-                case TAG_LONG:
-                        tag->val.lval = strtol(tag->sval, &tmp, 10);
-                        if (errno != 0) {
-                                // TODO: Log something
-                                return -1;
-                        }
-                        break;
-
-                case TAG_DOUBLE:
-                        tag->val.dval = strtod(tag->sval, &tmp);
-                        if (errno != 0) {
-                                // TODO: Log something
-                                return -1;
-                        }
-                        break;
-        }
-        return 0;
-}
 
 // TODO: Think a bit more on whether to free the key or sval
 int Tag_free(Tag **tags)
 {
-        Tag *head = *tags;
-        Tag *cur;
-
-        while(head) {
-                cur = head;
-                head = head->next;
-
-                free(cur->key);
-                free(cur->sval);
-                free(cur);
-        }
-        *tags = NULL;
-
+//        Tag *head = *tags;
+//        Tag *cur;
+//
+//        while(head) {
+//                cur = head;
+//                head = head->next;
+//
+//                free(cur->key);
+//                free(cur->sval);
+//                free(cur);
+//        }
+//        *tags = NULL;
+//
         return 0;
 }
