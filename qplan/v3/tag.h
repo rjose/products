@@ -3,7 +3,7 @@
 
 #include "assoc_array.h"
 
-// TODO: Add some documentation
+// TODO: Get rid of this enum
 typedef enum {
         TAG_LONG, TAG_DOUBLE
 } tag_val_type;

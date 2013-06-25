@@ -7,7 +7,7 @@
 typedef struct Work_ {
         char *name;
         AssocArray triage_tags;
-        Tag *estimate_tags;
+        AssocArray estimate_tags;
         Tag *tags;
 } Work;
 
@@ -20,5 +20,9 @@ double work_translate_estimate(const char *est_string);
 #define work_num_triage(work) ((work)->triage_tags.num_elements)
 
 #define work_triage_elem(work, i) (&(work)->triage_tags.elements[i])
+
+#define work_num_estimates(work) ((work)->estimate_tags.num_elements)
+
+#define work_estimate_elem(work, i) (&(work)->estimate_tags.elements[i])
 
 #endif

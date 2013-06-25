@@ -20,6 +20,7 @@ static void test_create_work()
                       "Native:2L,Web:M,Server:Q,BB:S",
                       "track:Track1,pm:John");
 
+        /* Check triage tags */
         pass(strcmp("Item 1", m_work[0].name) == 0, "Name matches");
         pass(2 == work_num_triage(&m_work[0]), "Know number of triage elements");
 
@@ -29,11 +30,13 @@ static void test_create_work()
         pass(EQ(2, tag->val.dval), "Know first triage value");
 
 
-//        tag = m_work[0].estimate_tags;
-//        tag = tag->next;
-//        pass(strcmp("Server", tag->key) == 0, "Estimate key matches");
-//        pass(strcmp("Q", tag->val) == 0, "Estimate val matches");
-//
+        /* Test estimate tags */
+        elem = work_estimate_elem(&m_work[0], 2);
+        tag = (Tag *)elem->val.vval;
+        pass(strcmp("Server", elem->key.sval) == 0, "Know third estimate element");
+        pass(EQ(13, tag->val.dval), "Know third estimate value");
+        pass(strcmp("Q", tag->sval) == 0, "Know third estimate string val");
+
 //        tag = m_work[0].tags;
 //        pass(strcmp("pm", tag->key) == 0, "Tag key matches");
 //        pass(strcmp("John", tag->val) == 0, "Tag val matches");
