@@ -62,7 +62,7 @@ static int create_tag(AssocArray *array, const char *str, int tag_start,
 
         /* Store element in assoc array */
         tag->key = key;
-        tag->val = val;
+        tag->sval = val;
 
         AssocArrayElem elem;
         elem.key.sval = key;
@@ -120,7 +120,7 @@ int tag_store_value(Tag *tag, tag_val_type type)
 
         switch (type) {
                 case TAG_LONG:
-                        tag->v.lval = strtol(tag->val, &tmp, 10);
+                        tag->val.lval = strtol(tag->sval, &tmp, 10);
                         if (errno != 0) {
                                 // TODO: Log something
                                 return -1;
@@ -128,7 +128,7 @@ int tag_store_value(Tag *tag, tag_val_type type)
                         break;
 
                 case TAG_DOUBLE:
-                        tag->v.dval = strtod(tag->val, &tmp);
+                        tag->val.dval = strtod(tag->sval, &tmp);
                         if (errno != 0) {
                                 // TODO: Log something
                                 return -1;
@@ -138,6 +138,7 @@ int tag_store_value(Tag *tag, tag_val_type type)
         return 0;
 }
 
+// TODO: Think a bit more on whether to free the key or sval
 int Tag_free(Tag **tags)
 {
         Tag *head = *tags;
@@ -148,7 +149,7 @@ int Tag_free(Tag **tags)
                 head = head->next;
 
                 free(cur->key);
-                free(cur->val);
+                free(cur->sval);
                 free(cur);
         }
         *tags = NULL;

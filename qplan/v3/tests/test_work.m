@@ -26,7 +26,7 @@ static void test_create_work()
         elem = work_triage_elem(&m_work[0], 0);
         tag = (Tag *)elem->val.vval;
         pass(strcmp("Eng", elem->key.sval) == 0, "Know first triage element");
-        pass(EQ(2, tag->v.dval), "Know first triage value");
+        pass(EQ(2, tag->val.dval), "Know first triage value");
 
 
 //        tag = m_work[0].estimate_tags;
@@ -49,12 +49,12 @@ static void test_create_work()
 static void test_translate_estimate()
 {
         START_SET("Translate work estimates");
-        pass(EQ(1, Work_translate_estimate("S")), "Translate S");
-        pass(EQ(2, Work_translate_estimate("M")), "Translate M");
-        pass(EQ(3, Work_translate_estimate("L")), "Translate L");
-        pass(EQ(13, Work_translate_estimate("Q")), "Translate Q");
-        pass(EQ(9, Work_translate_estimate("3L")), "Translate 3L");
-        pass(EQ(0, Work_translate_estimate("")), "Translate ''");
+        pass(EQ(1, work_translate_estimate("S")), "Translate S");
+        pass(EQ(2, work_translate_estimate("M")), "Translate M");
+        pass(EQ(3, work_translate_estimate("L")), "Translate L");
+        pass(EQ(13, work_translate_estimate("Q")), "Translate Q");
+        pass(EQ(9, work_translate_estimate("3L")), "Translate 3L");
+        pass(EQ(0, work_translate_estimate("")), "Translate ''");
         END_SET("Translate work estimates");
 }
 

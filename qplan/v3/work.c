@@ -65,7 +65,7 @@ int work_init(Work *w, const char *name, const char *triage_string,
         return 0;
 }
 
-double Work_translate_estimate(const char *est_string)
+double work_translate_estimate(const char *est_string)
 {
         double scale;
         char *stop;

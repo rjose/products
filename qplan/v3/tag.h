@@ -10,12 +10,12 @@ typedef enum {
 
 typedef struct Tag_ {
         char *key;
-        char *val;
+        char *sval;
         tag_val_type type;
         union {
                 long lval;
                 double dval;
-        } v;
+        } val;
 
         // TODO: Get rid of this
         struct Tag_ *next;
