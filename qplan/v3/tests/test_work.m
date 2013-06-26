@@ -25,25 +25,24 @@ static void test_create_work()
         pass(2 == work_num_triage(&m_work[0]), "Know number of triage elements");
 
         elem = work_triage_elem(&m_work[0], 0);
-        tag = (Tag *)elem->val.vval;
         pass(strcmp("Eng", elem->key.sval) == 0, "Know first triage element");
-        pass(EQ(2, tag->val.dval), "Know first triage value");
+        pass(EQ(2, elem->val.dval), "Know first triage value");
 
 
         /* Test estimate tags */
         pass(4 == work_num_estimates(&m_work[0]), "Know number of estimate elements");
         elem = work_estimate_elem(&m_work[0], 2);
-        tag = (Tag *)elem->val.vval;
         pass(strcmp("Server", elem->key.sval) == 0, "Know third estimate element");
-        pass(EQ(13, tag->val.dval), "Know third estimate value");
-        pass(strcmp("Q", tag->sval) == 0, "Know third estimate string val");
+        pass(EQ(13, elem->val.dval), "Know third estimate value");
+        
+        elem = work_text_estimate_elem(&m_work[0], 2);
+        pass(strcmp("Q", elem->val.sval) == 0, "Know third estimate string val");
 
         /* Test generic tags */
         pass(2 == work_num_tags(&m_work[0]), "Know number of tags");
         elem = work_tag_elem(&m_work[0], 1);
-        tag = (Tag *)elem->val.vval;
         pass(strcmp("track", elem->key.sval) == 0, "Know tag key");
-        pass(strcmp("Track1", tag->sval) == 0, "Know tag value");
+        pass(strcmp("Track1", elem->val.sval) == 0, "Know tag value");
 
         END_SET("Create work");
 
@@ -101,7 +100,7 @@ int main()
 {
         test_create_work();
         test_translate_estimate();
-//         test_sum_estimates();
+        test_sum_estimates();
         
         return 0;
 }

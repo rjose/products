@@ -7,6 +7,7 @@
 typedef struct Work_ {
         char *name;
         AssocArray triage_tags;
+        AssocArray text_estimate_tags;
         AssocArray estimate_tags;
         AssocArray tags;
 } Work;
@@ -26,6 +27,9 @@ AssocArray *work_sum_estimates(Work *items[], int num_items);
 #define work_num_estimates(work) ((work)->estimate_tags.num_elements)
 
 #define work_estimate_elem(work, i) (&(work)->estimate_tags.elements[i])
+
+#define work_text_estimate_elem(work, i) \
+        (&(work)->text_estimate_tags.elements[i])
 
 #define work_num_tags(work) ((work)->tags.num_elements)
 

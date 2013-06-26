@@ -7,6 +7,7 @@ typedef struct Tag_ {
         char *key;
         char *sval;
 
+        // TODO: Get rid of this
         union {
                 long lval;
                 double dval;

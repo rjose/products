@@ -72,3 +72,10 @@ of pointers to work items and sum number of them.
 Thoughts
 --------
 I should bring the assoc array tests over, too.
+
+I need to get rid of tag values. It's just confusing. We should just store the
+text of the tag, not any of the values.
+
+I think we need to get rid of Tags. They're just making things too complicated.
+I need to think about how to handle the estimate tags. Having two sets of them
+is bad.

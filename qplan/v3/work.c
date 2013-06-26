@@ -16,7 +16,9 @@ static int construct_triage_tags(Work *w, const char *triage_string)
         for (i = 0; i < work_num_triage(w); i++) {
                 elem = work_triage_elem(w, i);
                 tag = (Tag *)elem->val.vval;
-                tag->val.dval = strtod(tag->sval, NULL);
+                elem->val.dval = strtod(tag->sval, NULL);
+                // TODO: Get rid of the tag val field
+                //tag->val.dval = strtod(tag->sval, NULL);
         }
         return 0;
 }
@@ -28,14 +30,33 @@ static int construct_estimate_tags(Work *w, const char *estimate_string)
         AssocArrayElem *elem;
         Tag *tag;
 
+        /*
+         * Store the numeric tags
+         */
+        // TODO: Combine this with the above loop
         tag_parse_string(estimate_string, &w->estimate_tags);
         aa_sort_keys(&w->estimate_tags);
 
         for (i = 0; i < work_num_estimates(w); i++) {
                 elem = work_estimate_elem(w, i);
                 tag = (Tag *)elem->val.vval;
-                tag->val.dval = work_translate_estimate(tag->sval);
+                elem->val.dval = work_translate_estimate(tag->sval);
         }
+
+        /*
+         * Store the raw text tags. 
+         */
+        // TODO: Create a function that updates the numeric estimates when the
+        // raw estimates change
+        tag_parse_string(estimate_string, &w->text_estimate_tags);
+        aa_sort_keys(&w->text_estimate_tags);
+
+        for (i = 0; i < work_num_estimates(w); i++) {
+                elem = work_text_estimate_elem(w, i);
+                tag = (Tag *)elem->val.vval;
+                elem->val.sval = tag->sval;
+        }
+
 
         return 0;
 }
@@ -48,6 +69,12 @@ static int construct_tags(Work *w, const char *tag_string)
 
         tag_parse_string(tag_string, &w->tags);
         aa_sort_keys(&w->tags);
+
+        for (i = 0; i < work_num_tags(w); i++) {
+                elem = work_tag_elem(w, i);
+                tag = (Tag *)elem->val.vval;
+                elem->val.sval = tag->sval;
+        }
         return 0;
 }
 
@@ -68,6 +95,7 @@ int work_init(Work *w, const char *name, const char *triage_string,
         /* Initialize assoc arrays */
         aa_init(&w->triage_tags, 5, aa_string_compare);
         aa_init(&w->estimate_tags, 5, aa_string_compare);
+        aa_init(&w->text_estimate_tags, 5, aa_string_compare);
         aa_init(&w->tags, 5, aa_string_compare);
 
         /* Construct fields */
