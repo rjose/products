@@ -92,8 +92,45 @@ static void test_sum_estimates()
         pass(EQ(4.0, elem->val.dval), "Web should be 4.0");
 
         // TODO: Free "sum"
+        // TODO: Free work
 
         END_SET("Sum estimates");
+}
+
+static void test_running_total()
+{
+        AssocArray *running_totals;
+        AssocArrayElem *elem;
+        Work *work_items[2];
+        double *double_values;
+
+        work_init(&m_work[3], "Item 3",
+                      "",
+                      "Native:2L,Apps:Q",
+                      "");
+        work_init(&m_work[4], "Item 4",
+                      "",
+                      "Native:5L,Web:2M,Apps:S",
+                      "");
+
+        work_items[0] = &m_work[3];
+        work_items[1] = &m_work[4];
+
+        START_SET("Running total");
+        running_totals = work_running_total(work_items, 2);
+        pass(3 == aa_num_elements(running_totals), "Should be 3 skills");
+
+        /* Check Native totals */
+        elem = aa_get_element(running_totals, "Native");
+        double_values = (double *)elem->val.vval;
+        pass(EQ(6, double_values[0]), "Native running total 1");
+        pass(EQ(21, double_values[1]), "Native running total 2");
+
+
+        // TODO: Free "sum"
+        // TODO: Free work
+
+        END_SET("Running total");
 }
 
 int main()
@@ -101,6 +138,7 @@ int main()
         test_create_work();
         test_translate_estimate();
         test_sum_estimates();
+        test_running_total();
         
         return 0;
 }

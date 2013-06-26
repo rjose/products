@@ -20,6 +20,8 @@ double work_translate_estimate(const char *est_string);
 
 AssocArray *work_sum_estimates(Work *items[], int num_items);
 
+AssocArray *work_running_total(Work *items[], int num_items);
+
 #define work_num_triage(work) ((work)->triage_tags.num_elements)
 
 #define work_triage_elem(work, i) (&(work)->triage_tags.elements[i])

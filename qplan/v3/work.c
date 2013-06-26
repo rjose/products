@@ -147,14 +147,16 @@ double work_translate_estimate(const char *est_string)
         return scale * base;
 }
 
+
+
 /*
  * The caller of this is responsible for freeing result.
  */
 AssocArray *work_sum_estimates(Work *items[], int num_items)
 {
+        int i;
         AssocArray *result = NULL;
         AssocArray **work_estimates = NULL;
-        int i;
         
         /* 
          * Set up result
@@ -183,6 +185,54 @@ AssocArray *work_sum_estimates(Work *items[], int num_items)
          * Perform vector sum
          */
         aa_reduce(result, work_estimates, num_items, aa_vector_sum, NULL);
+        return result;
+
+error:
+        free(result);
+        free(work_estimates);
+        return NULL;
+}
+
+// TODO: Extract common code from above
+AssocArray *work_running_total(Work *items[], int num_items)
+{
+        int i;
+        AssocArray *result = NULL;
+        AssocArray **work_estimates = NULL;
+        ReduceContext context;
+        
+        /* 
+         * Set up result
+         */
+        result = (AssocArray *)malloc(sizeof(AssocArray));
+        if (result == NULL) {
+                // TODO: Log something
+                goto error;
+        }
+        aa_init(result, 5, aa_string_compare);
+
+
+        /*
+         * Set up work_estimates
+         */
+        work_estimates =
+                (AssocArray **)malloc(sizeof(AssocArray *) * num_items);
+        if (work_estimates == NULL) {
+                // TODO: Log something
+                goto error;
+        }
+        for (i = 0; i < num_items; i++)
+                work_estimates[i] = &items[i]->estimate_tags;
+
+        /*
+         * Perform running total
+         */
+        context.num_items = num_items;
+        context.cur_index = 0;
+        context.scale = 1.0;
+
+        aa_reduce(result, work_estimates, num_items, aa_running_vector_sum,
+                                                                    &context);
         return result;
 
 error:
