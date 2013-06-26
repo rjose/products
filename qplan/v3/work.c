@@ -29,7 +29,7 @@ static int construct_estimate_tags(Work *w, const char *estimate_string)
         Tag *tag;
 
         tag_parse_string(estimate_string, &w->estimate_tags);
-        //aa_sort_keys(&w->estimate_tags);
+        aa_sort_keys(&w->estimate_tags);
 
         for (i = 0; i < work_num_estimates(w); i++) {
                 elem = work_estimate_elem(w, i);
