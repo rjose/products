@@ -59,6 +59,8 @@ int aa_reduce(AssocArray *result, const AssocArray **assoc_arrays, size_t n,
            int (*f)(AssocArray *result, const AssocArray *other, void *context),
                                                                  void *context);
 
+#define aa_num_elements(array) ((array)->num_elements)
+
 #define aa_element(array, i) (&(array)->elements[i])
 
 int aa_string_compare(const void *k1, const void *k2);

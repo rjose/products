@@ -64,17 +64,36 @@ static void test_translate_estimate()
 
 static void test_sum_estimates()
 {
+        AssocArray *sum;
+        AssocArrayElem *elem;
+        Work *work_items[2];
+
         work_init(&m_work[1], "Item 1",
                       "",
-                      "Native:2L,Web:M,Apps:Q",
+                      "Native:2L,Apps:Q",
                       "");
         work_init(&m_work[2], "Item 2",
                       "",
                       "Native:5L,Web:2M,Apps:S",
                       "");
 
+        work_items[0] = &m_work[1];
+        work_items[1] = &m_work[2];
+
         START_SET("Sum estimates");
-        //Work_sum_estimates(&m_work[1], 2);
+        sum = work_sum_estimates(work_items, 2);
+        pass(3 == aa_num_elements(sum), "Should be 3 skills");
+        elem = aa_get_element(sum, "Native");
+        pass(EQ(21.0, elem->val.dval), "Native should be 21.0");
+
+        elem = aa_get_element(sum, "Apps");
+        pass(EQ(14.0, elem->val.dval), "Apps should be 14.0");
+
+        elem = aa_get_element(sum, "Web");
+        pass(EQ(4.0, elem->val.dval), "Web should be 4.0");
+
+        // TODO: Free "sum"
+
         END_SET("Sum estimates");
 }
 

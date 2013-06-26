@@ -14,6 +14,5 @@ typedef struct Tag_ {
 } Tag;
 
 int tag_parse_string(const char *tag_string, AssocArray *result);
-int Tag_free(Tag **tags);
 
 #endif
