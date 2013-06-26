@@ -38,12 +38,12 @@ static void test_create_work()
         pass(EQ(13, tag->val.dval), "Know third estimate value");
         pass(strcmp("Q", tag->sval) == 0, "Know third estimate string val");
 
-//        tag = m_work[0].tags;
-//        pass(strcmp("pm", tag->key) == 0, "Tag key matches");
-//        pass(strcmp("John", tag->val) == 0, "Tag val matches");
-//
-//        tag = m_work[0].estimate_tags->next->next->next;
-//        pass(EQ(6, tag->v.dval), "Estimate is auto computed");
+        /* Test generic tags */
+        pass(2 == work_num_tags(&m_work[0]), "Know number of tags");
+        elem = work_tag_elem(&m_work[0], 1);
+        tag = (Tag *)elem->val.vval;
+        pass(strcmp("track", elem->key.sval) == 0, "Know tag key");
+        pass(strcmp("Track1", tag->sval) == 0, "Know tag value");
 
         END_SET("Create work");
 
@@ -81,7 +81,7 @@ static void test_sum_estimates()
 int main()
 {
         test_create_work();
-//         test_translate_estimate();
+        test_translate_estimate();
 //         test_sum_estimates();
         
         return 0;

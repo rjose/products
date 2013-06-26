@@ -42,7 +42,12 @@ static int construct_estimate_tags(Work *w, const char *estimate_string)
 
 static int construct_tags(Work *w, const char *tag_string)
 {
+        int i;
+        AssocArrayElem *elem;
+        Tag *tag;
+
         tag_parse_string(tag_string, &w->tags);
+        aa_sort_keys(&w->tags);
         return 0;
 }
 
@@ -63,11 +68,12 @@ int work_init(Work *w, const char *name, const char *triage_string,
         /* Initialize assoc arrays */
         aa_init(&w->triage_tags, 5, aa_string_compare);
         aa_init(&w->estimate_tags, 5, aa_string_compare);
+        aa_init(&w->tags, 5, aa_string_compare);
 
         /* Construct fields */
         construct_triage_tags(w, triage_string);
         construct_estimate_tags(w, estimate_string);
-        // construct_tags(w, tag_string);
+        construct_tags(w, tag_string);
 
         return 0;
 }
