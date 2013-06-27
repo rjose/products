@@ -576,7 +576,8 @@ sc(num):	Sets cutline
 -- Reports
 rfl():		Report feasible line.
 rrt():		Report running totals
-rbt(t):		Report by track. Takes optional track(s) "t" to filter on
+rbt(t):		Report by track. Takes optional track(s) "t" to filter on and triage.
+                Using a triage of 1 selects all 1s. Using 1.5 selects 1s and 1.5s.
 rde():		Report data export (demand by triage and track)
 rs():		Report available supply
 ]]
