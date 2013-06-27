@@ -1,0 +1,556 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.4.5" />
+<title>QPlan v2</title>
+<style type="text/css">
+/* Debug borders */
+p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
+/*
+  border: 1px solid red;
+*/
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+tt {
+  color: navy;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  font-family: sans-serif;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+
+div.sectionbody {
+  font-family: serif;
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+span#author {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+span#email {
+}
+span#revnumber, span#revdate, span#revremark {
+  font-family: sans-serif;
+}
+
+div#footer {
+  font-family: sans-serif;
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+div#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+div#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+div#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.tableblock, div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.5em;
+  margin-bottom: 2.5em;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock {
+  padding-left: 2.0em;
+  margin-right: 10%;
+}
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock {
+  padding-left: 2.0em;
+  margin-right: 10%;
+}
+div.verseblock > div.content {
+  white-space: pre;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 2px solid silver;
+}
+
+div.exampleblock > div.content {
+  border-left: 2px solid silver;
+  padding: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead {
+  font-family: sans-serif;
+  font-weight: bold;
+}
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+@media print {
+  div#footer-badges { display: none; }
+}
+
+div#toctitle {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+/* Workarounds for IE6's broken and incomplete CSS2. */
+
+div.sidebar-content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+div.sidebar-title, div.image-title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin-top: 0.0em;
+  margin-bottom: 0.5em;
+}
+
+div.listingblock div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock-attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock-content {
+  white-space: pre;
+}
+div.verseblock-attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+
+div.exampleblock-content {
+  border-left: 2px solid silver;
+  padding-left: 0.5em;
+}
+
+/* IE6 sets dynamically generated links as visited. */
+div#toc a:visited { color: blue; }
+</style>
+</head>
+<body>
+<div id="header">
+<h1>QPlan v2</h1>
+<span id="author">Rino Jose</span><br />
+<span id="email"><tt>&lt;<a href="mailto:@rjose">@rjose</a>&gt;</tt></span><br />
+<span id="revnumber">version 1,</span>
+<span id="revdate">Jun 20, 2013</span>
+<br /><span id="revremark">Initial spec</span>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph"><p>Drafting effort [X][X][]</p></div>
+</div>
+</div>
+<h2 id="_how_the_quarterly_planning_process_should_work">How the quarterly planning process should work</h2>
+<div class="sectionbody">
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+A program manager creates a spreadsheet with the following columns: product
+priority, engineering priority, merged priority, track, work name, work
+description, notes, and a column each for relevant skills required.
+</p>
+</li>
+<li>
+<p>
+Product managers add rows for each feature/work item they want for their
+products. They fill out product priority, track, work name, description. Product
+priority is for triaging and should be 1, 2, or 3.
+</p>
+</li>
+<li>
+<p>
+Engineering managers and tech leads add skill estimates for each work item.
+They should use a t-shirt sizing system (S = 1wk, M = 2wk, L = 3wk, Q=13wk). The
+estimates may be multiplied by an integer factor (e.g., 4L = 12 wk). This can be
+used to convey that multiple people are involved or the work must be done for
+multiple platforms.
+</p>
+</li>
+<li>
+<p>
+Other work items should be added here as well. This includes requests from
+other groups (Operations, Marketing, other product teams). It also includes
+estimates for vacation, sustaining support, and initiatives like blogging and
+presenting at meetups/conferences.
+</p>
+</li>
+<li>
+<p>
+After this, Engineering managers should enter engineering priorities  for work
+items. Similar to product priority, these values should be 1, 2, or 3.
+</p>
+</li>
+<li>
+<p>
+Next, a program manager takes this data and runs it through QPlan to get total
+demand estimates by combined product/engineering triage. The "merged triage" is
+taken to be the higher of either the engineering or product triage; if the
+merged triage is explicitly specified, this should be used instead. These
+results should be added to a separate "resource demand" tab in the spreadsheet.
+</p>
+</li>
+<li>
+<p>
+The heads of Product and Engineering should then review the updated
+spreadsheet and take a second triage pass. During this pass, they explicitly set
+the merged priority of each item, using 1.5 and 2.5 to subdivide the main triage
+groups as needed.
+</p>
+</li>
+<li>
+<p>
+A program manager takes this data and runs it through QPlan to do a rough
+ranking by merged triage and to recompute the resource demand by merged triage.
+All 1s are in a group; all 1.5s and 2s are in a group; all 2.5s and 3s are in a
+group. The program manager uses QPlan to update the planning spreadsheet, adding
+a separate tab showing resource asks by track and merged triage.
+</p>
+</li>
+<li>
+<p>
+A larger quarterly planning meeting is held to review the initial plan. The
+goal is to discuss any items that people feel are mis-prioritized. QPlan can be
+used to drill down and help make tradeoff decisions here. The following QPlan
+views will be useful:
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+Global ranked list by items showing feasible line and cutline
+</p>
+</li>
+<li>
+<p>
+Ranked lists by track showing items above and below cutline as well as
+      resource asks for items above cutline.
+</p>
+</li>
+<li>
+<p>
+Resource list showing people by skill as well as resource supply totals
+</p>
+</li>
+</ul></div>
+</li>
+<li>
+<p>
+Once a feasible plan is in place, engineering managers should assign people to
+tracks for the quarter.
+</p>
+</li>
+</ol></div>
+</div>
+<h2 id="_thoughts_on_qplan_v1">Thoughts on QPlan v1</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The v1 of this tool was used on Jun 19, 2013 as part of Q3 planning. Some
+features of the tool worked as expected. Some features went unused. And some new
+feature requirements became evident.</p></div>
+<div class="paragraph"><p>One thing I didn&#8217;t fully appreciate was the need to be very flexible. People
+want to filter by different things and come up with new filters they want to
+try. People want to slice data in different ways, sometimes showing detail,
+sometimes just showing summaries. I think the QPlan core functions should
+support this better. We may need the concept of an "environment" where we can
+configure global settings (like current filter, details/no details, etc.).</p></div>
+<div class="paragraph"><p>Another observation is that we have a real spreadsheet with real data in it now.
+We should use this to unit test parts of QPlan v2.</p></div>
+<div class="paragraph"><p>Something that worked architecturally was to separate QPlan into a part that was
+more solid and wouldn&#8217;t change (a QPlan module) and a part that was more hacky
+(the shell functions). The shell functions were written on demand and filled
+gaps and torqued the QPlan code in ways that the team needed. Some of these
+tweaks should make their way back into the QPlan module. Part of QPlan v2 will be
+redesigning the QPlan module based on what I learned from Q3 planning and to
+incorporate and better support some of the shell function tweaks.</p></div>
+<div class="paragraph"><p>Some things were unused (triaging work from the app, ranking work in the app,
+estimating work from the app, exporting the spreadsheet data back out).</p></div>
+</div>
+<h2 id="_v2_implementation">v2 Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>We&#8217;ll do TDD and follow this rough plan:</p></div>
+<div class="paragraph"><div class="title">Make triage columns explicit [][][][]</div><p>We&#8217;ll redesign Work so that triage is a "first class field" separate from the
+other tags. We&#8217;ll support "1.5" and "2.5" values consistently. We&#8217;ll add some
+explicit functions for filtering by triage and for merging triage columns.</p></div>
+<div class="paragraph"><div class="title">Support filtering better [][][][][][]</div><p>I want to support the combining of filters better. It should be able to get all
+items from a certain track and with a certain triage level. In writing the
+actual tests, we&#8217;ll figure out what policies make the most sense. I also want to
+set/clear a globally default filter (maybe even have an array of filters?). We
+might want to make filters into proper objects.</p></div>
+<div class="paragraph"><div class="title">Support dynamic slicing of data [][][][][][][]</div><p>This will provide something similar to what pivot tables can do. We need to
+slice by track and triage. We want to sometimes show detail and sometimes just
+summary info. The data needs to be in a form that we can render to a console or
+to JSON for external client consumption.</p></div>
+<div class="paragraph"><div class="title">Clean up shell functions [][][][][][]</div><p>We should move some of the shell functions into the QPlan module. We should also
+factor many of these functions into other functions that focus on data retrieval
+or data render. The main purpose of the shell functions should be to interface
+with spreadsheet data and add custom functionality (which may make its way back
+to the QPlan module).</p></div>
+<div class="paragraph"><div class="title">Stronger tests [][][][]</div><p>We should use the Q3 spreadsheet to help develop stronger, more realistic unit
+tests.</p></div>
+<div class="paragraph"><div class="title">Better support for exporting results [][][][]</div><p>Slicing data and exporting it back to the spreadsheet was awkward. I need some
+better support here, especially how it ties into the dynamic slicing. This should
+require a single export to file and a single import into the spreadsheet. This
+will speed things up <strong>a lot</strong>.</p></div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 1<br />
+Last updated 2013-06-20 10:57:50 PDT
+</div>
+</div>
+</body>
+</html>
