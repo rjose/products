@@ -468,16 +468,15 @@ function rbc(t, triage)
 
 	-- Print overall demand total for work below cutline
 	local total_demand = Work.sum_demand(work)
-	print(string.format("%-30s %s", "TOTAL Required:", Writer.tags_to_string(
+	print(string.format("%-40s %s", "TOTAL Required:", Writer.tags_to_string(
 		to_num_people(total_demand, pl.num_weeks), ", "
 	)))
-
 
 	-- Print supply left after doing above cutline
 	local total_above_cut_demand = Work.sum_demand(wac())
         local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
         local net_supply = Work.subtract_skill_demand(total_bandwidth, total_above_cut_demand);
-	print(string.format("%-30s %s", "TOTAL Net Supply:", Writer.tags_to_string(
+	print(string.format("%-40s %s", "TOTAL Supply (after cutline work):", Writer.tags_to_string(
                 to_num_people(net_supply, pl.num_weeks), ", ")))
 end
 
@@ -502,10 +501,9 @@ end
 function print_by_triage_and_track(file, triage_tags, all_tracks, demand_hash)
         for _, tri in ipairs(triage_tags) do
                 -- Print triage
-                file:write(string.format("Triage: %s\n", tri))
 
                 -- Print track column headings
-                file:write("\t")
+                file:write(string.format("Triage: %s\t", tri))
                 for _, track in ipairs(all_tracks) do
                         file:write(string.format("%s\t", track))
                 end
@@ -520,6 +518,7 @@ function print_by_triage_and_track(file, triage_tags, all_tracks, demand_hash)
                         end
                         file:write("\n")
                 end
+		file:write("\n")
         end
 end
 
@@ -600,7 +599,7 @@ function rs()
                 local people_list = people_by_skill[skill]
                 print(string.format("%s ==", skill))
                 for j = 1,#people_list do
-                        print(string.format("     %3d. %15s %.1f", j, people_list[j].name,
+                        print(string.format("     %3d. %-30s %.1f", j, people_list[j].name,
                                                              people_list[j].skills[skill]))
                 end
         end
