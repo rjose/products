@@ -267,18 +267,18 @@ end
 
 -- "Report running totals"
 function rrt()
-	print(string.format("%-5s|%-9s|%-40s|%-30s|%-30s",
+	print(string.format("%-5s|%-15s|%-40s|%-30s|%-30s",
 		"Rank", "Track", "Item", "Estimate", "Supply left"))
-	print("-----|---------|----------------------------------------|" ..
+	print("-----|---------------|----------------------------------------|" ..
               "------------------------------|--------------------------")
 	local work = pl:get_work_items()
 	local feasible_line, _, supply_totals = pl:find_feasible_line()
 
 	for i = 1,#work do
 		local w = work[i]
-		print(string.format("%-5s|%-9s|%-40s|%-30s|%-30s",
+		print(string.format("%-5s|%-15s|%-40s|%-30s|%-30s",
 			"#" .. w.rank,
-			w.tags.track,
+			w.tags.track:truncate(15),
 			w.name:truncate(40, {["ellipsis"] = true}),
 			Writer.tags_to_string(w.estimates),
 			Writer.tags_to_string(to_num_people(supply_totals[i], pl.num_weeks))
