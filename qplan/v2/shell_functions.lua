@@ -361,8 +361,16 @@ function rbt(t, triage)
 
         -- Make a triage filter, if necessary
         if triage then
-                options.filter[#options.filter+1] = function(work_item)
-                        return Work.triage_xx_filter(triage, work_item)
+                -- Check for 1 vs 1.5, e.g.
+                fractional_part = triage % 1
+                if fractional_part > 0 then
+                        options.filter[#options.filter+1] = function(work_item)
+                                return Work.triage_xx_filter(triage - fractional_part, work_item)
+                        end
+                else
+                        options.filter[#options.filter+1] = function(work_item)
+                                return Work.triage_filter(triage, work_item)
+                        end
                 end
         end
 
@@ -532,6 +540,12 @@ function rs()
 	)))
 end
 
+function rss()
+        local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
+	print(string.format("TOTAL Skill Supply: %s", Writer.tags_to_string(
+		to_num_people(total_bandwidth, pl.num_weeks), ", "
+	)))
+end
 
 -- HELP -----------------------------------------------------------------------
 --
