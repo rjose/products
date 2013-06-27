@@ -115,6 +115,7 @@ function Plan:get_work_items(options)
         -- If specified, return work items above the cutline
         if options.ABOVE_CUT then
                 stop_index = self.cutline
+                if stop_index > #work_ids then stop_index = #work_ids end
         end
 
 	-- Specify filter
