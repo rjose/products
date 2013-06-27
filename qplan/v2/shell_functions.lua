@@ -190,7 +190,22 @@ function w2()
         return wfilter(f)
 end
 
+-- Returns true if work is below cutline
+function wbc_filter(work_item)
+        -- Find rank in plan
+        work_rank = nil
+        for r, work_id in ipairs(pl.work_items) do
+                if work_id .. '' == work_item.id then
+                        work_rank = r
+                end
+        end
 
+        if work_rank and work_rank > pl.cutline then
+                return true
+        else
+                return false
+        end
+end
 
 
 -- UPDATING THE PLAN ----------------------------------------------------------
@@ -351,7 +366,6 @@ function rbt(t, triage)
 
         -- Make a track filter, if necessary
         if t then
-                print(type(t))
                 if type(t) == "number" then
                         triage = t
                 else
@@ -409,6 +423,63 @@ function rbt(t, triage)
 	print(string.format("%-30s %s", "TOTAL Net Supply:", Writer.tags_to_string(net_supply, ", ")))
 end
 
+-- Report below cutline
+function rbc(t, triage)
+        -- Construct options
+        local options = {}
+        options.filter = {}
+
+        -- Make a track filter, if necessary
+        if t then
+                if type(t) == "number" then
+                        triage = t
+                else
+                        options.filter[#options.filter+1] = make_track_filter(t)
+                end
+        end
+
+        -- Make a triage filter, if necessary
+        if triage then
+                -- Check for 1 vs 1.5, e.g.
+                fractional_part = triage % 1
+                if fractional_part > 0 then
+                        options.filter[#options.filter+1] = function(work_item)
+                                return Work.triage_xx_filter(triage - fractional_part, work_item)
+                        end
+                else
+                        options.filter[#options.filter+1] = function(work_item)
+                                return Work.triage_filter(triage, work_item)
+                        end
+                end
+        end
+
+        -- Filter by below cutline
+        options.filter[#options.filter+1] = wbc_filter
+
+        -- Get relevant work
+	local work = pl:get_work_items(options)
+
+        -- Group work
+        local track_hash, track_tags = func.group_items(work, get_track)
+
+        -- Print work by grouping
+        print_work_by_grouping(track_tags, track_hash, options)
+
+
+	-- Print overall demand total for work below cutline
+	local total_demand = Work.sum_demand(work)
+	print(string.format("%-30s %s", "TOTAL Required:", Writer.tags_to_string(
+		to_num_people(total_demand, pl.num_weeks), ", "
+	)))
+
+
+	-- Print supply left after doing above cutline
+	local total_above_cut_demand = Work.sum_demand(wac())
+        local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
+        local net_supply = Work.subtract_skill_demand(total_bandwidth, total_above_cut_demand);
+	print(string.format("%-30s %s", "TOTAL Net Supply:", Writer.tags_to_string(
+                to_num_people(net_supply, pl.num_weeks), ", ")))
+end
 
 function make_triage_filter(triage)
         result = function(work_item)
