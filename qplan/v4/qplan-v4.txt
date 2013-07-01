@@ -47,6 +47,12 @@ unprotected call and died. Let's see if we can make this a protected call. Hmmm.
 Not sure how to do this. I did fix this, though, by calling "lua_setglobal"
 after the web module was required to set "web".
 
+What we'll do next is bring the request parser over and see if we can
+understand the requests. I want to make sure we bring the tests over first,
+though. Alright, the request parser tests are over and running. Let's hook up
+this up to the handle_request function. Hmmm. I keep getting a core dump when a
+web request executes an invalid instruction. I need to fix this.
+
 
 Thoughts
 --------

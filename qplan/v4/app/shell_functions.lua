@@ -1,4 +1,4 @@
-package.path = package.path .. ";app/?.lua"
+package.path = package.path .. ";app/?.lua;modules/?.lua"
 
 Person = require('person')
 Plan = require('plan')
