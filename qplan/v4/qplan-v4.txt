@@ -16,7 +16,7 @@ web module. Finally, we'll create some pages using angular to serve content.
 Implementation
 --------------
 
-. Organize lua and C code [X][][][][]
+. Organize lua and C code [X][X][][][]
 . Listen and respond to web requests [][][][][][]
 . Add lua web module [][][][]
 . Create angular pages [][][][][][][][]
@@ -35,7 +35,9 @@ Alright, let's start cleaning some things up. I don't like the global pl and ppl
 variables. We should clean these up when we start in on the qplan language. How
 about we start by splitting out the repl and web parts of the qplan.c file out.
 We should document these as well. I want to only have one lua state for now and
-have a lock around that.
+have a lock around that. Done. Alright, let's split out the QPlanContext into
+its own files. We'll leave "err_abort" in qplan.c until we have enough utils to
+pull it out. After that, we'll create repl and web C files.
 
 After that, we should bring the web request functions over.
 

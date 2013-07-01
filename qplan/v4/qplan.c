@@ -17,38 +17,25 @@
 
 #include "tcp_io.h"
 
+#include "qplan_context.h"
+
 #define SA struct sockaddr
 #define LISTENQ 1024
 #define MAXLINE 1024
 
 
-typedef struct QPlanContext_ {
-        lua_State *main_lua_state;
-        pthread_mutex_t *main_mutex;
-} QPlanContext;
 
 typedef struct WebHandlerContext_ {
         QPlanContext *context;
         int connfd;
 } WebHandlerContext;
 
-static void err_abort(int status, const char *message)
+void err_abort(int status, const char *message)
 {
 	fprintf(stderr, message);
 	exit(status);
 }
 
-static void lock_main(QPlanContext *ctx)
-{
-        if (pthread_mutex_lock(ctx->main_mutex) != 0)
-                err_abort(-1, "Problem locking main mutex");
-}
-
-static void unlock_main(QPlanContext *ctx)
-{
-        if (pthread_mutex_unlock(ctx->main_mutex) != 0)
-                err_abort(-1, "Problem unlocking main mutex");
-}
 
 
 static void *repl_routine(void *arg)
@@ -122,9 +109,11 @@ static void *handle_request_routine(void *arg)
 	}
         request_string[req_len] = '\0';
 
+        /*
+         * Call request handler
+         */
         lock_main(req_context->context);
         lua_getglobal(L_main, "web");
-        // TODO: Figure out the best way to organize the web functions
         lua_pushstring(L_main, "handle_request");
         lua_gettable(L_main, -2);
         lua_pushlstring(L_main, request_string, req_len);
