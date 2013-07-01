@@ -1,0 +1,36 @@
+QPlan v4
+========
+Rino Jose <@rjose>
+v2, Jul 1, 2013: Initial spec
+
+Drafting effort [][]
+
+Overview
+--------
+The goal of this version is to have QPlan listen for web requests and serve web
+pages. The first step is to organize our lua code into app code and modules. The
+next step is to bring over the code that can listen and respond to web
+requests. After that, we'll pull the lua web request parsing/routing code into a
+web module. Finally, we'll create some pages using angular to serve content.
+
+Implementation
+--------------
+
+. Organize lua and C code [][][][][]
+. Listen and respond to web requests [][][][][][]
+. Add lua web module [][][][]
+. Create angular pages [][][][][][][][]
+
+
+1 - Organize lua and C code
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+We should use qplan-c/proto2 as a model here. We'll copy the lua code from
+qplan/v2 and see if we can get it running through our custom shell. Let's start
+by getting the custom shell running first. Hmmmm. Forgot to check in the
+tcp_io.[ch] changes I made. I guess I'll just have to code it up again. These
+were just minor changes (function renaming). Alright, I got it to build. Let's
+copy the app code over. Done. Let's check this in.
+
+
+Thoughts
+--------
