@@ -19,7 +19,7 @@ Implementation
 .
 link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
       Organize lua and C code]
-      [X][X][X][][]
+      [X][X][X][X][X]
 . Listen and respond to web requests [][][][][][]
 . Add lua web module [][][][]
 . Create angular pages [][][][][][][][]
@@ -65,6 +65,11 @@ instead. Let's check this in, but then revert to the nonglobal version and see
 if it still works. Yup. Let's check in and then go on to routing (which is
 properly the next prototype).
 
+2 - Listen and respond to web requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Alright, now that we've gotten requests parsed, let's route them to other
+functions for handling. I'll bring over the tests first and then hook things up.
+Done. Let's check in.
 
 Thoughts
 --------
