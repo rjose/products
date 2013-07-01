@@ -1,7 +1,7 @@
 QPlan v4
 ========
 Rino Jose <@rjose>
-v2, Jul 1, 2013: Initial spec
+v2, Jul 1, 2013: Finished step 1
 
 Drafting effort [][]
 
@@ -16,7 +16,10 @@ web module. Finally, we'll create some pages using angular to serve content.
 Implementation
 --------------
 
-. Organize lua and C code [X][X][X][][]
+.
+link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
+      Organize lua and C code]
+      [X][X][X][][]
 . Listen and respond to web requests [][][][][][]
 . Add lua web module [][][][]
 . Create angular pages [][][][][][][][]
