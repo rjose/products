@@ -16,10 +16,11 @@ web module. Finally, we'll create some pages using angular to serve content.
 Implementation
 --------------
 
-. Organize lua and C code [X][X][][][]
+. Organize lua and C code [X][X][X][][]
 . Listen and respond to web requests [][][][][][]
 . Add lua web module [][][][]
 . Create angular pages [][][][][][][][]
+. Add readline support [][][][][]
 
 
 1 - Organize lua and C code
@@ -37,9 +38,14 @@ about we start by splitting out the repl and web parts of the qplan.c file out.
 We should document these as well. I want to only have one lua state for now and
 have a lock around that. Done. Alright, let's split out the QPlanContext into
 its own files. We'll leave "err_abort" in qplan.c until we have enough utils to
-pull it out. After that, we'll create repl and web C files.
+pull it out. After that, we'll create repl and web C files. Done!
 
-After that, we should bring the web request functions over.
+OK, next up is bringing up the lua functions from qplan_web. I want to bring the
+tests over for these as well. Let's see what would happen with a web request
+now. I think we'll get an error on the handle_request call. We got an
+unprotected call and died. Let's see if we can make this a protected call. Hmmm.
+Not sure how to do this. I did fix this, though, by calling "lua_setglobal"
+after the web module was required to set "web".
 
 
 Thoughts

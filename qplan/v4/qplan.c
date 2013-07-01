@@ -100,6 +100,7 @@ static lua_State *init_lua_state(int version)
         if (lua_pcall(result, 1, 1, 0) != LUA_OK)
                 luaL_error(result, "Problem requiring shell functions: %s",
                                 lua_tostring(result, -1));
+        lua_setglobal(result, "web");
 
 
         /* Load version specified from commandline */
