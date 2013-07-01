@@ -69,7 +69,9 @@ properly the next prototype).
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Alright, now that we've gotten requests parsed, let's route them to other
 functions for handling. I'll bring over the tests first and then hook things up.
-Done. Let's check in.
+Done. Let's check in. So where do we hook things up? It's got to be in
+handle_request right after we parse the request. OK, was able to return a web
+page. Cool. Let's check in.
 
 Thoughts
 --------

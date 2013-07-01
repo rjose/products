@@ -1,13 +1,14 @@
 RequestParser = require('request_parser')
+RequestRouter = require('request_router')
 
 local Web = {}
 
+-- TODO: Set up the routers here
+-- TODO: Define the app router
+
 function Web.handle_request(req_string)
-        print(req_string)
-        print(foo[1])
         local req = RequestParser.parse_request(req_string)
-        print("Request target", req.request_target)
-        print("User agent", req.headers['user-agent'])
+        return RequestRouter.route_request(req)
 end
 
 return Web

@@ -10,7 +10,7 @@ function TestRouteRequest:test_root_file_request()
         local req = {}
         req.method = "GET"
         req.request_target = "/"
-        req.path_pieces = {""}
+        req.path_pieces = {"", ""}
 
         local response = RequestRouter.route_request(req)
         assert(string.match(response, "HTML file!"))
