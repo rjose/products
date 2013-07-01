@@ -59,7 +59,8 @@ I think the problem is that we're not calling the function as a global function.
 Let's expose this and see what happens. OK, that wasn't it. It looks like when
 something went wrong, I kept going. Should've gone to an error condition
 instead. Let's check this in, but then revert to the nonglobal version and see
-if it still works.
+if it still works. Yup. Let's check in and then go on to routing (which is
+properly the next prototype).
 
 
 Thoughts

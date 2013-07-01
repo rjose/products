@@ -138,10 +138,9 @@ static void *handle_request_routine(void *arg)
          * Call request handler
          */
         lock_main(req_context->context);
-        // lua_getglobal(L_main, "web");
-        // lua_pushstring(L_main, "handle_request");
-        // lua_gettable(L_main, -2);
-        lua_getglobal(L_main, "handle_request");
+        lua_getglobal(L_main, "web");
+        lua_pushstring(L_main, "handle_request");
+        lua_gettable(L_main, -2);
         lua_pushlstring(L_main, request_string, req_len);
         error = lua_pcall(L_main, 1, 1, 0);
         if (error) {
