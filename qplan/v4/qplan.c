@@ -22,6 +22,8 @@ void err_abort(int status, const char *message)
 	exit(status);
 }
 
+static lua_State *init_lua_state(int);
+
 
 int main(int argc, char *argv[])
 {
@@ -31,47 +33,21 @@ int main(int argc, char *argv[])
         pthread_t repl_thread_id;
         pthread_t web_thread_id;
         pthread_mutex_t main_mutex = PTHREAD_MUTEX_INITIALIZER;
-
+        lua_State *L_main;
 
         /*
-         * Make sure a version is specified
+         * Set up lua state with data at specified version
          */
         if (argc < 2) {
                 printf("Usage: qplan <version>\n");
                 return 1;
         }
         version = strtol(argv[1], NULL, 0);
+        L_main = init_lua_state(version);
+
 
         /*
-         * Create lua states
-         */
-        lua_State *L_main = luaL_newstate();
-        luaL_openlibs(L_main);
-
-        /*
-         * Load functionality into main lua state
-         */
-        lua_getglobal(L_main, "require");
-        lua_pushstring(L_main, "app.shell_functions");
-        if (lua_pcall(L_main, 1, 1, 0) != LUA_OK)
-                luaL_error(L_main, "Problem requiring shell functions: %s",
-                                lua_tostring(L_main, -1));
-
-        /* Load version specified from commandline */
-        lua_getglobal(L_main, "s");
-        lua_pushnumber(L_main, version);
-        if (lua_pcall(L_main, 1, 0, 0) != LUA_OK)
-                luaL_error(L_main, "Problem calling lua function: %s",
-                                lua_tostring(L_main, -1));
-
-        lua_getglobal(L_main, "require");
-        lua_pushstring(L_main, "modules.web");
-        if (lua_pcall(L_main, 1, 1, 0) != LUA_OK)
-                luaL_error(L_main, "Problem requiring shell functions: %s",
-                                lua_tostring(L_main, -1));
-
-        /*
-         * Set up context
+         * Set up context and spin up threads
          */
         QPlanContext qplan_context;
         qplan_context.main_lua_state = L_main;
@@ -96,8 +72,41 @@ int main(int argc, char *argv[])
 	if (status != 0)
 		err_abort(status, "Join thread");
 
+        /*
+         * Clean up
+         */
         lua_close(L_main);
-
 	printf("We are most successfully done!\n");
 	return 0;
+}
+
+
+static lua_State *init_lua_state(int version)
+{
+        lua_State *result = luaL_newstate();
+        luaL_openlibs(result);
+
+        /* Load qplan functionality */
+        lua_getglobal(result, "require");
+        lua_pushstring(result, "app.shell_functions");
+        if (lua_pcall(result, 1, 1, 0) != LUA_OK)
+                luaL_error(result, "Problem requiring shell functions: %s",
+                                lua_tostring(result, -1));
+
+
+        /* Load web handling functionality */
+        lua_getglobal(result, "require");
+        lua_pushstring(result, "modules.web");
+        if (lua_pcall(result, 1, 1, 0) != LUA_OK)
+                luaL_error(result, "Problem requiring shell functions: %s",
+                                lua_tostring(result, -1));
+
+
+        /* Load version specified from commandline */
+        lua_getglobal(result, "s");
+        lua_pushnumber(result, version);
+        if (lua_pcall(result, 1, 0, 0) != LUA_OK)
+                luaL_error(result, "Problem calling lua function: %s",
+                                lua_tostring(result, -1));
+        return result;
 }
