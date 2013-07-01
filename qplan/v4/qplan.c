@@ -12,6 +12,7 @@
 #include "lualib.h"
 
 #include "qplan_context.h"
+#include "repl.h"
 #include "web.h"
 
 // TODO: Move this to a util file
@@ -22,52 +23,23 @@ void err_abort(int status, const char *message)
 }
 
 
-
-static void *repl_routine(void *arg)
-{
-        char buf[MAXLINE];
-        int error;
-        QPlanContext *ctx = (QPlanContext *)arg;
-
-        lua_State *L = ctx->main_lua_state;
-
-        /*
-         * REPL
-         */
-        // TODO: Hook readline up again
-        printf("qplan> ");
-        while (fgets(buf, sizeof(buf), stdin) != NULL) {
-                lock_main(ctx);
-                error = luaL_loadstring(L, buf) || lua_pcall(L, 0, 0, 0);
-
-                if (error) {
-                        fprintf(stderr, "%s\n", lua_tostring(L, -1));
-                        lua_pop(L, 1);
-                }
-                unlock_main(ctx);
-                printf("qplan> ");
-        }
-
-        return NULL;
-}
-
-
-
 int main(int argc, char *argv[])
 {
         int version;
 	void *thread_result;
 	long status;
-        pthread_mutex_t main_mutex = PTHREAD_MUTEX_INITIALIZER;
-
         pthread_t repl_thread_id;
         pthread_t web_thread_id;
+        pthread_mutex_t main_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+
+        /*
+         * Make sure a version is specified
+         */
         if (argc < 2) {
                 printf("Usage: qplan <version>\n");
                 return 1;
         }
-
         version = strtol(argv[1], NULL, 0);
 
         /*
@@ -77,7 +49,7 @@ int main(int argc, char *argv[])
         luaL_openlibs(L_main);
 
         /*
-         * Require shell functions
+         * Load functionality into main lua state
          */
         lua_getglobal(L_main, "require");
         lua_pushstring(L_main, "app.shell_functions");

@@ -11,8 +11,12 @@
 #include "tcp_io.h"
 #include "web.h"
 
-
 extern void err_abort(int status, const char *message);
+
+
+#define SA struct sockaddr
+#define LISTENQ 1024
+#define MAXLINE 1024
 
 static void *handle_request_routine(void *);
 

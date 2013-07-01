@@ -8,10 +8,6 @@
 #include "qplan_context.h"
 #include "tcp_io.h"
 
-#define SA struct sockaddr
-#define LISTENQ 1024
-#define MAXLINE 1024
-
 /* ----------------------------------------------------------------------------
  * Data structure
  */
