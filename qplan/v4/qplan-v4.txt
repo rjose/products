@@ -51,7 +51,15 @@ What we'll do next is bring the request parser over and see if we can
 understand the requests. I want to make sure we bring the tests over first,
 though. Alright, the request parser tests are over and running. Let's hook up
 this up to the handle_request function. Hmmm. I keep getting a core dump when a
-web request executes an invalid instruction. I need to fix this.
+web request executes an invalid instruction. I need to fix this. In any case, I
+was able to parse a web request! Let's spend a pomodoro on the core dump. If I
+can't get that working, let's move to routing the request.
+
+I think the problem is that we're not calling the function as a global function.
+Let's expose this and see what happens. OK, that wasn't it. It looks like when
+something went wrong, I kept going. Should've gone to an error condition
+instead. Let's check this in, but then revert to the nonglobal version and see
+if it still works.
 
 
 Thoughts

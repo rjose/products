@@ -2,7 +2,7 @@ RequestParser = require('request_parser')
 
 local Web = {}
 
-function Web.handle_request(req_string)
+function handle_request(req_string)
         print(req_string)
         local req = RequestParser.parse_request(req_string)
         print("Request target", req.request_target)

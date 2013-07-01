@@ -78,7 +78,7 @@ void *web_routine(void *arg)
                 status = pthread_create(&tid, NULL, handle_request_routine,
                                                        (void *)handler_context);
                 if (status != 0)
-                        err_abort(status, "Create repl thread");
+                        err_abort(status, "Create web thread");
         }
 
         return NULL;
@@ -104,6 +104,7 @@ static void *handle_request_routine(void *arg)
         size_t res_len;
         const char *tmp;
         char *res_str;
+        int error;
 
         if ((request_string = malloc(sizeof(char) * MAXLINE)) == NULL)
                 err_abort(-1, "Couldn't allocate memory");
@@ -137,14 +138,17 @@ static void *handle_request_routine(void *arg)
          * Call request handler
          */
         lock_main(req_context->context);
-        lua_getglobal(L_main, "web");
-        lua_pushstring(L_main, "handle_request");
-        lua_gettable(L_main, -2);
+        // lua_getglobal(L_main, "web");
+        // lua_pushstring(L_main, "handle_request");
+        // lua_gettable(L_main, -2);
+        lua_getglobal(L_main, "handle_request");
         lua_pushlstring(L_main, request_string, req_len);
-        if (lua_pcall(L_main, 1, 1, 0) != LUA_OK)
-                luaL_error(L_main, "Problem calling lua function: %s",
-                                lua_tostring(L_main, -1));
-        free(request_string);
+        error = lua_pcall(L_main, 1, 1, 0);
+        if (error) {
+                fprintf(stderr, "%s\n", lua_tostring(L_main, -1));
+                lua_pop(L_main, 1);
+                goto error;
+        }
 
         /* Copy result string */
         tmp = lua_tolstring(L_main, -1, &res_len);
@@ -156,7 +160,9 @@ static void *handle_request_routine(void *arg)
 
         my_writen(connfd, res_str, res_len);
 
+error:
         close(connfd);
+        free(request_string);
         free(req_context);
         return NULL;
 }
