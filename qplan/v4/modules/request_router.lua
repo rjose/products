@@ -47,7 +47,6 @@ function static_file_router(req)
         else
                 local content = file:read("*all")
                 file:close()
-                print(content)
                 result = construct_response(200, content_type, content)
         end
 
