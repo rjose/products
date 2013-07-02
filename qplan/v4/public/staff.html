@@ -8,31 +8,24 @@
         </head>
 
         <body>
-            <nav>
-                <ul>
-                        <li><a href='/'>QPlan</a></li>
-                        <li><a href='/tracks.html'>Tracks</a></li>
-                        <li><a href='/work.html'>Work</a></li>
-                        <li><a href='/staff.html'>Staff</a></li>
-                </ul>
-            </nav>
+                <nav ng-include="'./partials/nav.html'"></nav>
+
+                <div ng-controller="StaffCtrl">
+                        <h3>Staff Availability Totals</h3>
+                        <ul>
+                                <li ng-repeat="skill in staff_data.skills">{{skill}}:
+                                {{staff_data.bandwidth[skill]}}</li>
+                        </ul>
+
+                        <h3>Staff List</h3>
+                        <ul ng-repeat="skill in staff_data.skills">
+                                <li>{{skill}}</li>
+                                <ol>
+                                        <li ng-repeat="person in
+                                        staff_data.people_by_skill[skill]">{{person.name}}</li>
+                                </ol>
+                        </ul>
+                </div>
         </body>
-
-        <div ng-controller="StaffCtrl">
-                <h3>Staff Availability Totals</h3>
-                <ul>
-                        <li ng-repeat="skill in staff_data.skills">{{skill}}:
-                        {{staff_data.bandwidth[skill]}}</li>
-                </ul>
-
-                <h3>Staff List</h3>
-                <ul ng-repeat="skill in staff_data.skills">
-                        <li>{{skill}}</li>
-                        <ol>
-                                <li ng-repeat="person in
-                                staff_data.people_by_skill[skill]">{{person.name}}</li>
-                        </ol>
-                </ul>
-        </div>
 </html>
 

@@ -22,7 +22,7 @@ link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
       [X][X][X][X][X]
 . Listen and respond to web requests [X][X][X][][][]
 . Create angular pages [X][X][X][][][][][]
-. Add staff page [X][X][][]
+. Add staff page [X][X][X][X]
 . Add work page [][][][][]
 . Add tracks page [][][][][][][]
 . Add index page [][][][][][]
@@ -112,7 +112,16 @@ of staff back. Actually, let me break this out as its own implementation step.
 I've been able to render some data using a StaffCtrl. Let's see if I can make
 the ajax request to actually get the data from QPlan. Alright, I was able to
 do this from within the StaffCtrl function. I think I'd like the flexibility
-to call this explicitly. I'll do this after I get some data back.
+to call this explicitly. I'll do this after I get some data back. OK, I can
+render the staff list and staff availability now. I'm using
+link:https://github.com/craigmj/json4lua/tree/master/json4lua[json4lua] to do
+the json render. We're essentially done with this. I do want to explore how
+the data is loaded, though. OK, I
+link:http://stackoverflow.com/questions/10973568/is-there-a-way-to-interact-with-controller-and-scope-directly-in-angularjs[see]
+that you can access a scope directly.
+
+The last thing I want to do here is to look at angular templates for the nav
+elements
 
 Thoughts
 --------
