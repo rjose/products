@@ -4,10 +4,31 @@
         <head>
                 <title>QPlan Work</title>
                 <script src="./js/angular.min.js"></script>
+                <script src="./js/work.js"></script>
+                <link rel="stylesheet" href="./css/qplan.css">
         </head>
 
         <body>
                 <nav ng-include="'./partials/nav.html'"></nav>
+                <div ng-controller="WorkCtrl">
+                        <table>
+                                <tr>
+                                        <th>Rank</th>
+                                        <th>Track</th>
+                                        <th>Item</th>
+                                        <th>Estimates</th>
+                                        <th>Net avail</th>
+                                </tr>
+                                <tr class="is-feasible-{{w.rank < work_data.feasible_line}} above-cutline-{{w.rank < work_data.cutline}}"
+                                        ng-repeat="w in work_data.work">
+                                        <td>{{w.rank}}</td>
+                                        <td>{{w.tags.track}}</td>
+                                        <td>{{w.name}}</td>
+                                        <td>{{tags_to_string(w.estimates)}}</td>
+                                        <td>{{tags_to_string(work_data.net_totals[$index])}}</td>
+                                </tr>
+                        </table>
+                </div>
         </body>
 </html>
 

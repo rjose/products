@@ -121,7 +121,15 @@ link:http://stackoverflow.com/questions/10973568/is-there-a-way-to-interact-with
 that you can access a scope directly.
 
 The last thing I want to do here is to look at angular templates for the nav
-elements
+elements. Done!
+
+5 - Add work page
+~~~~~~~~~~~~~~~~~
+The first step is to get the data across. After that, I can render it in a
+table. Let's render the data pretty straight first and then figure out how to
+render items above/below cutline/feasible line. Hmmm. Not sure if I should
+have the client know that track is inside the tags object or if I should
+preformat it.
 
 Thoughts
 --------

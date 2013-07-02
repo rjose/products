@@ -40,10 +40,31 @@ function handle_app_web_staff(req)
         return RequestRouter.construct_response(200, "application/json", json.encode(result))
 end
 
+
+function handle_app_web_work(req)
+        local work = pl:get_work_items()
+	local feasible_line, _, supply_totals = pl:find_feasible_line()
+
+        local result = {}
+        result.work = work
+        result.feasible_line = feasible_line
+        result.cutline = pl.cutline
+
+        -- Adjust net totals to be people
+        result.net_totals = {}
+        for i, t in ipairs(supply_totals) do
+                result.net_totals[i] = to_num_people(supply_totals[i], pl.num_weeks)
+        end
+
+        return RequestRouter.construct_response(200, "application/json", json.encode(result))
+end
+
 -- TODO: Move this to its own set of files
 function handle_app_web_request(req)
         if req.path_pieces[RESOURCE_INDEX] == 'staff' then
                 return handle_app_web_staff(req)
+        elseif req.path_pieces[RESOURCE_INDEX] == 'work' then
+                return handle_app_web_work(req)
         end
         local content = string.format([[{
                 "track_names": ["T1", "T2", "T3"],

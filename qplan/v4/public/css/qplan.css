@@ -1,0 +1,7 @@
+.is-feasible-false {
+        color: red
+}
+
+tr.above-cutline-false td {
+        background-color: #999
+}
