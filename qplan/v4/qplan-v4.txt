@@ -82,7 +82,17 @@ for how angular pages work.
 ~~~~~~~~~~~~~~~~~~~~~~~~
 OK, the next thing we should do is start creating some web pages. I'll follow
 along with the angular tutorial. I think it may make sense for me to do this
-work on my mac. Let's check this out over there.
+work on my mac. Let's check this out over there. I wonder if I can do some
+development there, mocking out the responses and then hooking them up later?
+Alright, I added the todo content, and it appears to be working.
+
+There are a couple of things that I need to understand. Is angular supposed to
+supplant jquery? (A: I believe so. It's a different mental model). How do I make
+an ajax request? (A: there's an $http service with callbacks).
+
+I think what I want to do is to have an index.html page that show an overview of
+the quarterly plan. There should be links to static pages like people and
+reports by track.
 
 
 
