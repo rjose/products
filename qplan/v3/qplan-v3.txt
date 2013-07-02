@@ -1,5 +1,5 @@
-QPlan v3
-=============
+QPlan v3 - ABANDONED
+====================
 Rino Jose <@rjose>
 v1, Jun 22, 2013: Initial version
 

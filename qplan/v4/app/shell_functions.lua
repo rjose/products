@@ -1,3 +1,5 @@
+package.path = package.path .. ";app/?.lua;modules/?.lua"
+
 Person = require('person')
 Plan = require('plan')
 Work = require('work')
@@ -11,6 +13,12 @@ require('string_utils')
 env = {}
 env.summaries = true
 
+-- TODO: Redesign global state
+function s(version)
+        pl, ppl = load_data(version)
+end
+
+
 -- TODO: Talk about naming conventions
 
 -- READ/WRITE DATA ------------------------------------------------------------
@@ -20,7 +28,6 @@ local data_dir = "./data/"
 
 -- Used to figure out the next work id
 local num_work_items
-
 
 function load_data(prefix)
 	local prefix = prefix or ""
@@ -648,7 +655,6 @@ rfl():		Report feasible line.
 rrt():		Report running totals
 rbt(t):		Report by track. Takes optional track(s) "t" to filter on and triage.
                 Using a triage of 1 selects all 1s. Using 1.5 selects 1s and 1.5s.
-rbc(t):		Reports items below cutline by track/triage
 rde():		Report data export (demand by triage and track)
 rs():		Report available supply
 ]]
