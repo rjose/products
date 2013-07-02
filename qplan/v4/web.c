@@ -156,11 +156,10 @@ static void *handle_request_routine(void *arg)
                 err_abort(-1, "Couldn't allocate memory");
         strncpy(res_str, tmp, res_len);
         lua_pop(L_main, 1);
-        unlock_main(req_context->context);
-
         my_writen(connfd, res_str, res_len);
 
 error:
+        unlock_main(req_context->context);
         close(connfd);
         free(request_string);
         free(req_context);
