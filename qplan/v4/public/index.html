@@ -1,12 +1,21 @@
 <!doctype html>
 <html ng-app>
     <head>
+        <title>QPlan</title>
         <script src="./js/angular.min.js"></script>
         <script src="./js/todo.js"></script>
         <link rel="stylesheet" href="./css/todo.css">
     </head>
 
     <body>
+            <nav>
+                <ul>
+                        <li><a href='/'>QPlan</a></li>
+                        <li><a href='/tracks.html'>Tracks</a></li>
+                        <li><a href='/work.html'>Work</a></li>
+                        <li><a href='/staff.html'>Staff</a></li>
+                </ul>
+            </nav>
     <h2>Todo</h2>
 
     <div ng-controller="TodoCtrl">

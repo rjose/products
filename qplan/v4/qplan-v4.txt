@@ -92,9 +92,16 @@ an ajax request? (A: there's an $http service with callbacks).
 
 I think what I want to do is to have an index.html page that show an overview of
 the quarterly plan. There should be links to static pages like people and
-reports by track.
+reports by track. I'll try to get this work done without doing a prototype. If
+I run into issues, though, I'll drop out of here and do an exploratory
+prototype.
 
+Alright, let's start by creating our nav elements and our basic pages. How
+does angular handle nav elements? I'm going to just do some copy/paste for
+now. After it works, I'll circle back.
 
+I've created a bunch of (mostly) empty pages. Let's see if we can get a list
+of staff back.
 
 Thoughts
 --------
@@ -103,6 +110,5 @@ to see if there's anything I can learn about organizing the source files.
 
 Here are some things I wanted to do:
 
-- Think about how to recover from a bad lua state
 - Review memory management in our C files
 - Add readline support

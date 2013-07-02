@@ -113,9 +113,9 @@ static void *handle_request_routine(void *arg)
                 err_abort(-1, "Couldn't allocate memory");
         str_capacity = MAXLINE;
 
-
-
-        // TODO: Need a timeout for malformed requests
+        /*
+         * Read in request
+         */
 	while ((cur_len = my_readline(connfd, buf, MAXLINE)) > 0) {
 		if (strcmp(buf, "\r\n") == 0)
 			break;
