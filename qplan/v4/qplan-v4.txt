@@ -21,7 +21,8 @@ link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
       Organize lua and C code]
       [X][X][X][X][X]
 . Listen and respond to web requests [X][X][X][][][]
-. Create angular pages [][][][][][][][]
+. Create angular pages [X][X][X][][][][][]
+. Add staff page [X][][][]
 . Add readline support [][][][][]
 
 
@@ -101,7 +102,14 @@ does angular handle nav elements? I'm going to just do some copy/paste for
 now. After it works, I'll circle back.
 
 I've created a bunch of (mostly) empty pages. Let's see if we can get a list
-of staff back.
+of staff back. Actually, let me break this out as its own implementation step.
+
+4 - Add staff page
+~~~~~~~~~~~~~~~~~~
+I've been able to render some data using a StaffCtrl. Let's see if I can make
+the ajax request to actually get the data from QPlan. Alright, I was able to
+do this from within the StaffCtrl function. I think I'd like the flexibility
+to call this explicitly. I'll do this after I get some data back.
 
 Thoughts
 --------

@@ -4,6 +4,7 @@
         <head>
                 <title>QPlan Staff</title>
                 <script src="./js/angular.min.js"></script>
+                <script src="./js/staff.js"></script>
         </head>
 
         <body>
@@ -16,5 +17,11 @@
                 </ul>
             </nav>
         </body>
+
+        <div ng-controller="StaffCtrl">
+                <ul ng-repeat="skill in skills">
+                        <li>{{skill}}</li>
+                </ul>
+        </div>
 </html>
 
