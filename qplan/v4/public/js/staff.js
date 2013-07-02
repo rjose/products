@@ -1,19 +1,14 @@
 function StaffCtrl($scope, $http) {
-        $scope.skills = [];
+        $scope.staff_data = [];
 
         // Load data to render
         $http.get('/app/web/staff').then(
                         function(res) {
                                 console.dir(res);
-                                $scope.skills = res.data.skills;
+                                $scope.staff_data = res.data
                         },
                         function(res) {
                                 console.log("Ugh.");
                                 console.dir(res);
                         });
-
-
-        $scope.loadStaffData = function() {
-                console.log("TODO: Load staff data");
-        };
 }

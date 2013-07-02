@@ -22,7 +22,10 @@ link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
       [X][X][X][X][X]
 . Listen and respond to web requests [X][X][X][][][]
 . Create angular pages [X][X][X][][][][][]
-. Add staff page [X][][][]
+. Add staff page [X][X][][]
+. Add work page [][][][][]
+. Add tracks page [][][][][][][]
+. Add index page [][][][][][]
 . Add readline support [][][][][]
 
 

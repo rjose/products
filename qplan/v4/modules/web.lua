@@ -1,5 +1,6 @@
 RequestParser = require('request_parser')
 RequestRouter = require('request_router')
+json = require('json')
 
 local Web = {}
 
@@ -46,20 +47,12 @@ end
 
 function handle_app_web_staff(req)
         local people_by_skill, skill_tags, bandwidth = get_people_by_skill(ppl)
-        local tmp = {}
-        tmp[#tmp+1] = "{"
 
-        -- Add skills
-        tmp[#tmp+1] = '"skills": ['
-        for i = 1, #skill_tags-1 do
-                tmp[#tmp+1] = string.format('"%s",', skill_tags[i])
-        end
-        tmp[#tmp+1] = string.format('"%s"]', skill_tags[#skill_tags])
+        local result = {}
+        result.skills = skill_tags
+        result.people_by_skill = people_by_skill
 
-        tmp[#tmp+1] = "}"
-
-        result = RequestRouter.construct_response(200, "application/json", table.concat(tmp, "\n"))
-        return result
+        return RequestRouter.construct_response(200, "application/json", json.encode(result))
 end
 
 -- TODO: Move this to its own set of files

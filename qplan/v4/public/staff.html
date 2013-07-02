@@ -19,8 +19,12 @@
         </body>
 
         <div ng-controller="StaffCtrl">
-                <ul ng-repeat="skill in skills">
+                <ul ng-repeat="skill in staff_data.skills">
                         <li>{{skill}}</li>
+                        <ol>
+                                <li ng-repeat="person in
+                                staff_data.people_by_skill[skill]">{{person.name}}</li>
+                        </ol>
                 </ul>
         </div>
 </html>
