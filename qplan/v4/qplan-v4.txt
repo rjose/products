@@ -98,3 +98,11 @@ reports by track.
 
 Thoughts
 --------
+I should learn how to do TDD with angular. I should examine the angular-seed app
+to see if there's anything I can learn about organizing the source files.
+
+Here are some things I wanted to do:
+
+- Think about how to recover from a bad lua state
+- Review memory management in our C files
+- Add readline support

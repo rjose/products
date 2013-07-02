@@ -1,3 +1,4 @@
+package.path = package.path .. ";app/?.lua;modules/?.lua"
 -- Usage: lua -i shell.lua [version]
 -- The "version" refers to the save version
 
