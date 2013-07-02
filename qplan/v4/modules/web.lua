@@ -24,25 +24,9 @@ function get_people_by_skill(people)
 	local skill_tags = func.get_table_keys(people_by_skill)
 	table.sort(skill_tags)
 
-        local total_bandwidth = Person.sum_bandwidth(people, num_weeks)
+        local total_bandwidth = to_num_people(Person.sum_bandwidth(people, num_weeks), num_weeks)
 
         return people_by_skill, skill_tags, total_bandwidth
-
---         -- This prints people by skill
--- 	for i = 1,#skill_tags do
---                 local skill = skill_tags[i]
---                 local people_list = people_by_skill[skill]
---                 print(string.format("%s ==", skill))
---                 for j = 1,#people_list do
---                         print(string.format("     %3d. %-30s %.1f", j, people_list[j].name,
---                                                              people_list[j].skills[skill]))
---                 end
---         end
--- 
---         -- This prints total bandwidth
--- 	print(string.format("TOTAL Skill Supply: %s", Writer.tags_to_string(
--- 		to_num_people(total_bandwidth, pl.num_weeks), ", "
--- 	)))
 end
 
 function handle_app_web_staff(req)
@@ -51,6 +35,7 @@ function handle_app_web_staff(req)
         local result = {}
         result.skills = skill_tags
         result.people_by_skill = people_by_skill
+        result.bandwidth = bandwidth
 
         return RequestRouter.construct_response(200, "application/json", json.encode(result))
 end

@@ -19,6 +19,13 @@
         </body>
 
         <div ng-controller="StaffCtrl">
+                <h3>Staff Availability Totals</h3>
+                <ul>
+                        <li ng-repeat="skill in staff_data.skills">{{skill}}:
+                        {{staff_data.bandwidth[skill]}}</li>
+                </ul>
+
+                <h3>Staff List</h3>
                 <ul ng-repeat="skill in staff_data.skills">
                         <li>{{skill}}</li>
                         <ol>

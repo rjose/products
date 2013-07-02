@@ -27,18 +27,14 @@ function static_file_router(req)
         local path_pieces = req.path_pieces
 
         if (#req.path_pieces == 2 and req.path_pieces[2] == '') then
-                print("Option 1")
                 path_pieces = {"", "index.html"}
         elseif req.path_pieces[2] == 'css' then
-                print("Option 2")
                 content_type = "text/css"
         elseif req.path_pieces[2] == 'js' then
-                print("Option 3")
                 content_type = "application/javascript"
         end
 
         path = RequestRouter.public_dir .. table.concat(path_pieces, "/")
-        print("Opening path", path)
 
         -- Open file
         file = io.open(path, "r")
