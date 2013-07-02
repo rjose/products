@@ -79,6 +79,9 @@ void *web_routine(void *arg)
                                                        (void *)handler_context);
                 if (status != 0)
                         err_abort(status, "Create web thread");
+
+                if (pthread_detach(tid) != 0)
+                        err_abort(-1, "Couldn't detach thread");
         }
 
         return NULL;
@@ -111,8 +114,6 @@ static void *handle_request_routine(void *arg)
         str_capacity = MAXLINE;
 
 
-        if (pthread_detach(pthread_self()) != 0)
-                err_abort(-1, "Couldn't detach thread");
 
         // TODO: Need a timeout for malformed requests
 	while ((cur_len = my_readline(connfd, buf, MAXLINE)) > 0) {

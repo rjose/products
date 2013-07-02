@@ -20,8 +20,7 @@ Implementation
 link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
       Organize lua and C code]
       [X][X][X][X][X]
-. Listen and respond to web requests [][][][][][]
-. Add lua web module [][][][]
+. Listen and respond to web requests [X][][][][][]
 . Create angular pages [][][][][][][][]
 . Add readline support [][][][][]
 
@@ -72,6 +71,13 @@ functions for handling. I'll bring over the tests first and then hook things up.
 Done. Let's check in. So where do we hook things up? It's got to be in
 handle_request right after we parse the request. OK, was able to return a web
 page. Cool. Let's check in.
+
+The next step was to add a lua web module, but I think that should be done here
+instead. Let's pull the app module out of the request router and into the web
+module. Any json requests should come through here. I'll follow the conventions
+for how angular pages work.
+
+
 
 Thoughts
 --------

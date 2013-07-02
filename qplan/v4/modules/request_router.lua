@@ -18,6 +18,7 @@ function construct_response(code, content_type, content)
         return table.concat(tmp, "\r\n")
 end
 
+
 function static_file_router(req)
         local result
         local path = ''
@@ -53,9 +54,9 @@ function static_file_router(req)
         return result
 end
 
-function app_router(req)
+function sample_app_router(req)
         -- Need something like "/app/web/rbt"
-        if #req.path_pieces < 3 then
+        if #req.path_pieces < 4 then
                 return nil
         end
 
@@ -75,7 +76,7 @@ function app_router(req)
 end
 
 -- Set up routers
-RequestRouter.routers = {app_router, static_file_router}
+RequestRouter.routers = {sample_app_router, static_file_router}
 
 function RequestRouter.route_request(req)
         local result
@@ -92,4 +93,6 @@ function RequestRouter.route_request(req)
 end
 
 
+RequestRouter.construct_response = construct_response
+RequestRouter.static_file_router = static_file_router
 return RequestRouter
