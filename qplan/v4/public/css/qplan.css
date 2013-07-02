@@ -1,3 +1,7 @@
+body {
+font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace
+}
+
 .is-feasible-false {
         color: red
 }

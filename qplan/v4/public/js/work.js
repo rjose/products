@@ -12,6 +12,7 @@ function WorkCtrl($scope, $http) {
                                 console.dir(res);
                         });
 
+        // A helper function to convert a tags hash to a string
         $scope.tags_to_string = function(tags) {
                 var keys = [];
                 for (var key in tags) {

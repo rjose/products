@@ -1,5 +1,6 @@
 RequestParser = require('request_parser')
 RequestRouter = require('request_router')
+func = require('functional')
 json = require('json')
 
 local Web = {}
@@ -59,21 +60,28 @@ function handle_app_web_work(req)
         return RequestRouter.construct_response(200, "application/json", json.encode(result))
 end
 
+function handle_app_web_tracks(req)
+	local work = pl:get_work_items()
+        local track_hash, track_tags = func.group_items(work, get_track)
+        local result = {}
+        result.tracks = track_tags
+        result.work_by_track = track_hash
+        result.cutline = pl.cutline
+
+        return RequestRouter.construct_response(200, "application/json", json.encode(result))
+end
+
 -- TODO: Move this to its own set of files
 function handle_app_web_request(req)
         if req.path_pieces[RESOURCE_INDEX] == 'staff' then
                 return handle_app_web_staff(req)
         elseif req.path_pieces[RESOURCE_INDEX] == 'work' then
                 return handle_app_web_work(req)
+        elseif req.path_pieces[RESOURCE_INDEX] == 'tracks' then
+                return handle_app_web_tracks(req)
         end
-        local content = string.format([[{
-                "track_names": ["T1", "T2", "T3"],
-                "cutline": %d
-        }
-        ]], pl.cutline)
 
-        result = RequestRouter.construct_response(200, "application/json", content)
-        return result
+        return RequestRouter.construct_response(400, "application/json", "")
 end
 
 
