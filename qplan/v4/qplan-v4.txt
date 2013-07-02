@@ -20,7 +20,7 @@ Implementation
 link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
       Organize lua and C code]
       [X][X][X][X][X]
-. Listen and respond to web requests [X][][][][][]
+. Listen and respond to web requests [X][X][X][][][]
 . Create angular pages [][][][][][][][]
 . Add readline support [][][][][]
 
@@ -76,6 +76,13 @@ The next step was to add a lua web module, but I think that should be done here
 instead. Let's pull the app module out of the request router and into the web
 module. Any json requests should come through here. I'll follow the conventions
 for how angular pages work.
+
+
+3 - Create angular pages
+~~~~~~~~~~~~~~~~~~~~~~~~
+OK, the next thing we should do is start creating some web pages. I'll follow
+along with the angular tutorial. I think it may make sense for me to do this
+work on my mac. Let's check this out over there.
 
 
 
