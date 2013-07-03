@@ -1,6 +1,14 @@
 -- TODO: Document this
 local func = {}
 
+function func.map_table(f, t)
+	local result = {}
+	for k, item in pairs(t) do
+                result[k] = f(item)
+	end
+	return result
+end
+
 function func.filter(items, filter)
 	local result = {}
 	for _, item in ipairs(items) do

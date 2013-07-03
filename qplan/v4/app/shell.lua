@@ -22,10 +22,74 @@ pl, ppl = Data.load_data(version)
 
 Cmd.init(pl, ppl)
 
+pw = Cmd.print_work_items
+
+
+-- CANNED REPORTS -------------------------------------------------------------
+--
 function w()
         local work_items = Select.all_work(Cmd.plan)
         Cmd.print_work_items(work_items)
 end
 
+function wac()
+        local work_items = Select.all_work(Cmd.plan)
+
+        local above_cutline_filter = Select.make_above_cutline_filter(Cmd.plan)
+        work_items = Select.apply_filters(work_items, {above_cutline_filter})
+
+        Cmd.print_work_items(work_items)
+end
+
+function rrt()
+        -- Get work items
+        local work_items = Select.all_work(Cmd.plan)
+
+        -- Print work items
+        Cmd.print_work_items(work_items, Cmd.rrt_formatter)
+end
+
+-- UTILITY FUNCTIONS ----------------------------------------------------------
+--
+
+-- Rank can be a single number or an array of numbers
+function r(rank)
+        --return Select.all_work(Cmd.plan)
+        return Select.work_with_rank(Cmd.plan, rank)
+end
+
+-- This is a helper function that essentially maps "get_id" over a set of work
+-- items. This is necessary when we need to work with actual work IDs rather
+-- than work rankings.
+function get_ids(work_items)
+	local result = {}
+	for i = 1,#work_items do
+		result[#result+1] = work_items[i].id
+	end
+	return result
+end
+
+-- Rank work. work_items can be either ids or work objects
+function rank(work_items, position)
+	if #work_items == 0 then return end
+
+	-- If we have work objects, get the ids
+	if type(work_items[1]) == "table" then
+		work_items = get_ids(work_items)
+	end
+	Cmd.plan:rank(work_items, {["at"] = position})
+end
+
+-- "triage sort". This just pulls all of the items Triaged to 1 to the top of the list
+-- This ranks items stably.
+function tsort()
+	-- Get IDs of all 1s and 1.5s
+	local ids = get_ids(w1())
+	Cmd.plan:rank(ids)
+end
+
+function sc(cutline)
+        Cmd.plan.cutline = cutline
+end
 
 print("READY")

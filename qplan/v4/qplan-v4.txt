@@ -25,7 +25,7 @@ link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
 . Add staff page [X][X][X][X]
 . Add work page [X][X][X][][]
 . Add tracks page [X][X][][][][][]
-. Revise web and shell functions [X][][][][][]
+. Revise web and shell functions [X][X][X][][][]
 . Add index page [][][][][][]
 . Add readline support [][][][][]
 
@@ -159,6 +159,11 @@ code should move up to cmdline and web. I need to distinguish between pure lua
 commandline and qplan commandline. The pure lua functions have to be short and
 print stuff out. The qplan cmdline functions will be more explicit but use a
 piping syntax.
+
+Our filters should take a work item and the index of that work item in the
+array. Alright, I've done a pile of work to pull functions out cmdline and
+into shell to separate selection, filtering, and reporting. Gotten through
+rrt.
 
 Thoughts
 --------

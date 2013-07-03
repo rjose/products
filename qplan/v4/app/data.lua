@@ -20,7 +20,9 @@ function Data.load_data(prefix)
 	num_work_items = #work_array
 	local work_table = {}
 	for i = 1,#work_array do
-		work_table[work_array[i].id] = work_array[i]
+                local w = work_array[i]
+                w.rank = i -- Set initial rank
+		work_table[work_array[i].id] = w
 	end
 	pl.work_table = work_table
 	pl.default_supply = Person.sum_bandwidth(ppl, 13)

@@ -51,20 +51,12 @@ function pt(tags)
 	print(Writer.tags_to_string(tags))
 end
 
--- "Print workitems"
-function pw(work_items)
-	print("Rank\tID\tName\tTags")
-	for i = 1,#work_items do
-		local w = work_items[i]
-		local rank = w.rank or "--"
-		print(string.format("#%-4s\t%3s\t%20s\t%s\t%s", rank, w.id, w.name,
-                        Writer.tags_to_string(w.triage),
-			Writer.tags_to_string(w.tags)))
-	end
-end
-
 -- REPORTING FUNCTIONS --------------------------------------------------------
 --
+function format_number(num)
+        return string.format("%.1f", num)
+end
+
 function Cmd.default_work_formatter(work_items)
         local tmp = {}
         tmp[#tmp+1] = "Rank\tID\tName\tTags"
@@ -75,6 +67,42 @@ function Cmd.default_work_formatter(work_items)
                         Writer.tags_to_string(w.triage),
 			Writer.tags_to_string(w.tags)))
 	end
+        return table.concat(tmp, "\n")
+end
+
+-- Assuming that work items are in ranked order
+function Cmd.rrt_formatter(work_items)
+        local tmp = {}
+        tmp[#tmp+1] = string.format("%-5s|%-15s|%-40s|%-30s|%-30s",
+                             "Rank", "Track", "Item", "Estimate", "Supply left")
+	tmp[#tmp+1] =
+           ("-----|---------------|----------------------------------------|" ..
+                    "------------------------------|--------------------------")
+
+	local feasible_line, _, supply_totals =
+                      Work.find_feasible_line(work_items, Cmd.plan.default_supply)
+
+	for i = 1,#work_items do
+		local w = work_items[i]
+                local totals = Cmd.plan:to_num_people(supply_totals[i])
+                totals = func.map_table(format_number, totals)
+                tmp[#tmp+1] = string.format("%-5s|%-15s|%-40s|%-30s|%-30s",
+                        "#" .. w.rank,
+                        w.tags.track:truncate(15),
+                        w.name:truncate(40, {["ellipsis"] = true}),
+                        Writer.tags_to_string(w.estimates),
+                        Writer.tags_to_string(totals)
+                        )
+
+		if (w.rank == Cmd.plan.cutline) and (w.rank == feasible_line) then
+			tmp[#tmp+1] = "----- CUTLINE/FEASIBLE LINE -----"
+		elseif w.rank == Cmd.plan.cutline then
+			tmp[#tmp+1] = "----- CUTLINE -----------"
+		elseif w.rank == feasible_line then
+			tmp[#tmp+1] = "----- FEASIBLE LINE -----"
+		end
+	end
+
         return table.concat(tmp, "\n")
 end
 
@@ -91,177 +119,57 @@ end
 
 
 
--- WORK SELECTION -------------------------------------------------------------
--- These functions are used to select work items.
---
--- TODO: Hook these functions up to the qplan shell
 
 
+-- -- Returns all work items whose Triage value is 1
+-- function wfilter(filter)
+-- 	return pl:get_work_items{["filter"] = filter}
+-- end
+-- 
+-- function w1()
+--         local f = function(work_item)
+--                 return Work.triage_xx_filter(1, work_item)
+--         end
+--         return wfilter(f)
+-- end
+-- 
+-- -- Returns all work items whose Triage value is 2
+-- function w2()
+--         local f = function(work_item)
+--                 return Work.triage_xx_filter(2, work_item)
+--         end
+--         return wfilter(f)
+-- end
+-- 
+-- -- Returns all work items whose Triage value is 3
+-- function w2()
+--         local f = function(work_item)
+--                 return Work.triage_xx_filter(3, work_item)
+--         end
+--         return wfilter(f)
+-- end
 
-function above_cutline_filter(work_item)
-	if not work_item.rank then
-		return false
-	else
-		return work_item.rank <= pl.cutline
-	end
-end
+-- -- Returns true if work is below cutline
+-- function wbc_filter(work_item)
+--         -- Find rank in plan
+--         work_rank = nil
+--         for r, work_id in ipairs(pl.work_items) do
+--                 if work_id .. '' == work_item.id then
+--                         work_rank = r
+--                 end
+--         end
+-- 
+--         if work_rank and work_rank > pl.cutline then
+--                 return true
+--         else
+--                 return false
+--         end
+-- end
 
--- Selects all "work above cutline"
-function wac()
-	return pl:get_work_items{["ABOVE_CUT"] = 1}
-end
-
--- Selects all work
-function wall()
-	return pl:get_work_items{}
-end
-
--- Select work items by rank. If an array is specified, returns an array of
--- work items (ignoring any value out of range)
-function r(rank)
-	if type(rank) == "number" then
-		return pl:get_work(rank)
-	elseif type(rank) == "table" then
-		return pl:get_work_array(rank)
-	else
-		print("Couldn't interpret input")
-	end
-end
-
-
-
--- Returns all work items whose Triage value is 1
-function wfilter(filter)
-	return pl:get_work_items{["filter"] = filter}
-end
-
-function w1()
-        local f = function(work_item)
-                return Work.triage_xx_filter(1, work_item)
-        end
-        return wfilter(f)
-end
-
--- Returns all work items whose Triage value is 2
-function w2()
-        local f = function(work_item)
-                return Work.triage_xx_filter(2, work_item)
-        end
-        return wfilter(f)
-end
-
--- Returns all work items whose Triage value is 3
-function w2()
-        local f = function(work_item)
-                return Work.triage_xx_filter(3, work_item)
-        end
-        return wfilter(f)
-end
-
--- Returns true if work is below cutline
-function wbc_filter(work_item)
-        -- Find rank in plan
-        work_rank = nil
-        for r, work_id in ipairs(pl.work_items) do
-                if work_id .. '' == work_item.id then
-                        work_rank = r
-                end
-        end
-
-        if work_rank and work_rank > pl.cutline then
-                return true
-        else
-                return false
-        end
-end
-
-
--- UPDATING THE PLAN ----------------------------------------------------------
--- These functions are used to update the plan. These are mainly used for
--- changing the relative priority of the work items.
---
-
--- This is a helper function that essentially maps "get_id" over a set of work
--- items. This is necessary when we need to work with actual work IDs rather
--- than work rankings.
-function get_ids(work_items)
-	local result = {}
-	for i = 1,#work_items do
-		result[#result+1] = work_items[i].id
-	end
-	return result
-end
-
--- Rank work. work_items can be either ids or work objects
-function rank(work_items, position)
-	if #work_items == 0 then return end
-
-	-- If we have work objects, get the ids
-	if type(work_items[1]) == "table" then
-		work_items = get_ids(work_items)
-	end
-	pl:rank(work_items, {["at"] = position})
-end
-
-
--- "triage sort". This just pulls all of the items Triaged to 1 to the top of the list
--- This ranks items stably.
-function tsort()
-	-- Get IDs of all 1s and 1.5s
-	local ids = get_ids(w1())
-	pl:rank(ids)
-end
-
-function sc(cutline)
-        pl.cutline = cutline
-end
 
 
 -- QPLAN REPORTS --------------------------------------------------------------
 --
-
--- Converts skill_totals in man-weeks into num-people
-function to_num_people(skill_totals, num_weeks)
-        if skill_totals == nil then
-                return {}
-        end
-
-	for k, _ in pairs(skill_totals) do
-		skill_totals[k] = string.format("%.1f", skill_totals[k] / num_weeks)
-	end
-	return skill_totals
-end
-
-
--- "Report running totals"
-function rrt()
-	print(string.format("%-5s|%-15s|%-40s|%-30s|%-30s",
-		"Rank", "Track", "Item", "Estimate", "Supply left"))
-	print("-----|---------------|----------------------------------------|" ..
-              "------------------------------|--------------------------")
-	local work = pl:get_work_items()
-	local feasible_line, _, supply_totals = pl:find_feasible_line()
-
-	for i = 1,#work do
-		local w = work[i]
-		print(string.format("%-5s|%-15s|%-40s|%-30s|%-30s",
-			"#" .. w.rank,
-			w.tags.track:truncate(15),
-			w.name:truncate(40, {["ellipsis"] = true}),
-			Writer.tags_to_string(w.estimates),
-			Writer.tags_to_string(to_num_people(supply_totals[i], pl.num_weeks))
-		))
-
-		if (i == pl.cutline) and (i == feasible_line) then
-			print("CUTLINE/FEASIBLE LINE -----")
-		elseif i == pl.cutline then
-			print("----- CUTLINE -----------")
-		elseif i == feasible_line then
-			print("----- FEASIBLE LINE -----")
-		end
-	end
-end
-
 
 -- Filters on one or more track labels
 function make_track_filter(t)
@@ -598,7 +506,6 @@ export():	Writes data to "data/output.txt" in a form for Google Docs
 
 -- Printing
 p():		Alias for print
-pw(ws):		Print work items "ws"
 
 -- Select work
 r(rank):	Selects work item at rank 'rank'. May also take an array of ranks.
