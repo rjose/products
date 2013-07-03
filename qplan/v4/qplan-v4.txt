@@ -153,7 +153,12 @@ actually be set on the functions providing the work items. I'll pull this out
 in a bit. 
 
 OK, we need to have something like qplan.lua that sets up the commandline and
-web (and whatever else) modules. Done. Let's check this in.
+web (and whatever else) modules. Done. Let's check this in. The next step is
+moving the select and filter functions to a select.lua file. The reporting
+code should move up to cmdline and web. I need to distinguish between pure lua
+commandline and qplan commandline. The pure lua functions have to be short and
+print stuff out. The qplan cmdline functions will be more explicit but use a
+piping syntax.
 
 Thoughts
 --------
