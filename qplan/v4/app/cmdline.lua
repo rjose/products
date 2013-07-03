@@ -70,6 +70,69 @@ function Cmd.default_work_formatter(work_items)
         return table.concat(tmp, "\n")
 end
 
+function Cmd.default_work_hash_formatter(work_hash, keys, options)
+        local options = options or {}
+        local total_demand = {}
+        local tmp = {}
+        print("Default formatter", options.with_detail, options.with_net_supply)
+	for j = 1,#keys do
+		local cutline_shown = false
+		local key = keys[j]
+		local work_items = work_hash[key]
+
+		-- Sum the key items
+		local demand = Work.sum_demand(work_items)
+		local demand_str = Writer.tags_to_string(
+                        func.map_table(format_number, Cmd.plan:to_num_people(demand)), ", ")
+                total_demand = Work.add_skill_demand(total_demand, demand)
+
+		tmp[#tmp+1] = "== " .. key
+
+                if options.with_detail then
+                        tmp[#tmp+1] = string.format("     %-5s|%-40s|%6s|", "Rank", "Item", "Triage")
+                        tmp[#tmp+1] = "     -----|----------------------------------------|" ..
+                                                                                        "----------|"
+                        for i = 1,#work_items do
+                                local w = work_items[i]
+                                if w.rank > pl.cutline and cutline_shown == false then
+                                        tmp[#tmp+1] = "     ----- CUTLINE -----------"
+                                        cutline_shown = true
+                                end
+                                tmp[#tmp+1] = string.format("     %-5s|%-40s|%-10s|%s",
+                                        "#" .. w.rank,
+                                        w.name:truncate(40, {["ellipsis"] = true}),
+                                        w:merged_triage(),
+                                        Writer.tags_to_string(w.estimates, ", "))
+                        end
+                        tmp[#tmp+1] = "     ---------------------------------"
+                end
+                tmp[#tmp+1] = string.format("     Required people: %s", demand_str)
+                tmp[#tmp+1] = ""
+	end
+
+	-- Print overall demand total
+        tmp[#tmp+1] = string.format("%-30s %s", "TOTAL Required:", Writer.tags_to_string(
+                func.map_table(format_number, total_demand), ", "
+        ))
+
+	
+        if options.with_net_supply then
+                -- Print total supply
+                local total_bandwidth = Person.sum_bandwidth(Cmd.staff, Cmd.plan.num_weeks)
+                tmp[#tmp+1] = string.format("%-30s %s", "TOTAL Skill Supply:", Writer.tags_to_string(
+                        func.map_table(format_number, Cmd.plan:to_num_people(total_bandwidth)), ", "
+                ))
+
+                -- Print net supply
+                -- NOTE: This is a hack, but to_num_people has already converted
+                -- total_bandwidth and total_demand to num people!
+                local net_supply = Work.subtract_skill_demand(total_bandwidth, total_demand);
+                tmp[#tmp+1] = string.format("%-30s %s", "TOTAL Net Supply:", 
+                        Writer.tags_to_string(func.map_table(format_number, net_supply), ", "))
+        end
+        return table.concat(tmp, "\n")
+end
+
 -- Assuming that work items are in ranked order
 function Cmd.rrt_formatter(work_items)
         local tmp = {}
@@ -114,6 +177,13 @@ function Cmd.print_work_items(work_items, work_formatter)
         end
 end
 
+function Cmd.print_work_hash(work_hash, keys, work_hash_formatter, options)
+        if work_hash_formatter == nil then
+                print(Cmd.default_work_hash_formatter(work_hash, keys, options))
+        else
+                print(work_formatter(work_hash, keys, options))
+        end
+end
 -- TODO: Add functions that combine functions from Select and the reporting
 -- functions
 
@@ -193,9 +263,68 @@ function make_track_filter(t)
         return result
 end
 
-function get_track(work_item)
-        return work_item.tags.track
+
+
+function Cmd.work_groupings_formatter(work_hash, groupings, options)
+        local options = options or {}
+        local total_demand = {}
+        local tmp = {}
+	for j = 1,#groupings do
+		local cutline_shown = false
+		local group = groupings[j]
+		local work_items = work_hash[group]
+
+		-- Sum the group items
+		local demand = Work.sum_demand(work_items)
+		local demand_str = Writer.tags_to_string(Cmd.plan:to_num_people(demand), ", ")
+                total_demand = Work.add_skill_demand(total_demand, demand)
+
+		tmp[#tmp+1] = "== " .. group
+
+                if options.with_detail then
+                        tmp[#tmp+1] = string.format("     %-5s|%-40s|%6s|", "Rank", "Item", "Triage")
+                        tmp[#tmp+1] = "     -----|----------------------------------------|" ..
+                                                                                        "----------|"
+                        for i = 1,#work_items do
+                                local w = work_items[i]
+                                if w.rank > pl.cutline and cutline_shown == false then
+                                        tmp[#tmp+1] = "     ----- CUTLINE -----------"
+                                        cutline_shown = true
+                                end
+                                tmp[#tmp+1] = string.format("     %-5s|%-40s|%-10s|%s",
+                                        "#" .. w.rank,
+                                        w.name:truncate(40, {["ellipsis"] = true}),
+                                        w:merged_triage(),
+                                        Writer.tags_to_string(w.estimates, ", "))
+                        end
+                        tmp[#tmp+1] = "     ---------------------------------"
+                end
+                tmp[#tmp+1] = string.format("     Required people: %s", demand_str)
+                tmp[#tmp+1] = ""
+	end
+
+	-- Print overall demand total
+        tmp[#tmp+1] = string.format("%-30s %s", "TOTAL Required:", Writer.tags_to_string(
+                Cmd.plan:to_num_people(total_demand), ", "
+        ))
+
+	
+        if options.with_net_supply then
+                -- Print total supply
+                local total_bandwidth = Person.sum_bandwidth(Cmd.staff, Cmd.plan.num_weeks)
+                tmp[#tmp+1] = string.format("%-30s %s", "TOTAL Skill Supply:", Writer.tags_to_string(
+                        Cmd.plan:to_num_people(total_bandwidth), ", "
+                ))
+
+                -- Print net supply
+                -- NOTE: This is a hack, but to_num_people has already converted
+                -- total_bandwidth and total_demand to num people!
+                local net_supply = Work.subtract_skill_demand(total_bandwidth, total_demand);
+                tmp[#tmp+1] = string.format("%-30s %s", "TOTAL Net Supply:", Writer.tags_to_string(net_supply, ", "))
+        end
+        return table.concat(tmp, "\n")
 end
+
 
 function print_work_by_grouping(groupings, work_hash)
 	for j = 1,#groupings do
@@ -204,9 +333,9 @@ function print_work_by_grouping(groupings, work_hash)
 		local group_items = work_hash[group]
 
 		-- Sum the group items
-		local demand = Work.sum_demand(func.filter(group_items, above_cutline_filter))
+		local demand = Work.sum_demand(func.filter(group_items, Select.make_above_cutline_filter(Cmd.plan)))
 		local demand_str = Writer.tags_to_string(
-			to_num_people(demand, pl.num_weeks), ", ")
+			Cmd.plan:to_num_people(demand), ", ")
 
 		print("== " .. group)
 
@@ -235,7 +364,7 @@ function print_work_by_grouping(groupings, work_hash)
 
 end
 
-function rbt(t, triage)
+function rbt2(t, triage)
         -- Construct options
         local options = {}
         options.filter = {}
@@ -275,9 +404,9 @@ function rbt(t, triage)
 
 
 	-- Print overall demand total
-	local total_demand = Work.sum_demand(func.filter(work, above_cutline_filter))
+	local total_demand = Work.sum_demand(func.filter(work, Select.make_above_cutline_filter(Cmd.plan)))
 	print(string.format("%-30s %s", "TOTAL Required (for cutline):", Writer.tags_to_string(
-		to_num_people(total_demand, pl.num_weeks), ", "
+		Cmd.plan:to_num_people(total_demand), ", "
 	)))
 
         -- If we're filtering the results, return now since there's no point in
@@ -289,7 +418,7 @@ function rbt(t, triage)
         -- Print total supply
         local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
 	print(string.format("%-30s %s", "TOTAL Skill Supply:", Writer.tags_to_string(
-		to_num_people(total_bandwidth, pl.num_weeks), ", "
+		Cmd.plan:to_num_people(total_bandwidth), ", "
 	)))
 
         -- Print net supply
@@ -369,6 +498,10 @@ function make_triage_filter(triage)
         return result
 end
 
+
+function get_track(work_item)
+        return work_item.tags.track
+end
 
 function get_triage(work_item)
         return work_item:merged_triage()
@@ -482,14 +615,14 @@ function rs()
 
         local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
 	print(string.format("TOTAL Skill Supply: %s", Writer.tags_to_string(
-		to_num_people(total_bandwidth, pl.num_weeks), ", "
+		Cmd.plan:to_num_people(total_bandwidth), ", "
 	)))
 end
 
 function rss()
         local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
 	print(string.format("TOTAL Skill Supply: %s", Writer.tags_to_string(
-		to_num_people(total_bandwidth, pl.num_weeks), ", "
+		Cmd.plan:to_num_people(total_bandwidth), ", "
 	)))
 end
 

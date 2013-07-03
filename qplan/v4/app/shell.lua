@@ -45,8 +45,31 @@ function rrt()
         -- Get work items
         local work_items = Select.all_work(Cmd.plan)
 
-        -- Print work items
+        -- Format and print work items
         Cmd.print_work_items(work_items, Cmd.rrt_formatter)
+end
+
+function rbt(t, triage)
+        -- Get work items
+        local work_items = Select.all_work(Cmd.plan)
+        print(#work_items)
+
+        -- Filter items
+        local filters = Select.get_track_and_triage_filters(t, triage)
+        print(#filters)
+        work_items = Select.apply_filters(work_items, filters)
+        print(#work_items)
+
+
+        -- Group items
+        local work_hash, tracks = Select.group_by_track(work_items)
+
+        -- Format and print items
+        local options = {}
+        options.with_detail = true
+        options.with_net_supply = true
+        formatter = nil                 -- Use default formatter
+        Cmd.print_work_hash(work_hash, tracks, formatter, options)
 end
 
 -- UTILITY FUNCTIONS ----------------------------------------------------------
