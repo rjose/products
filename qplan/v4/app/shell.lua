@@ -52,24 +52,16 @@ end
 function rbt(t, triage)
         -- Get work items
         local work_items = Select.all_work(Cmd.plan)
-        print(#work_items)
 
         -- Filter items
         local filters = Select.get_track_and_triage_filters(t, triage)
-        print(#filters)
         work_items = Select.apply_filters(work_items, filters)
-        print(#work_items)
-
 
         -- Group items
         local work_hash, tracks = Select.group_by_track(work_items)
 
-        -- Format and print items
-        local options = {}
-        options.with_detail = true
-        options.with_net_supply = true
-        formatter = nil                 -- Use default formatter
-        Cmd.print_work_hash(work_hash, tracks, formatter, options)
+        -- Format and print items using default formatter
+        Cmd.print_work_hash(work_hash, tracks)
 end
 
 -- UTILITY FUNCTIONS ----------------------------------------------------------

@@ -74,6 +74,9 @@ function Cmd.default_work_hash_formatter(work_hash, keys, options)
         local options = options or {}
         local total_demand = {}
         local tmp = {}
+        local with_detail = not options.without_detail
+        local with_net_supply = not options.without_net_supply
+
         print("Default formatter", options.with_detail, options.with_net_supply)
 	for j = 1,#keys do
 		local cutline_shown = false
@@ -88,7 +91,7 @@ function Cmd.default_work_hash_formatter(work_hash, keys, options)
 
 		tmp[#tmp+1] = "== " .. key
 
-                if options.with_detail then
+                if with_detail then
                         tmp[#tmp+1] = string.format("     %-5s|%-40s|%6s|", "Rank", "Item", "Triage")
                         tmp[#tmp+1] = "     -----|----------------------------------------|" ..
                                                                                         "----------|"
@@ -116,7 +119,7 @@ function Cmd.default_work_hash_formatter(work_hash, keys, options)
         ))
 
 	
-        if options.with_net_supply then
+        if with_net_supply then
                 -- Print total supply
                 local total_bandwidth = Person.sum_bandwidth(Cmd.staff, Cmd.plan.num_weeks)
                 tmp[#tmp+1] = string.format("%-30s %s", "TOTAL Skill Supply:", Writer.tags_to_string(
