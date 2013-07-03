@@ -130,32 +130,6 @@ function Select.get_track_and_triage_filters(t, triage)
         end
 
         return result
-
---        -- Make a track filter, if necessary
---        if t then
---                if type(t) == "number" then
---                        triage = t
---                else
---                        result[#result+1] = Select.make_track_filter(t)
---                end
---        end
---
---        -- Make a triage filter, if necessary
---        if triage then
---                -- Check for 1 vs 1.5, e.g.
---                fractional_part = triage % 1
---                if fractional_part > 0 then
---                        result[#result+1] = function(work_item)
---                                return Work.triage_xx_filter(triage - fractional_part, work_item)
---                        end
---                else
---                        result[#result+1] = function(work_item)
---                                return Work.triage_filter(triage, work_item)
---                        end
---                end
---        end
---
---        return result
 end
 
 

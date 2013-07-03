@@ -69,7 +69,6 @@ end
 
 -- Rank can be a single number or an array of numbers
 function r(rank)
-        --return Select.all_work(Cmd.plan)
         return Select.work_with_rank(Cmd.plan, rank)
 end
 
@@ -98,6 +97,7 @@ end
 -- "triage sort". This just pulls all of the items Triaged to 1 to the top of the list
 -- This ranks items stably.
 function tsort()
+        -- TODO: Fix this
 	-- Get IDs of all 1s and 1.5s
 	local ids = get_ids(w1())
 	Cmd.plan:rank(ids)
