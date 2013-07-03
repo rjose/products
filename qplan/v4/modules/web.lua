@@ -5,9 +5,19 @@ json = require('json')
 
 local Web = {}
 
+-- These are things that must be set via an init function
+Web.plan = nil
+Web.staff = nil
+
 APP_INDEX = 2
 DEVICE_INDEX = 3
 RESOURCE_INDEX = 4
+
+function Web.init(plan, staff)
+        Web.plan = plan
+        Web.staff = staff
+end
+
 
 -- TODO: Share this with rs()
 function get_people_by_skill(people)
@@ -31,7 +41,7 @@ function get_people_by_skill(people)
 end
 
 function handle_app_web_staff(req)
-        local people_by_skill, skill_tags, bandwidth = get_people_by_skill(ppl)
+        local people_by_skill, skill_tags, bandwidth = get_people_by_skill(Web.staff)
 
         local result = {}
         result.skills = skill_tags
@@ -49,12 +59,12 @@ function handle_app_web_work(req)
         local result = {}
         result.work = work
         result.feasible_line = feasible_line
-        result.cutline = pl.cutline
+        result.cutline = Web.plan.cutline
 
         -- Adjust net totals to be people
         result.net_totals = {}
         for i, t in ipairs(supply_totals) do
-                result.net_totals[i] = to_num_people(supply_totals[i], pl.num_weeks)
+                result.net_totals[i] = to_num_people(supply_totals[i], Web.plan.num_weeks)
         end
 
         return RequestRouter.construct_response(200, "application/json", json.encode(result))
@@ -66,7 +76,7 @@ function handle_app_web_tracks(req)
         local result = {}
         result.tracks = track_tags
         result.work_by_track = track_hash
-        result.cutline = pl.cutline
+        result.cutline = Web.plan.cutline
 
         return RequestRouter.construct_response(200, "application/json", json.encode(result))
 end

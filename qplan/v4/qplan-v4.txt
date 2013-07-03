@@ -25,6 +25,7 @@ link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
 . Add staff page [X][X][X][X]
 . Add work page [X][X][X][][]
 . Add tracks page [X][X][][][][][]
+. Revise web and shell functions [X][][][][][]
 . Add index page [][][][][][]
 . Add readline support [][][][][]
 
@@ -139,6 +140,20 @@ and separate the collection of data from the rendering and then send that back
 to the ajax call. OK, I have the data. Was thinking of having a dropdown to
 select tracks, but let's just render everything. Done. Pretty cool. One last
 bit of functionality is to show the running demand as well.
+
+7 - Revise web and shell functions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I want the code architecture to follow a piping model that we'll use in our
+qplan shell. Let's see if we can revise the code that serves the work.html
+page. Getting the work items is fine, but I don't like the global pl or ppl
+variables. What's the best way of handling this? I think we should set this
+from the shell. We should set this on the Web module. Let's give this a try.
+I'll set the staff and plan on the web module for now, but this should
+actually be set on the functions providing the work items. I'll pull this out
+in a bit. 
+
+OK, we need to have something like qplan.lua that sets up the commandline and
+web (and whatever else) modules. Done. Let's check this in.
 
 Thoughts
 --------

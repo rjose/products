@@ -1,6 +1,7 @@
-package.path = package.path .. ";app/?.lua;modules/?.lua"
 -- Usage: lua -i shell.lua [version]
 -- The "version" refers to the save version
+
+package.path = package.path .. ";app/?.lua;modules/?.lua"
 
 -- NOTE: Everything here is global so we can access it from the shell
 require('shell_functions')
@@ -12,13 +13,9 @@ if version then
 end
 
 
+-- TODO: Make these local
 -- Load data (at some point, use a prefix to specify a version)
 pl, ppl = load_data(version)
-
--- Set up areas
-phone = {"austin", "felix", "soprano", "money"}
-tablet = {"tablet"}
-rel = {"rapportive", "contacts"}
 
 
 

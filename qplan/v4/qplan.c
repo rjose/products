@@ -88,20 +88,10 @@ static lua_State *init_lua_state(int version)
 
         /* Load qplan functionality */
         lua_getglobal(result, "require");
-        lua_pushstring(result, "app.shell_functions");
+        lua_pushstring(result, "app.qplan");
         if (lua_pcall(result, 1, 1, 0) != LUA_OK)
-                luaL_error(result, "Problem requiring shell functions: %s",
+                luaL_error(result, "Problem requiring qplan.lua: %s",
                                 lua_tostring(result, -1));
-
-
-        /* Load web handling functionality */
-        lua_getglobal(result, "require");
-        lua_pushstring(result, "modules.web");
-        if (lua_pcall(result, 1, 1, 0) != LUA_OK)
-                luaL_error(result, "Problem requiring shell functions: %s",
-                                lua_tostring(result, -1));
-        lua_setglobal(result, "web");
-
 
         /* Load version specified from commandline */
         lua_getglobal(result, "s");

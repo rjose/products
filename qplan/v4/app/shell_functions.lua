@@ -9,14 +9,20 @@ func = require('functional')
 
 require('string_utils')
 
+local Cmd = {}
+Cmd.plan = nil
+Cmd.staff = nil
+
+function Cmd.init(plan, staff)
+        Cmd.plan = plan
+        Cmd.staff = staff
+end
+
+
 -- Global environment
 env = {}
 env.summaries = true
 
--- TODO: Redesign global state
-function s(version)
-        pl, ppl = load_data(version)
-end
 
 
 -- TODO: Talk about naming conventions
@@ -660,3 +666,5 @@ rs():		Report available supply
 ]]
 	)
 end
+
+return Cmd
