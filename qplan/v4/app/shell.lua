@@ -33,7 +33,7 @@ function w()
         local work_items = Select.all_work(Cmd.plan)
 
         -- Format work items
-        local result_string = Cmd.default_work_formatter(work_items)
+        local result_string = Cmd.default_format_work(work_items)
 
         -- Print result
         print(result_string)
@@ -48,7 +48,7 @@ function wac()
         work_items = Select.apply_filters(work_items, {above_cutline_filter})
 
         -- Format work items
-        local result_string = Cmd.default_work_formatter(work_items)
+        local result_string = Cmd.default_format_work(work_items)
 
         -- Print result
         print(result_string)
@@ -59,7 +59,7 @@ function rrt()
         local work_items = Select.all_work(Cmd.plan)
 
         -- Format work items
-        local result_string = Cmd.rrt_formatter(work_items)
+        local result_string = Cmd.format_rrt(work_items)
 
         -- Print result
         print(result_string)
@@ -77,7 +77,7 @@ function rbt(t, triage)
         local work_hash, tracks = Select.group_by_track(work_items)
 
         -- Format result items
-        local result_string = Cmd.default_work_hash_formatter(work_hash, tracks)
+        local result_string = Cmd.default_format_work_hash(work_hash, tracks)
         
         -- Print result
         print(result_string)

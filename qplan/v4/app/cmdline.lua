@@ -30,7 +30,7 @@ function format_number(num)
         return string.format("%.1f", num)
 end
 
-function Cmd.default_work_formatter(work_items)
+function Cmd.default_format_work(work_items)
         local tmp = {}
         tmp[#tmp+1] = "Rank\tID\tName\tTags"
 	for i = 1,#work_items do
@@ -43,7 +43,7 @@ function Cmd.default_work_formatter(work_items)
         return table.concat(tmp, "\n")
 end
 
-function Cmd.default_work_hash_formatter(work_hash, keys, options)
+function Cmd.default_format_work_hash(work_hash, keys, options)
         local options = options or {}
         local total_demand = {}
         local tmp = {}
@@ -110,7 +110,7 @@ function Cmd.default_work_hash_formatter(work_hash, keys, options)
 end
 
 -- Assuming that work items are in ranked order
-function Cmd.rrt_formatter(work_items)
+function Cmd.format_rrt(work_items)
         local tmp = {}
         tmp[#tmp+1] = string.format("%-5s|%-15s|%-40s|%-30s|%-30s",
                              "Rank", "Track", "Item", "Estimate", "Supply left")
