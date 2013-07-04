@@ -10,6 +10,8 @@ Select = require('app/select')
 
 require('string_utils')
 
+-- MODULE INIT ----------------------------------------------------------------
+--
 local Cmd = {}
 Cmd.plan = nil
 Cmd.staff = nil
@@ -18,10 +20,6 @@ function Cmd.init(plan, staff)
         Cmd.plan = plan
         Cmd.staff = staff
 end
-
-
--- Print alias
-p = print
 
 
 -- REPORTING FUNCTIONS --------------------------------------------------------
@@ -231,41 +229,5 @@ function rss()
 	)))
 end
 
--- TODO: Move this to shell
--- HELP -----------------------------------------------------------------------
---
-
-function help()
-	print(
-[[
--- Reading/Writing
-load(n):	Loads data from disk. Suffix "n" is optional.
-wrd(n):		Writes data to file with suffix "n"
-export():	Writes data to "data/output.txt" in a form for Google Docs
-
--- Printing
-p():		Alias for print
-
--- Select work
-r(rank):	Selects work item at rank 'rank'. May also take an array of ranks.
-wall():		Selects all work in plan
-wac():		Selects work above cutline
-w1():		Work with overall triage of 1
-w2():		Work with overall triage of 2
-
--- Updating plan
-rank(ws, p):	Ranks work items "ws" at position "p". May use work items or IDs.
-sc(num):	Sets cutline
-
--- Reports
-rfl():		Report feasible line.
-rrt():		Report running totals
-rbt(t):		Report by track. Takes optional track(s) "t" to filter on and triage.
-                Using a triage of 1 selects all 1s. Using 1.5 selects 1s and 1.5s.
-rde():		Report data export (demand by triage and track)
-rs():		Report available supply
-]]
-	)
-end
 
 return Cmd

@@ -7,23 +7,24 @@ Cmd = require('app/cmdline')
 Data = require('app/data')
 func = require('app/functional')
 
--- NOTE: Everything here is global so we can access it from the shell
--- require('shell_functions')
-
+-- STARTUP --------------------------------------------------------------------
+--
 version = arg[1]
 
 if version then
         print("Loading version: " .. version)
 end
 
-
--- TODO: Make these local
--- Load data (at some point, use a prefix to specify a version)
-pl, ppl = Data.load_data(version)
-
+local pl, ppl = Data.load_data(version)
 Cmd.init(pl, ppl)
 
+
+-- ALIASES --------------------------------------------------------------------
+--
+p = print
 pw = Cmd.print_work_items
+export = Data.export
+wrd = Data.wrd
 
 
 -- CANNED REPORTS -------------------------------------------------------------
@@ -142,17 +143,40 @@ function rank(work_items, position)
 	Cmd.plan:rank(work_items, {["at"] = position})
 end
 
--- "triage sort". This just pulls all of the items Triaged to 1 to the top of the list
--- This ranks items stably.
-function tsort()
-        -- TODO: Fix this
-	-- Get IDs of all 1s and 1.5s
-	local ids = get_ids(w1())
-	Cmd.plan:rank(ids)
-end
 
 function sc(cutline)
         Cmd.plan.cutline = cutline
+end
+
+-- HELP -----------------------------------------------------------------------
+--
+
+function help()
+	print(
+[[
+-- Reading/Writing
+wrd(n):		Writes data to file with suffix "n"
+export():	Writes data to "data/output.txt" in a form for Google Docs
+
+-- Printing
+p():		Alias for print
+
+-- Select work
+r(rank):	Selects work item at rank 'rank'. May also take an array of ranks.
+wall():		Prints all work in plan
+wac():		Prints work above cutline
+
+-- Updating plan
+sc(num):	Sets cutline
+
+-- Reports
+rrt():		Report running totals
+rbt(tra, tri):	Report by track. Takes optional track(s) "t" to filter on and triage.
+                Using a triage of 1 selects all 1s. Using 1.5 selects 1s and 1.5s.
+rde():		Report data export (demand by triage and track)
+rs():		Report available supply
+]]
+	)
 end
 
 print("READY")
