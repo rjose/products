@@ -3,7 +3,7 @@
 
 package.path = package.path .. ";app/?.lua;modules/?.lua"
 
-Cmd = require('app/cmdline')
+Cmd = require('app/cmdline_format')
 Data = require('app/data')
 func = require('app/functional')
 
