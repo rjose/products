@@ -4,6 +4,9 @@ local RequestParser = require('request_parser')
 local RequestRouter = require('request_router')
 local Select = require('select')
 local func = require('functional')
+local JsonFormat = require('json_format')
+
+-- TODO get rid of this
 local json = require('json')
 
 local WebUI = {}
@@ -80,14 +83,18 @@ function handle_app_web_work(req)
 end
 
 function handle_app_web_tracks(req)
+        -- Select work items
 	local work = plan:get_work_items()
-        local track_hash, track_tags = Select.group_by_track(work)
-        local result = {}
-        result.tracks = track_tags
-        result.work_by_track = track_hash
-        result.cutline = plan.cutline
 
-        return RequestRouter.construct_response(200, "application/json", json.encode(result))
+        -- Group items
+        local track_hash, track_tags = Select.group_by_track(work)
+
+        -- Format results
+        local result_str =
+            JsonFormat.format_work_by_group(track_hash, track_tags, plan, staff)
+
+        return RequestRouter.construct_response(
+                                            200, "application/json", result_str)
 end
 
 function handle_app_web_request(req)
