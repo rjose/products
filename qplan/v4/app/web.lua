@@ -1,6 +1,6 @@
 RequestParser = require('request_parser')
 RequestRouter = require('request_router')
-func = require('functional')
+func = require('modules/functional')
 json = require('json')
 
 local Web = {}

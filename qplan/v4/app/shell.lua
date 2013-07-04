@@ -5,7 +5,7 @@ package.path = package.path .. ";app/?.lua;modules/?.lua"
 
 TextFormat = require('app/text_format')
 Data = require('app/data')
-func = require('app/functional')
+func = require('modules/functional')
 
 -- STARTUP --------------------------------------------------------------------
 --
@@ -117,7 +117,7 @@ end
 function rs()
         local people_by_skill = {}
 
-        for _, person in ipairs(ppl) do
+        for _, person in ipairs(staff) do
                 local skill_tag =
                         Writer.tags_to_string(person.skills):split(":")[1]
                 skill_tag = skill_tag or "_UNSPECIFIED"
@@ -140,14 +140,14 @@ function rs()
                 end
         end
 
-        local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
+        local total_bandwidth = Person.sum_bandwidth(staff, plan.num_weeks)
 	print(string.format("TOTAL Skill Supply: %s", Writer.tags_to_string(
 		plan:to_num_people(total_bandwidth), ", "
 	)))
 end
 
 function rss()
-        local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
+        local total_bandwidth = Person.sum_bandwidth(staff, plan.num_weeks)
 	print(string.format("TOTAL Skill Supply: %s", Writer.tags_to_string(
 		plan:to_num_people(total_bandwidth), ", "
 	)))

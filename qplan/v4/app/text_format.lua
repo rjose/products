@@ -1,11 +1,9 @@
-package.path = package.path .. ";app/?.lua;modules/?.lua"
-
 Person = require('person')
 Plan = require('plan')
 Work = require('work')
 Reader = require('reader')
 Writer = require('writer')
-func = require('functional')
+func = require('modules/functional')
 Select = require('app/select')
 
 require('string_utils')
