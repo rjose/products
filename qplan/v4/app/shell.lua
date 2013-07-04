@@ -5,6 +5,7 @@ package.path = package.path .. ";app/?.lua;modules/?.lua"
 
 Cmd = require('app/cmdline')
 Data = require('app/data')
+func = require('app/functional')
 
 -- NOTE: Everything here is global so we can access it from the shell
 -- require('shell_functions')
@@ -62,6 +63,35 @@ function rbt(t, triage)
 
         -- Format and print items using default formatter
         Cmd.print_work_hash(work_hash, tracks)
+end
+
+
+
+function rde()
+        -- Get work items
+	local work_items = pl:get_work_items()
+
+        -- Group work items by triage then track
+        local triage_hash, triage_tags = Select.group_by_triage(work_items)
+        for _, triage in ipairs(triage_tags) do
+                triage_hash[triage] = table.pack(Select.group_by_track(triage_hash[triage]))
+        end
+
+        -- Apply map over work items by triage then track to sum required skills
+        local demand_hash = {}
+        for _, triage in ipairs(triage_tags) do
+                demand_hash[triage] = demand_hash[triage] or {}
+                local track_hash, track_tags = unpack(triage_hash[triage])
+                for _, track in pairs(track_tags) do
+                        demand_hash[triage][track] =
+                      Cmd.plan:to_num_people(Work.sum_demand(track_hash[track]))
+                      print(triage, track, #track_hash[track])
+                end
+        end
+
+        -- Format required demand by triage then track
+        local result_string = Cmd.rde_formatter(demand_hash, triage_tags)
+        print(result_string)
 end
 
 -- UTILITY FUNCTIONS ----------------------------------------------------------

@@ -165,6 +165,11 @@ array. Alright, I've done a pile of work to pull functions out cmdline and
 into shell to separate selection, filtering, and reporting. Gotten through
 rrt.
 
+OK, a couple more to get through. Let's go after rde next. We need to add
+two-level grouping: one by triage and one by track. Once we have this, we want
+to map a function that sums the demand for the work items in each triage/track
+cell.
+
 Thoughts
 --------
 I should learn how to do TDD with angular. I should examine the angular-seed app
@@ -176,3 +181,4 @@ Here are some things I wanted to do:
 - Add readline support
 - Come up with a style that works for this
 - Think about how multiple apps (QPlan, Scheduler, etc.) should interact.
+- Reformat lines

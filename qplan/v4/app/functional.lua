@@ -36,14 +36,24 @@ function func.key_union(...)
         return result
 end
 
+-- TODO: Rewrite this function to match key_union
+function func.value_union(acc, table)
+        for _, val in pairs(table) do
+                acc[val] = 1
+        end
+        return acc
+end
+
 -- Returns all the keys in a table
 function func.get_table_keys(t)
 	local result = {}
 	for k, _ in pairs(t) do
 		result[#result+1] = k .. ""
 	end
+        table.sort(result)
 	return result
 end
+
 
 -- This applies a function of 2 variables key-wise to two tables. The function f
 -- should handle nil values in a way that makes sense.

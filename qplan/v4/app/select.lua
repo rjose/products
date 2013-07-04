@@ -137,8 +137,14 @@ end
 --
 function Select.group_by_track(work_items)
         local get_track = function(w) return w.tags.track end
+
         return func.group_items(work_items, get_track)
 end
 
+function Select.group_by_triage(work_items)
+        local get_triage = function(w) return w:merged_triage() end
+
+        return func.group_items(work_items, get_triage)
+end
 
 return Select
