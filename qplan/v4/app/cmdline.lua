@@ -34,9 +34,10 @@ function Cmd.default_format_work(work_items)
 	for i = 1,#work_items do
 		local w = work_items[i]
 		local rank = w.rank or "--"
-		tmp[#tmp+1] = (string.format("#%-4s\t%3s\t%20s\t%s\t%s", rank, w.id, w.name,
-                        Writer.tags_to_string(w.triage),
-			Writer.tags_to_string(w.tags)))
+                tmp[#tmp+1] =
+                   string.format("#%-4s\t%3s\t%20s\t%s\t%s", rank, w.id, w.name,
+                                 Writer.tags_to_string(w.triage),
+                                 Writer.tags_to_string(w.tags))
 	end
         return table.concat(tmp, "\n")
 end
@@ -57,22 +58,28 @@ function Cmd.default_format_work_hash(work_hash, keys, options)
 		-- Sum the key items
 		local demand = Work.sum_demand(work_items)
 		local demand_str = Writer.tags_to_string(
-                        func.map_table(format_number, Cmd.plan:to_num_people(demand)), ", ")
+                        func.map_table(format_number,
+                                       Cmd.plan:to_num_people(demand)), ", ")
                 total_demand = Work.add_skill_demand(total_demand, demand)
 
 		tmp[#tmp+1] = "== " .. key
 
                 if with_detail then
-                        tmp[#tmp+1] = string.format("     %-5s|%-40s|%6s|", "Rank", "Item", "Triage")
-                        tmp[#tmp+1] = "     -----|----------------------------------------|" ..
-                                                                                        "----------|"
+                        tmp[#tmp+1] =
+                 string.format("     %-5s|%-40s|%6s|", "Rank", "Item", "Triage")
+                 tmp[#tmp+1] =
+                       "     -----|----------------------------------------|" ..
+                                                                   "----------|"
                         for i = 1,#work_items do
                                 local w = work_items[i]
-                                if w.rank > pl.cutline and cutline_shown == false then
-                                        tmp[#tmp+1] = "     ----- CUTLINE -----------"
+                                if w.rank > pl.cutline and
+                                                     cutline_shown == false then
+                                        tmp[#tmp+1] =
+                                                "     ----- CUTLINE -----------"
                                         cutline_shown = true
                                 end
-                                tmp[#tmp+1] = string.format("     %-5s|%-40s|%-10s|%s",
+                                tmp[#tmp+1] =
+                                        string.format("     %-5s|%-40s|%-10s|%s",
                                         "#" .. w.rank,
                                         w.name:truncate(40, {["ellipsis"] = true}),
                                         w:merged_triage(),
@@ -85,24 +92,30 @@ function Cmd.default_format_work_hash(work_hash, keys, options)
 	end
 
 	-- Print overall demand total
-        tmp[#tmp+1] = string.format("%-30s %s", "TOTAL Required:", Writer.tags_to_string(
-                func.map_table(format_number, total_demand), ", "
+        tmp[#tmp+1] = string.format("%-30s %s", "TOTAL Required:",
+                             Writer.tags_to_string(
+                               func.map_table(format_number, total_demand), ", "
         ))
 
 	
         if with_net_supply then
                 -- Print total supply
-                local total_bandwidth = Person.sum_bandwidth(Cmd.staff, Cmd.plan.num_weeks)
-                tmp[#tmp+1] = string.format("%-30s %s", "TOTAL Skill Supply:", Writer.tags_to_string(
-                        func.map_table(format_number, Cmd.plan:to_num_people(total_bandwidth)), ", "
+                local total_bandwidth =
+                             Person.sum_bandwidth(Cmd.staff, Cmd.plan.num_weeks)
+                tmp[#tmp+1] = string.format("%-30s %s", "TOTAL Skill Supply:",
+                               Writer.tags_to_string(
+                                  func.map_table(format_number,
+                                  Cmd.plan:to_num_people(total_bandwidth)), ", "
                 ))
 
                 -- Print net supply
                 -- NOTE: This is a hack, but to_num_people has already converted
                 -- total_bandwidth and total_demand to num people!
-                local net_supply = Work.subtract_skill_demand(total_bandwidth, total_demand);
+                local net_supply =
+                      Work.subtract_skill_demand(total_bandwidth, total_demand);
                 tmp[#tmp+1] = string.format("%-30s %s", "TOTAL Net Supply:", 
-                        Writer.tags_to_string(func.map_table(format_number, net_supply), ", "))
+                        Writer.tags_to_string(
+                              func.map_table(format_number, net_supply), ", "))
         end
         return table.concat(tmp, "\n")
 end
@@ -147,8 +160,6 @@ function Cmd.format_rrt(work_items)
 end
 
 function Cmd.rde_formatter(demand_hash, triage_tags, options)
---function Cmd.rde_formatter(file, triage_tags, all_tracks, demand_hash)
-
         local tmp = {}
         options = options or {}
         local skills = options.skills or {"Apps", "Native", "Web"}
@@ -196,7 +207,8 @@ function rs()
         local people_by_skill = {}
 
         for _, person in ipairs(ppl) do
-                local skill_tag = Writer.tags_to_string(person.skills):split(":")[1]
+                local skill_tag =
+                        Writer.tags_to_string(person.skills):split(":")[1]
                 skill_tag = skill_tag or "_UNSPECIFIED"
                 people_list = people_by_skill[skill_tag] or {}
                 people_list[#people_list+1] = person
@@ -211,8 +223,9 @@ function rs()
                 local people_list = people_by_skill[skill]
                 print(string.format("%s ==", skill))
                 for j = 1,#people_list do
-                        print(string.format("     %3d. %-30s %.1f", j, people_list[j].name,
-                                                             people_list[j].skills[skill]))
+                        print(string.format("     %3d. %-30s %.1f",
+                                             j, people_list[j].name,
+                                             people_list[j].skills[skill]))
                 end
         end
 
