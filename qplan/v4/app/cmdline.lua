@@ -202,45 +202,6 @@ function Cmd.rde_formatter(demand_hash, triage_tags, options)
 end
 
 
--- Prints available people by skill
-function rs()
-        local people_by_skill = {}
-
-        for _, person in ipairs(ppl) do
-                local skill_tag =
-                        Writer.tags_to_string(person.skills):split(":")[1]
-                skill_tag = skill_tag or "_UNSPECIFIED"
-                people_list = people_by_skill[skill_tag] or {}
-                people_list[#people_list+1] = person
-                people_by_skill[skill_tag] = people_list
-        end
-
-	local skill_tags = func.get_table_keys(people_by_skill)
-	table.sort(skill_tags)
-
-	for i = 1,#skill_tags do
-                local skill = skill_tags[i]
-                local people_list = people_by_skill[skill]
-                print(string.format("%s ==", skill))
-                for j = 1,#people_list do
-                        print(string.format("     %3d. %-30s %.1f",
-                                             j, people_list[j].name,
-                                             people_list[j].skills[skill]))
-                end
-        end
-
-        local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
-	print(string.format("TOTAL Skill Supply: %s", Writer.tags_to_string(
-		Cmd.plan:to_num_people(total_bandwidth), ", "
-	)))
-end
-
-function rss()
-        local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
-	print(string.format("TOTAL Skill Supply: %s", Writer.tags_to_string(
-		Cmd.plan:to_num_people(total_bandwidth), ", "
-	)))
-end
 
 
 return Cmd
