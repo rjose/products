@@ -30,7 +30,6 @@ function format_number(num)
         return string.format("%.1f", num)
 end
 
--- TODO: Make the other formatter the default formatter
 function Cmd.default_work_formatter(work_items)
         local tmp = {}
         tmp[#tmp+1] = "Rank\tID\tName\tTags"
@@ -192,26 +191,6 @@ function Cmd.rde_formatter(demand_hash, triage_tags, options)
 
         return table.concat(tmp, "\n")
 end
-
--- TODO: Get rid of these
-function Cmd.print_work_items(work_items, work_formatter)
-        local result_str = ""
-        if work_formatter == nil then
-                result_str = Cmd.default_work_formatter(work_items)
-        else
-                result_str = work_formatter(work_items)
-        end
-        print(result_str)
-end
-
-function Cmd.print_work_hash(work_hash, keys, work_hash_formatter, options)
-        if work_hash_formatter == nil then
-                print(Cmd.default_work_hash_formatter(work_hash, keys, options))
-        else
-                print(work_formatter(work_hash, keys, options))
-        end
-end
-
 
 
 -- Prints available people by skill

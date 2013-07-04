@@ -29,29 +29,44 @@ pw = Cmd.print_work_items
 -- CANNED REPORTS -------------------------------------------------------------
 --
 function w()
+        -- Select work items
         local work_items = Select.all_work(Cmd.plan)
-        Cmd.print_work_items(work_items)
+
+        -- Format work items
+        local result_string = Cmd.default_work_formatter(work_items)
+
+        -- Print result
+        print(result_string)
 end
 
 function wac()
+        -- Select work items
         local work_items = Select.all_work(Cmd.plan)
 
+        -- Filter work items
         local above_cutline_filter = Select.make_above_cutline_filter(Cmd.plan)
         work_items = Select.apply_filters(work_items, {above_cutline_filter})
 
-        Cmd.print_work_items(work_items)
+        -- Format work items
+        local result_string = Cmd.default_work_formatter(work_items)
+
+        -- Print result
+        print(result_string)
 end
 
 function rrt()
-        -- Get work items
+        -- Select work items
         local work_items = Select.all_work(Cmd.plan)
 
-        -- Format and print work items
-        Cmd.print_work_items(work_items, Cmd.rrt_formatter)
+        -- Format work items
+        local result_string = Cmd.rrt_formatter(work_items)
+
+        -- Print result
+        print(result_string)
 end
 
 function rbt(t, triage)
-        -- Get work items
+        -- Select work items
         local work_items = Select.all_work(Cmd.plan)
 
         -- Filter items
@@ -61,8 +76,11 @@ function rbt(t, triage)
         -- Group items
         local work_hash, tracks = Select.group_by_track(work_items)
 
-        -- Format and print items using default formatter
-        Cmd.print_work_hash(work_hash, tracks)
+        -- Format result items
+        local result_string = Cmd.default_work_hash_formatter(work_hash, tracks)
+        
+        -- Print result
+        print(result_string)
 end
 
 
