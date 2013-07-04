@@ -38,4 +38,18 @@ function JsonFormat.format_rrt(work_items, plan, staff)
         return json.encode(object)
 end
 
+function JsonFormat.format_people_hash(people_hash, groups, plan, staff)
+        local num_weeks = plan.num_weeks
+
+        local object = {}
+        object.groups = groups
+        object.people_hash = people_hash
+
+        -- Compute bandwidth
+        object.bandwidth = plan:to_num_people(
+                              Person.sum_bandwidth(staff, num_weeks), num_weeks)
+        
+        return json.encode(object)
+end
+
 return JsonFormat

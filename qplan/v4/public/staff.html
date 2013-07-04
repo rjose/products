@@ -14,16 +14,16 @@
                 <div ng-controller="StaffCtrl">
                         <h3>Staff Availability Totals</h3>
                         <ul>
-                                <li ng-repeat="skill in staff_data.skills">{{skill}}:
+                                <li ng-repeat="skill in staff_data.groups">{{skill}}:
                                 {{staff_data.bandwidth[skill]}}</li>
                         </ul>
 
                         <h3>Staff List</h3>
-                        <ul ng-repeat="skill in staff_data.skills">
+                        <ul ng-repeat="skill in staff_data.groups">
                                 <li>{{skill}}</li>
                                 <ol>
                                         <li ng-repeat="person in
-                                        staff_data.people_by_skill[skill]">{{person.name}}</li>
+                                        staff_data.people_hash[skill]">{{person.name}}</li>
                                 </ol>
                         </ul>
                 </div>

@@ -149,4 +149,21 @@ function Select.group_by_triage(work_items)
         return func.group_items(work_items, get_triage)
 end
 
+function Select.group_people_by_skill(people)
+        local people_by_skill = {}
+
+        for _, person in ipairs(people) do
+                local skill_tag = Writer.tags_to_string(person.skills):split(":")[1]
+                skill_tag = skill_tag or "_UNSPECIFIED"
+                people_list = people_by_skill[skill_tag] or {}
+                people_list[#people_list+1] = person
+                people_by_skill[skill_tag] = people_list
+        end
+
+	local skill_tags = func.get_table_keys(people_by_skill)
+	table.sort(skill_tags)
+
+        return people_by_skill, skill_tags
+end
+
 return Select
