@@ -94,7 +94,7 @@ static lua_State *init_lua_state(int version)
                                 lua_tostring(result, -1));
 
         /* Load version specified from commandline */
-        lua_getglobal(result, "s");
+        lua_getglobal(result, "qplan_init");
         lua_pushnumber(result, version);
         if (lua_pcall(result, 1, 0, 0) != LUA_OK)
                 luaL_error(result, "Problem calling lua function: %s",

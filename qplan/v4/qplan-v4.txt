@@ -179,8 +179,8 @@ the current web.lua file.
 
 8 - Refactor web.lua to select/filter/format
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-First, let's remove the init call from TextFormat. After that, we'll split
-web.lua into web_ui.lua and json_format.lua
+First, let's remove the init call from TextFormat. Done. Now, let's rename shell
+to lua_ui. Done. Now, let's split web.lua into web_ui.lua and json_format.lua
 
 Thoughts
 --------

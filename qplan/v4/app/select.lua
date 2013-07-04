@@ -1,3 +1,5 @@
+local func = require('functional')
+
 local Select = {}
 
 function Select.all_work(plan)

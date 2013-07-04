@@ -1,23 +1,30 @@
-RequestParser = require('request_parser')
-RequestRouter = require('request_router')
-func = require('modules/functional')
-json = require('json')
+local Writer = require('writer')
+local Person = require('person')
+local RequestParser = require('request_parser')
+local RequestRouter = require('request_router')
+local Select = require('select')
+local func = require('functional')
+local json = require('json')
 
-local Web = {}
+local WebUI = {}
 
--- These are things that must be set via an init function
-Web.plan = nil
-Web.staff = nil
+-- STARTUP --------------------------------------------------------------------
+--
+local plan = nil
+local staff = nil
 
 APP_INDEX = 2
 DEVICE_INDEX = 3
 RESOURCE_INDEX = 4
 
-function Web.init(plan, staff)
-        Web.plan = plan
-        Web.staff = staff
+function WebUI.init(a_plan, a_staff)
+        plan = a_plan
+        staff = a_staff
 end
 
+
+-- REQUEST HANDLING -----------------------------------------------------------
+--
 
 -- TODO: Share this with rs()
 function get_people_by_skill(people)
@@ -35,13 +42,14 @@ function get_people_by_skill(people)
 	local skill_tags = func.get_table_keys(people_by_skill)
 	table.sort(skill_tags)
 
-        local total_bandwidth = to_num_people(Person.sum_bandwidth(people, num_weeks), num_weeks)
+        local total_bandwidth =
+          plan:to_num_people(Person.sum_bandwidth(people, num_weeks), num_weeks)
 
         return people_by_skill, skill_tags, total_bandwidth
 end
 
 function handle_app_web_staff(req)
-        local people_by_skill, skill_tags, bandwidth = get_people_by_skill(Web.staff)
+        local people_by_skill, skill_tags, bandwidth = get_people_by_skill(staff)
 
         local result = {}
         result.skills = skill_tags
@@ -53,35 +61,35 @@ end
 
 
 function handle_app_web_work(req)
-        local work = pl:get_work_items()
-	local feasible_line, _, supply_totals = pl:find_feasible_line()
+        local work = plan:get_work_items()
+	local feasible_line, _, supply_totals = plan:find_feasible_line()
 
         local result = {}
         result.work = work
         result.feasible_line = feasible_line
-        result.cutline = Web.plan.cutline
+        result.cutline = plan.cutline
 
         -- Adjust net totals to be people
         result.net_totals = {}
         for i, t in ipairs(supply_totals) do
-                result.net_totals[i] = to_num_people(supply_totals[i], Web.plan.num_weeks)
+                result.net_totals[i] =
+                      plan:to_num_people(supply_totals[i], plan.num_weeks)
         end
 
         return RequestRouter.construct_response(200, "application/json", json.encode(result))
 end
 
 function handle_app_web_tracks(req)
-	local work = pl:get_work_items()
-        local track_hash, track_tags = func.group_items(work, get_track)
+	local work = plan:get_work_items()
+        local track_hash, track_tags = Select.group_by_track(work)
         local result = {}
         result.tracks = track_tags
         result.work_by_track = track_hash
-        result.cutline = Web.plan.cutline
+        result.cutline = plan.cutline
 
         return RequestRouter.construct_response(200, "application/json", json.encode(result))
 end
 
--- TODO: Move this to its own set of files
 function handle_app_web_request(req)
         if req.path_pieces[RESOURCE_INDEX] == 'staff' then
                 return handle_app_web_staff(req)
@@ -95,6 +103,9 @@ function handle_app_web_request(req)
 end
 
 
+
+-- REQUEST ROUTING ------------------------------------------------------------
+--
 function app_router(req)
         -- Need something like "/app/web/rbt"
         if #req.path_pieces < 4 or req.path_pieces[APP_INDEX] ~= "app" then
@@ -108,12 +119,12 @@ function app_router(req)
         return nil
 end
 
--- Set up routers
+-- Set routers
 RequestRouter.routers = {app_router, RequestRouter.static_file_router}
 
-function Web.handle_request(req_string)
+function WebUI.handle_request(req_string)
         local req = RequestParser.parse_request(req_string)
         return RequestRouter.route_request(req)
 end
 
-return Web
+return WebUI

@@ -9,13 +9,19 @@ func = require('modules/functional')
 
 -- STARTUP --------------------------------------------------------------------
 --
+-- If we load this from a lua interpreter, arg will be set and we'll proced to
+-- load the qplan data and set things up. Otherwise, this will have been loaded
+-- by some other process which should set up the global "plan" and "staff"
+-- variables.
+
+arg = arg or {}
 version = arg[1]
 
 if version then
         print("Loading version: " .. version)
+        plan, staff = Data.load_data(version)
+        print("READY")
 end
-
-local plan, staff = Data.load_data(version)
 
 
 -- ALIASES --------------------------------------------------------------------
@@ -223,4 +229,3 @@ rs():		Report available supply
 	)
 end
 
-print("READY")
