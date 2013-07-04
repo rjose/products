@@ -1,6 +1,6 @@
 package.path = package.path .. ";app/?.lua;modules/?.lua"
 
-Cmd = require('app/cmdline_format')
+Cmd = require('app/text_format')
 Web = require('app/web')
 Data = require('app/data')
 
