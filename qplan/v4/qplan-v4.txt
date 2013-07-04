@@ -25,7 +25,8 @@ link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
 . Add staff page [X][X][X][X]
 . Add work page [X][X][X][][]
 . Add tracks page [X][X][][][][][]
-. Revise web and shell functions [X][X][X][][][]
+. Refactor into select/filter/format [X][X][X][X][X][X][X]
+. Refactor web.lua to select/filter/format [][][][][]
 . Add index page [][][][][][]
 . Add readline support [][][][][]
 
@@ -141,8 +142,8 @@ to the ajax call. OK, I have the data. Was thinking of having a dropdown to
 select tracks, but let's just render everything. Done. Pretty cool. One last
 bit of functionality is to show the running demand as well.
 
-7 - Revise web and shell functions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+7 - Refactor into select/filter/format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 I want the code architecture to follow a piping model that we'll use in our
 qplan shell. Let's see if we can revise the code that serves the work.html
 page. Getting the work items is fine, but I don't like the global pl or ppl
@@ -170,6 +171,17 @@ two-level grouping: one by triage and one by track. Once we have this, we want
 to map a function that sums the demand for the work items in each triage/track
 cell.
 
+Tomorrow, I'll take a look at reorganizing things a little more. I think I want
+a "lua_ui.lua" file for doing the pure lua shell, a "json_ui.lua" file for
+presenting json data for web pages, and a "cls_ui.lua" file for the command line
+server shell. I'll also need to write the json_format file to extract parts from
+the current web.lua file.
+
+8 - Refactor web.lua to select/filter/format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+First, let's remove the init call from TextFormat. After that, we'll split
+web.lua into web_ui.lua and json_format.lua
+
 Thoughts
 --------
 I should learn how to do TDD with angular. I should examine the angular-seed app
@@ -181,4 +193,4 @@ Here are some things I wanted to do:
 - Add readline support
 - Come up with a style that works for this
 - Think about how multiple apps (QPlan, Scheduler, etc.) should interact.
-- Reformat lines
+- Remove TextFormat init call

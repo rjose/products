@@ -11,13 +11,6 @@ require('string_utils')
 -- MODULE INIT ----------------------------------------------------------------
 --
 local TextFormat = {}
-local plan = nil
-local staff = nil
-
-function TextFormat.init(a_plan, a_staff)
-        plan = a_plan
-        staff = a_staff
-end
 
 
 -- REPORTING FUNCTIONS --------------------------------------------------------
@@ -26,7 +19,7 @@ function format_number(num)
         return string.format("%.1f", num)
 end
 
-function TextFormat.default_format_work(work_items)
+function TextFormat.default_format_work(work_items, plan, staff)
         local tmp = {}
         tmp[#tmp+1] = "Rank\tID\tName\tTags"
 	for i = 1,#work_items do
@@ -40,7 +33,8 @@ function TextFormat.default_format_work(work_items)
         return table.concat(tmp, "\n")
 end
 
-function TextFormat.default_format_work_hash(work_hash, keys, options)
+function TextFormat.default_format_work_hash(work_hash, keys,
+                                                      plan, staff, options)
         local options = options or {}
         local total_demand = {}
         local tmp = {}
@@ -119,7 +113,7 @@ function TextFormat.default_format_work_hash(work_hash, keys, options)
 end
 
 -- Assuming that work items are in ranked order
-function TextFormat.format_rrt(work_items)
+function TextFormat.format_rrt(work_items, plan, staff)
         local tmp = {}
         tmp[#tmp+1] = string.format("%-5s|%-15s|%-40s|%-30s|%-30s",
                              "Rank", "Track", "Item", "Estimate", "Supply left")
@@ -157,7 +151,8 @@ function TextFormat.format_rrt(work_items)
         return table.concat(tmp, "\n")
 end
 
-function TextFormat.rde_formatter(demand_hash, triage_tags, options)
+function TextFormat.rde_formatter(demand_hash, triage_tags, plan,
+                                                         staff, options)
         local tmp = {}
         options = options or {}
         local skills = options.skills or {"Apps", "Native", "Web"}

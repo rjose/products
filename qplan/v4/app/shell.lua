@@ -16,7 +16,6 @@ if version then
 end
 
 local plan, staff = Data.load_data(version)
-TextFormat.init(plan, staff)
 
 
 -- ALIASES --------------------------------------------------------------------
@@ -33,7 +32,8 @@ function w()
         local work_items = Select.all_work(plan)
 
         -- Format work items
-        local result_string = TextFormat.default_format_work(work_items)
+        local result_string =
+                         TextFormat.default_format_work(work_items, plan, staff)
 
         -- Print result
         print(result_string)
@@ -48,7 +48,8 @@ function wac()
         work_items = Select.apply_filters(work_items, {above_cutline_filter})
 
         -- Format work items
-        local result_string = TextFormat.default_format_work(work_items)
+        local result_string =
+                         TextFormat.default_format_work(work_items, plan, staff)
 
         -- Print result
         print(result_string)
@@ -59,7 +60,7 @@ function rrt()
         local work_items = Select.all_work(plan)
 
         -- Format work items
-        local result_string = TextFormat.format_rrt(work_items)
+        local result_string = TextFormat.format_rrt(work_items, plan, staff)
 
         -- Print result
         print(result_string)
@@ -77,7 +78,8 @@ function rbt(t, triage)
         local work_hash, tracks = Select.group_by_track(work_items)
 
         -- Format result items
-        local result_string = TextFormat.default_format_work_hash(work_hash, tracks)
+        local result_string =
+             TextFormat.default_format_work_hash(work_hash, tracks, plan, staff)
         
         -- Print result
         print(result_string)
@@ -92,7 +94,8 @@ function rde()
         -- Group work items by triage then track
         local triage_hash, triage_tags = Select.group_by_triage(work_items)
         for _, triage in ipairs(triage_tags) do
-                triage_hash[triage] = table.pack(Select.group_by_track(triage_hash[triage]))
+                triage_hash[triage] =
+                          table.pack(Select.group_by_track(triage_hash[triage]))
         end
 
         -- Apply map over work items by triage then track to sum required skills
@@ -108,7 +111,8 @@ function rde()
         end
 
         -- Format required demand by triage then track
-        local result_string = TextFormat.rde_formatter(demand_hash, triage_tags)
+        local result_string =
+                 TextFormat.rde_formatter(demand_hash, triage_tags, plan, staff)
         print(result_string)
 end
 
