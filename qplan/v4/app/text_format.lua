@@ -195,6 +195,35 @@ function TextFormat.rde_formatter(demand_hash, triage_tags, plan,
         return table.concat(tmp, "\n")
 end
 
+function TextFormat.format_people_bandwidth(staff, plan)
+        local tmp = {}
+        local total_bandwidth = Person.sum_bandwidth(staff, plan.num_weeks)
+        tmp[#tmp+1] = string.format("TOTAL Skill Supply: %s",
+               Writer.tags_to_string(plan:to_num_people(total_bandwidth), ", "))
+
+        return table.concat(tmp, "\n")
+end
+
+function TextFormat.format_people_hash(people_hash, groups, plan, staff)
+        local tmp = {}
+        for i = 1,#groups do
+                local group = groups[i]
+                local people_list = people_hash[group]
+                tmp[#tmp+1] = string.format("%s ==", group)
+                for j = 1,#people_list do
+                        tmp[#tmp+1] = string.format("     %3d. %-30s %s",
+                                j, people_list[j].name,
+                                Writer.tags_to_string(people_list[j].skills))
+                end
+        end
+
+        local total_bandwidth = Person.sum_bandwidth(staff, plan.num_weeks)
+        tmp[#tmp+1] = string.format("TOTAL Skill Supply: %s",
+               Writer.tags_to_string(plan:to_num_people(total_bandwidth), ", "))
+
+        return table.concat(tmp, "\n")
+end
+
 
 
 

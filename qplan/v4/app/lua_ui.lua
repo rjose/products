@@ -122,45 +122,29 @@ function rde()
         print(result_string)
 end
 
--- TODO: Convert these into formatters
 -- Prints available people by skill
 function rs()
-        local people_by_skill = {}
+        -- "Select" staff
+        local staff = staff
 
-        for _, person in ipairs(staff) do
-                local skill_tag =
-                        Writer.tags_to_string(person.skills):split(":")[1]
-                skill_tag = skill_tag or "_UNSPECIFIED"
-                people_list = people_by_skill[skill_tag] or {}
-                people_list[#people_list+1] = person
-                people_by_skill[skill_tag] = people_list
-        end
+        -- Group by skill
+        local people_by_skill, skill_tags = Select.group_people_by_skill(staff)
 
-	local skill_tags = func.get_table_keys(people_by_skill)
-	table.sort(skill_tags)
+        -- Format results
+        local result_str = TextFormat.format_people_hash(
+                               people_by_skill, skill_tags, plan, staff)
 
-	for i = 1,#skill_tags do
-                local skill = skill_tags[i]
-                local people_list = people_by_skill[skill]
-                print(string.format("%s ==", skill))
-                for j = 1,#people_list do
-                        print(string.format("     %3d. %-30s %.1f",
-                                             j, people_list[j].name,
-                                             people_list[j].skills[skill]))
-                end
-        end
-
-        local total_bandwidth = Person.sum_bandwidth(staff, plan.num_weeks)
-	print(string.format("TOTAL Skill Supply: %s", Writer.tags_to_string(
-		plan:to_num_people(total_bandwidth), ", "
-	)))
+        print(result_str)
 end
 
 function rss()
-        local total_bandwidth = Person.sum_bandwidth(staff, plan.num_weeks)
-	print(string.format("TOTAL Skill Supply: %s", Writer.tags_to_string(
-		plan:to_num_people(total_bandwidth), ", "
-	)))
+        -- "Select" staff
+        local staff = staff
+
+        -- Format results
+        local result_str = TextFormat.format_people_bandwidth(staff, plan)
+
+        print(result_str)
 end
 
 -- UTILITY FUNCTIONS ----------------------------------------------------------
