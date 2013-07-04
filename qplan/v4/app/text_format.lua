@@ -15,6 +15,7 @@ local TextFormat = {}
 
 -- REPORTING FUNCTIONS --------------------------------------------------------
 --
+-- TODO: Add this to a util file
 function format_number(num)
         return string.format("%.1f", num)
 end

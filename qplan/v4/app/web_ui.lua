@@ -64,22 +64,14 @@ end
 
 
 function handle_app_web_work(req)
+        -- Select work items
         local work = plan:get_work_items()
-	local feasible_line, _, supply_totals = plan:find_feasible_line()
+        
 
-        local result = {}
-        result.work = work
-        result.feasible_line = feasible_line
-        result.cutline = plan.cutline
-
-        -- Adjust net totals to be people
-        result.net_totals = {}
-        for i, t in ipairs(supply_totals) do
-                result.net_totals[i] =
-                      plan:to_num_people(supply_totals[i], plan.num_weeks)
-        end
-
-        return RequestRouter.construct_response(200, "application/json", json.encode(result))
+        -- Format results
+        local result_str = JsonFormat.format_rrt(work, plan, staff)
+        return RequestRouter.construct_response(
+                                        200, "application/json", result_str)
 end
 
 function handle_app_web_tracks(req)
