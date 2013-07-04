@@ -6,9 +6,6 @@ local Select = require('select')
 local func = require('functional')
 local JsonFormat = require('json_format')
 
--- TODO get rid of this
-local json = require('json')
-
 local WebUI = {}
 
 -- STARTUP --------------------------------------------------------------------

@@ -1,7 +1,7 @@
 QPlan v4
 ========
 Rino Jose <@rjose>
-v2, Jul 1, 2013: Finished step 1
+v2, Jul 1, 2013: Finished step 8
 
 Drafting effort [][]
 
@@ -26,9 +26,9 @@ link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
 . Add work page [X][X][X][][]
 . Add tracks page [X][X][][][][][]
 . Refactor into select/filter/format [X][X][X][X][X][X][X]
-. Refactor web.lua to select/filter/format [X][X][X][][]
-. Add index page [][][][][][]
+. Refactor web.lua to select/filter/format [X][X][X][X][X]
 . Add readline support [][][][][]
+. Add index page [][][][][][]
 
 
 1 - Organize lua and C code
@@ -191,6 +191,4 @@ Here are some things I wanted to do:
 
 - Review memory management in our C files
 - Add readline support
-- Come up with a style that works for this
 - Think about how multiple apps (QPlan, Scheduler, etc.) should interact.
-- Remove TextFormat init call
