@@ -1,6 +1,6 @@
 package.path = package.path .. ";app/?.lua;modules/?.lua"
 
-Cmd = require('app/text_format')
+TextFormat = require('app/text_format')
 Web = require('app/web')
 Data = require('app/data')
 
@@ -10,6 +10,6 @@ function s(version)
         -- TODO: Make these local
         pl, ppl = Data.load_data(version)
 
-        Cmd.init(pl, ppl)
+        TextFormat.init(pl, ppl)
         Web.init(pl, ppl)
 end

@@ -12,13 +12,13 @@ require('string_utils')
 
 -- MODULE INIT ----------------------------------------------------------------
 --
-local Cmd = {}
-Cmd.plan = nil
-Cmd.staff = nil
+local TextFormat = {}
+local plan = nil
+local staff = nil
 
-function Cmd.init(plan, staff)
-        Cmd.plan = plan
-        Cmd.staff = staff
+function TextFormat.init(a_plan, a_staff)
+        plan = a_plan
+        staff = a_staff
 end
 
 
@@ -28,7 +28,7 @@ function format_number(num)
         return string.format("%.1f", num)
 end
 
-function Cmd.default_format_work(work_items)
+function TextFormat.default_format_work(work_items)
         local tmp = {}
         tmp[#tmp+1] = "Rank\tID\tName\tTags"
 	for i = 1,#work_items do
@@ -42,7 +42,7 @@ function Cmd.default_format_work(work_items)
         return table.concat(tmp, "\n")
 end
 
-function Cmd.default_format_work_hash(work_hash, keys, options)
+function TextFormat.default_format_work_hash(work_hash, keys, options)
         local options = options or {}
         local total_demand = {}
         local tmp = {}
@@ -59,7 +59,7 @@ function Cmd.default_format_work_hash(work_hash, keys, options)
 		local demand = Work.sum_demand(work_items)
 		local demand_str = Writer.tags_to_string(
                         func.map_table(format_number,
-                                       Cmd.plan:to_num_people(demand)), ", ")
+                                       plan:to_num_people(demand)), ", ")
                 total_demand = Work.add_skill_demand(total_demand, demand)
 
 		tmp[#tmp+1] = "== " .. key
@@ -72,7 +72,7 @@ function Cmd.default_format_work_hash(work_hash, keys, options)
                                                                    "----------|"
                         for i = 1,#work_items do
                                 local w = work_items[i]
-                                if w.rank > pl.cutline and
+                                if w.rank > plan.cutline and
                                                      cutline_shown == false then
                                         tmp[#tmp+1] =
                                                 "     ----- CUTLINE -----------"
@@ -101,11 +101,11 @@ function Cmd.default_format_work_hash(work_hash, keys, options)
         if with_net_supply then
                 -- Print total supply
                 local total_bandwidth =
-                             Person.sum_bandwidth(Cmd.staff, Cmd.plan.num_weeks)
+                             Person.sum_bandwidth(staff, plan.num_weeks)
                 tmp[#tmp+1] = string.format("%-30s %s", "TOTAL Skill Supply:",
                                Writer.tags_to_string(
                                   func.map_table(format_number,
-                                  Cmd.plan:to_num_people(total_bandwidth)), ", "
+                                  plan:to_num_people(total_bandwidth)), ", "
                 ))
 
                 -- Print net supply
@@ -121,7 +121,7 @@ function Cmd.default_format_work_hash(work_hash, keys, options)
 end
 
 -- Assuming that work items are in ranked order
-function Cmd.format_rrt(work_items)
+function TextFormat.format_rrt(work_items)
         local tmp = {}
         tmp[#tmp+1] = string.format("%-5s|%-15s|%-40s|%-30s|%-30s",
                              "Rank", "Track", "Item", "Estimate", "Supply left")
@@ -130,14 +130,14 @@ function Cmd.format_rrt(work_items)
                     "------------------------------|--------------------------")
 
 	local feasible_line, _, supply_totals =
-                      Work.find_feasible_line(work_items, Cmd.plan.default_supply)
+                      Work.find_feasible_line(work_items, plan.default_supply)
         for k, v in pairs(supply_totals[1]) do
                 print(k, v)
         end
 
 	for i = 1,#work_items do
 		local w = work_items[i]
-                local totals = Cmd.plan:to_num_people(supply_totals[i])
+                local totals = plan:to_num_people(supply_totals[i])
                 totals = func.map_table(format_number, totals)
                 tmp[#tmp+1] = string.format("%-5s|%-15s|%-40s|%-30s|%-30s",
                         "#" .. w.rank,
@@ -147,9 +147,9 @@ function Cmd.format_rrt(work_items)
                         Writer.tags_to_string(totals)
                         )
 
-		if (w.rank == Cmd.plan.cutline) and (w.rank == feasible_line) then
+		if (w.rank == plan.cutline) and (w.rank == feasible_line) then
 			tmp[#tmp+1] = "----- CUTLINE/FEASIBLE LINE -----"
-		elseif w.rank == Cmd.plan.cutline then
+		elseif w.rank == plan.cutline then
 			tmp[#tmp+1] = "----- CUTLINE -----------"
 		elseif w.rank == feasible_line then
 			tmp[#tmp+1] = "----- FEASIBLE LINE -----"
@@ -159,7 +159,7 @@ function Cmd.format_rrt(work_items)
         return table.concat(tmp, "\n")
 end
 
-function Cmd.rde_formatter(demand_hash, triage_tags, options)
+function TextFormat.rde_formatter(demand_hash, triage_tags, options)
         local tmp = {}
         options = options or {}
         local skills = options.skills or {"Apps", "Native", "Web"}
@@ -204,4 +204,4 @@ end
 
 
 
-return Cmd
+return TextFormat

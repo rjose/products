@@ -3,7 +3,7 @@
 
 package.path = package.path .. ";app/?.lua;modules/?.lua"
 
-Cmd = require('app/text_format')
+TextFormat = require('app/text_format')
 Data = require('app/data')
 func = require('app/functional')
 
@@ -15,14 +15,13 @@ if version then
         print("Loading version: " .. version)
 end
 
-local pl, ppl = Data.load_data(version)
-Cmd.init(pl, ppl)
+local plan, staff = Data.load_data(version)
+TextFormat.init(plan, staff)
 
 
 -- ALIASES --------------------------------------------------------------------
 --
 p = print
-pw = Cmd.print_work_items
 export = Data.export
 wrd = Data.wrd
 
@@ -31,10 +30,10 @@ wrd = Data.wrd
 --
 function w()
         -- Select work items
-        local work_items = Select.all_work(Cmd.plan)
+        local work_items = Select.all_work(plan)
 
         -- Format work items
-        local result_string = Cmd.default_format_work(work_items)
+        local result_string = TextFormat.default_format_work(work_items)
 
         -- Print result
         print(result_string)
@@ -42,14 +41,14 @@ end
 
 function wac()
         -- Select work items
-        local work_items = Select.all_work(Cmd.plan)
+        local work_items = Select.all_work(plan)
 
         -- Filter work items
-        local above_cutline_filter = Select.make_above_cutline_filter(Cmd.plan)
+        local above_cutline_filter = Select.make_above_cutline_filter(plan)
         work_items = Select.apply_filters(work_items, {above_cutline_filter})
 
         -- Format work items
-        local result_string = Cmd.default_format_work(work_items)
+        local result_string = TextFormat.default_format_work(work_items)
 
         -- Print result
         print(result_string)
@@ -57,10 +56,10 @@ end
 
 function rrt()
         -- Select work items
-        local work_items = Select.all_work(Cmd.plan)
+        local work_items = Select.all_work(plan)
 
         -- Format work items
-        local result_string = Cmd.format_rrt(work_items)
+        local result_string = TextFormat.format_rrt(work_items)
 
         -- Print result
         print(result_string)
@@ -68,7 +67,7 @@ end
 
 function rbt(t, triage)
         -- Select work items
-        local work_items = Select.all_work(Cmd.plan)
+        local work_items = Select.all_work(plan)
 
         -- Filter items
         local filters = Select.get_track_and_triage_filters(t, triage)
@@ -78,7 +77,7 @@ function rbt(t, triage)
         local work_hash, tracks = Select.group_by_track(work_items)
 
         -- Format result items
-        local result_string = Cmd.default_format_work_hash(work_hash, tracks)
+        local result_string = TextFormat.default_format_work_hash(work_hash, tracks)
         
         -- Print result
         print(result_string)
@@ -103,13 +102,13 @@ function rde()
                 local track_hash, track_tags = unpack(triage_hash[triage])
                 for _, track in pairs(track_tags) do
                         demand_hash[triage][track] =
-                      Cmd.plan:to_num_people(Work.sum_demand(track_hash[track]))
+                      plan:to_num_people(Work.sum_demand(track_hash[track]))
                       print(triage, track, #track_hash[track])
                 end
         end
 
         -- Format required demand by triage then track
-        local result_string = Cmd.rde_formatter(demand_hash, triage_tags)
+        local result_string = TextFormat.rde_formatter(demand_hash, triage_tags)
         print(result_string)
 end
 
@@ -143,14 +142,14 @@ function rs()
 
         local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
 	print(string.format("TOTAL Skill Supply: %s", Writer.tags_to_string(
-		Cmd.plan:to_num_people(total_bandwidth), ", "
+		plan:to_num_people(total_bandwidth), ", "
 	)))
 end
 
 function rss()
         local total_bandwidth = Person.sum_bandwidth(ppl, pl.num_weeks)
 	print(string.format("TOTAL Skill Supply: %s", Writer.tags_to_string(
-		Cmd.plan:to_num_people(total_bandwidth), ", "
+		plan:to_num_people(total_bandwidth), ", "
 	)))
 end
 
@@ -159,7 +158,7 @@ end
 
 -- Rank can be a single number or an array of numbers
 function r(rank)
-        return Select.work_with_rank(Cmd.plan, rank)
+        return Select.work_with_rank(plan, rank)
 end
 
 -- This is a helper function that essentially maps "get_id" over a set of work
@@ -181,12 +180,12 @@ function rank(work_items, position)
 	if type(work_items[1]) == "table" then
 		work_items = get_ids(work_items)
 	end
-	Cmd.plan:rank(work_items, {["at"] = position})
+	plan:rank(work_items, {["at"] = position})
 end
 
 
 function sc(cutline)
-        Cmd.plan.cutline = cutline
+        plan.cutline = cutline
 end
 
 -- HELP -----------------------------------------------------------------------
