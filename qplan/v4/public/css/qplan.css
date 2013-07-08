@@ -79,7 +79,7 @@ body {
         border: 1px dotted #CCC;
 }
 
-#track-selector li.selected {
+#track-selector li.selected-true {
         background-color: blue;
 }
 
