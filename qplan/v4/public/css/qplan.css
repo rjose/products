@@ -73,13 +73,17 @@ body {
         height: 2em;
 }
 
-#track-selector span {
+
+#track-selector a {
+        text-decoration: none;
+        background-color: #444;
+        color: #CCC;
         display: block;
         padding: 0.5em;
         border: 1px dotted #CCC;
 }
 
-#track-selector li.selected-true {
+#track-selector li.selected-true a {
         background-color: blue;
 }
 
