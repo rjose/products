@@ -16,8 +16,7 @@ web module. Finally, we'll create some pages using angular to serve content.
 Implementation
 --------------
 
-.
-link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
+. link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
       Organize lua and C code]
       [X][X][X][X][X]
 . Listen and respond to web requests [X][X][X][][][]
@@ -26,7 +25,7 @@ link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
 . Add work page [X][X][X][][]
 . Add tracks page [X][X][][][][][]
 . Revise web and shell functions [X][X][X][][][]
-. Add index page [][][][][][]
+. Revise Web UI [][][][][]
 . Add readline support [][][][][]
 
 
@@ -164,6 +163,25 @@ Our filters should take a work item and the index of that work item in the
 array. Alright, I've done a pile of work to pull functions out cmdline and
 into shell to separate selection, filtering, and reporting. Gotten through
 rrt.
+
+8 - Revise Web UI
+-----------------
+Alright, let's see if we can create a two column layout with sticky
+navigation. The navigation options are "Work" and "Staff". Here's the data
+that we need from the server:
+
+- All tracks
+- All triages
+- Assigned staff info (totals, names by skill)
+- Default triage (1.5)
+  - Skill demand for selected triage
+  - List of work items for track with cutline and feasible line
+
+The web view should have a slider that selects the triage. When the triage
+level changes, there should be an Ajax call to the server to get the updated
+demand and work items list.
+
+Let's start by adding a sticky nav element. 
 
 Thoughts
 --------
