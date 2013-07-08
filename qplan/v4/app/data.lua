@@ -1,3 +1,7 @@
+local Reader = require('app/reader')
+local Writer = require('app/reader')
+local Person = require('app/person')
+
 local Data = {}
 
 local data_dir = "./data/"

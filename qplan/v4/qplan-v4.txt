@@ -1,7 +1,7 @@
 QPlan v4
 ========
 Rino Jose <@rjose>
-v2, Jul 1, 2013: Finished step 1
+v2, Jul 1, 2013: Finished step 8
 
 Drafting effort [][]
 
@@ -24,7 +24,8 @@ Implementation
 . Add staff page [X][X][X][X]
 . Add work page [X][X][X][][]
 . Add tracks page [X][X][][][][][]
-. Revise web and shell functions [X][X][X][][][]
+. Refactor into select/filter/format [X][X][X][X][X][X][X]
+. Refactor web.lua to select/filter/format [X][X][X][X][X]
 . Revise Web UI [][][][][]
 . Add readline support [][][][][]
 
@@ -140,8 +141,8 @@ to the ajax call. OK, I have the data. Was thinking of having a dropdown to
 select tracks, but let's just render everything. Done. Pretty cool. One last
 bit of functionality is to show the running demand as well.
 
-7 - Revise web and shell functions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+7 - Refactor into select/filter/format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 I want the code architecture to follow a piping model that we'll use in our
 qplan shell. Let's see if we can revise the code that serves the work.html
 page. Getting the work items is fine, but I don't like the global pl or ppl
@@ -164,7 +165,23 @@ array. Alright, I've done a pile of work to pull functions out cmdline and
 into shell to separate selection, filtering, and reporting. Gotten through
 rrt.
 
-8 - Revise Web UI
+OK, a couple more to get through. Let's go after rde next. We need to add
+two-level grouping: one by triage and one by track. Once we have this, we want
+to map a function that sums the demand for the work items in each triage/track
+cell.
+
+Tomorrow, I'll take a look at reorganizing things a little more. I think I want
+a "lua_ui.lua" file for doing the pure lua shell, a "json_ui.lua" file for
+presenting json data for web pages, and a "cls_ui.lua" file for the command line
+server shell. I'll also need to write the json_format file to extract parts from
+the current web.lua file.
+
+8 - Refactor web.lua to select/filter/format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+First, let's remove the init call from TextFormat. Done. Now, let's rename shell
+to lua_ui. Done. Now, let's split web.lua into web_ui.lua and json_format.lua
+
+9 - Revise Web UI
 -----------------
 Alright, let's see if we can create a two column layout with sticky
 navigation. The navigation options are "Work" and "Staff". Here's the data
@@ -192,5 +209,4 @@ Here are some things I wanted to do:
 
 - Review memory management in our C files
 - Add readline support
-- Come up with a style that works for this
 - Think about how multiple apps (QPlan, Scheduler, etc.) should interact.

@@ -12,7 +12,7 @@
                 <nav ng-include="'./partials/nav.html'"></nav>
 
                 <div ng-controller="TracksCtrl">
-                        <div ng-repeat="track in data.tracks">
+                        <div ng-repeat="track in data.groups">
                                 <h3>{{track}}</h3>
                                 <table>
                                         <tr>
@@ -21,7 +21,7 @@
                                                 <th>Name</th>
                                         </tr>
                                         <tr ng-repeat="work in
-                                                data.work_by_track[track]"
+                                                data.work_hash[track]"
                                                 class="above-cutline-{{work.rank <= data.cutline }}">
                                                 <td>#{{work.rank}}</td>
                                                 <td>{{work.triage.Triage}}</td>
