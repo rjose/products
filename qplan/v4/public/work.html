@@ -41,27 +41,28 @@
                         <table class='stats'>
                                 <tr>
                                         <th></th>
-                                        <th class='col-head'>Apps</th>
-                                        <th class='col-head'>Native</th>
-                                        <th class='col-head'>Web</th>
+                                        <th ng-repeat='skill in staffing_stats.skills' class='col-head'>
+                                                {{skill}}
+                                        </th>
                                 </tr>
                                 <tr>
                                         <th class='row-head'>Required</th>
-                                        <td>10</td>
-                                        <td>1</td>
-                                        <td>1</td>
+                                        <td ng-repeat='skill in staffing_stats.skills'>
+                                                {{staffing_stats.required[skill]}}
+                                        </td>
                                 </tr>
                                 <tr>
                                         <th class='row-head'>Available</th>
-                                        <td>4</td>
-                                        <td>2</td>
-                                        <td>1</td>
+                                        <td ng-repeat='skill in staffing_stats.skills'>
+                                                {{staffing_stats.available[skill]}}
+                                        </td>
                                 </tr>
                                 <tr class='net-left'>
                                         <th class='row-head'>Net Left</th>
-                                        <td class='understaffed-true'>-6</td>
-                                        <td>1</td>
-                                        <td class='understaffed-true'>0</td>
+                                        <td ng-repeat='skill in staffing_stats.skills'
+                                                class='understaffed-{{staffing_stats.net_left[skill] <= 0}}'>
+                                                {{staffing_stats.net_left[skill]}}
+                                        </td>
                                 </tr>
                         </table>
 
