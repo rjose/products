@@ -201,7 +201,10 @@ demand and work items list.
 Let's start by adding a sticky nav element. I'll just use the colors from the
 CSS Anthology book for now and then update them once I pick a scheme. Hmmm.
 This isn't working out that great. I think I need to explore this in a
-prototype. Done. Let's angularize this next.
+prototype. Done. Let's angularize this next. Alright, I've hooked a controller
+up and set up some mock data. Looks good. I'll need to hook this up to real
+data. One other thing I want to do is to highlight rows with the selected
+triage.
 
 Thoughts
 --------

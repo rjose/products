@@ -7,8 +7,16 @@ function WorkCtrl($scope, $http) {
                 skills: ['Apps', 'Native', 'Web'],
                 required: {'Apps': 11, 'Native': 2, 'Web': 2},
                 available: {'Apps': 4, 'Native': 3, 'Web': 2},
-                net_left: {'Apps': -7, 'Native': 1, 'Web': 0}
+                net_left: {'Apps': -7, 'Native': 1, 'Web': 0},
+                feasible_line: 2
         };
+
+        $scope.work_items = [
+                {rank: 5, triage: 1, track: 'Track Alpha', name: 'Something to do', estimate: 'Apps: Q, Native: 3S, Web: M'},
+                {rank: 8, triage: 1, track: 'Track Alpha', name: 'Something to do', estimate: 'Apps: Q, Native: 3S, Web: M'},
+                {rank: 15, triage: 1.5, track: 'Track Alpha', name: 'Something to do', estimate: 'Apps: Q, Native: 3S, Web: M'},
+                {rank: 22, triage: 2, track: 'Track Alpha', name: 'Something to do', estimate: 'Apps: Q, Native: 3S, Web: M'}
+        ];
 
         $scope.update = function() {
                 console.log("Update: " + $scope.triage + " " + $scope.selected_track);

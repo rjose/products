@@ -76,46 +76,13 @@
                                         <th class='field-estimates'>Estimates</th>
                                 </tr>
 
-                                <tr>
-                                        <td class='field-rank'>#1</td>
-                                        <td class='field-triage'>1</td>
-                                        <td class='field-track'>Track 1</td>
-                                        <td class='field-item'>Some work to do</td>
-                                        <td class='field-estimates'>Apps: 2Q, Web: M, Native: 3S</td>
-                                </tr>
-
-                                <tr>
-                                        <td class='field-rank'>#2</td>
-                                        <td class='field-triage'>1</td>
-                                        <td class='field-track'>Track 1</td>
-                                        <td class='field-item'>Some work to do</td>
-                                        <td class='field-estimates'>Apps: 2Q, Web: M, Native: 3S</td>
-                                </tr>
-
-                                <tr>
-                                        <td class='field-rank'>#3</td>
-                                        <td class='field-triage'>1.5</td>
-                                        <td class='field-track'>Track 1</td>
-                                        <td class='field-item'>Now is the time
-                                        for all good men to come to the aid of
-                                        their tasks.</td>
-                                        <td class='field-estimates'>Apps: 2Q, Web: M, Native: 3S</td>
-                                </tr>
-
-                                <tr class='feasible-false'>
-                                        <td class='field-rank'>#9</td>
-                                        <td class='field-triage'>1.5</td>
-                                        <td class='field-track'>Track 1</td>
-                                        <td class='field-item'>Some work to do</td>
-                                        <td class='field-estimates'>Apps: 2Q, Web: M, Native: 3S</td>
-                                </tr>
-
-                                <tr class='feasible-false'>
-                                        <td class='field-rank'>#15</td>
-                                        <td class='field-triage'>2</td>
-                                        <td class='field-track'>Track 1</td>
-                                        <td class='field-item'>Some work to do</td>
-                                        <td class='field-estimates'>Apps: 2Q, Web: M, Native: 3S</td>
+                                <tr ng-repeat='work in work_items'
+                                        class='feasible-{{$index + 1 <= staffing_stats.feasible_line}}'>
+                                        <td class='field-rank'>#{{work.rank}}</td>
+                                        <td class='field-triage'>{{work.triage}}</td>
+                                        <td class='field-track'>{{work.track}}</td>
+                                        <td class='field-item'>{{work.name}}</td>
+                                        <td class='field-estimates'>{{work.estimate}}</td>
                                 </tr>
                         </table>
 
