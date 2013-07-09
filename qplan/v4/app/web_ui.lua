@@ -60,7 +60,7 @@ function handle_app_web_work(req)
         local work_items = all_work_items
 
         -- Filter out unneeded tracks and resources
-        local available = plan.default_supply
+        local available = func.shallow_copy(plan.default_supply)
         if track ~= 'All' then
                 local filters = {Select.make_track_filter(track)}
                 work_items = Select.apply_filters(all_work_items, filters)

@@ -173,4 +173,12 @@ function func.select_n_items(items, num_items, filter)
 	return result
 end
 
+function func.shallow_copy(src)
+        local result = {}
+        for k, v in pairs(src) do
+                result[k] = v
+        end
+        return result
+end
+
 return func
