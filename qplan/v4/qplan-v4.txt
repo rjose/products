@@ -207,6 +207,8 @@ up and set up some mock data. Looks good. I'll need to hook this up to real
 data. One other thing I want to do is to highlight rows with the selected
 triage.
 
+OK, let's start by having our server return the mocked data.
+
 Thoughts
 --------
 I should learn how to do TDD with angular. I should examine the angular-seed app

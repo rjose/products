@@ -1,25 +1,33 @@
 function WorkCtrl($scope, $http) {
-        $scope.work_data = [];
-        $scope.tracks = ["All", "Track 1", "Track 2"];
-        $scope.selected_track = "All";
+        $scope.default_track = "All";
+        $scope.tracks = [$scope.default_track];
+        $scope.selected_track = $scope.default_track;
         $scope.triage = 1.5;
         $scope.staffing_stats = {
-                skills: ['Apps', 'Native', 'Web'],
-                required: {'Apps': 11, 'Native': 2, 'Web': 2},
-                available: {'Apps': 4, 'Native': 3, 'Web': 2},
-                net_left: {'Apps': -7, 'Native': 1, 'Web': 0},
-                feasible_line: 2
+                skills: [],
+                required: {},
+                available: {},
+                net_left: {},
+                feasible_line: 100
         };
-
-        $scope.work_items = [
-                {rank: 5, triage: 1, track: 'Track Alpha', name: 'Something to do', estimate: 'Apps: Q, Native: 3S, Web: M'},
-                {rank: 8, triage: 1, track: 'Track Alpha', name: 'Something to do', estimate: 'Apps: Q, Native: 3S, Web: M'},
-                {rank: 15, triage: 1.5, track: 'Track Alpha', name: 'Something to do', estimate: 'Apps: Q, Native: 3S, Web: M'},
-                {rank: 22, triage: 2, track: 'Track Alpha', name: 'Something to do', estimate: 'Apps: Q, Native: 3S, Web: M'}
-        ];
+        $scope.work_items = [];
 
         $scope.update = function() {
                 console.log("Update: " + $scope.triage + " " + $scope.selected_track);
+                $http.get('/app/web/work?triage=' + $scope.triage + "&track=" + $scope.selected_track).then(
+                                function(res) {
+                                        console.log("TODO: Handle the query args");
+                                        console.dir(res);
+
+                                        var tmp = [$scope.default_track];
+                                        $scope.tracks = tmp.concat(res.data.tracks);
+                                        $scope.staffing_stats = res.data.staffing_stats;
+                                        $scope.work_items = res.data.work_items;
+                                },
+                                function(res) {
+                                        console.log("Ugh.");
+                                        console.dir(res);
+                                });
         };
 
         $scope.selectTrack = function(track) {
@@ -32,16 +40,6 @@ function WorkCtrl($scope, $http) {
         };
 
 
-        // Load data to render
-        $http.get('/app/web/work').then(
-                        function(res) {
-                                console.dir(res);
-                                $scope.work_data = res.data
-                        },
-                        function(res) {
-                                console.log("Ugh.");
-                                console.dir(res);
-                        });
 
         // A helper function to convert a tags hash to a string
         $scope.tags_to_string = function(tags) {
@@ -64,5 +62,8 @@ function WorkCtrl($scope, $http) {
                 }
                 return result;
         };
+
+        // Update
+        $scope.update();
 }
 

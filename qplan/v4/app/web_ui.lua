@@ -5,6 +5,7 @@ local RequestRouter = require('request_router')
 local Select = require('select')
 local func = require('functional')
 local JsonFormat = require('json_format')
+local json = require('json')
 
 local WebUI = {}
 
@@ -42,15 +43,31 @@ end
 
 
 function handle_app_web_work(req)
-        -- Select work items
-        local work = plan:get_work_items()
+--        -- Select work items
+--        local work = plan:get_work_items()
+--
+--        -- Format results
+--        local result_str = JsonFormat.format_rrt(work, plan, staff)
 
-        -- Format results
-        local result_str = JsonFormat.format_rrt(work, plan, staff)
+        local result = {}
+        result.tracks = {"Track 1", "Track 2"}
+        result.staffing_stats = {
+                ["skills"]= {'Apps', 'Native', 'Web'},
+                ["required"]= {['Apps']= 11, ['Native']= 2, ['Web']= 2},
+                ["available"]= {['Apps']= 4, ['Native']= 3, ['Web']= 2},
+                ["net_left"]= {['Apps']= -7, ['Native']= 1, ['Web']= 0},
+                ["feasible_line"]= 2
+        }
+        result.work_items ={                {["rank"] = 5, ["triage"] = 1, ["track"] = 'Track Alpha', ["name"] = 'Something to do', ["estimate"] = 'Apps = Q, Native = 3S, Web = M'},
+        {["rank"] = 8, ["triage"] = 1, ["track"] = 'Track Alpha', ["name"] = 'Something to do', ["estimate"] = 'Apps = Q, Native = 3S, Web = M'},
+        {["rank"] = 15, ["triage"] = 1.5, ["track"] = 'Track Alpha', ["name"] = 'Something to do', ["estimate"] = 'Apps = Q, Native = 3S, Web = M'},
+        {["rank"] = 22, ["triage"] = 2, ["track"] = 'Track Alpha', ["name"] = 'Something to do', ["estimate"] = 'Apps = Q, Native = 3S, Web = M'}
+} 
+
 
         -- Return response
         return RequestRouter.construct_response(
-                                        200, "application/json", result_str)
+                                        200, "application/json", json.encode(result))
 end
 
 function handle_app_web_tracks(req)
