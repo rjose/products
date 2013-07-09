@@ -60,15 +60,23 @@ function handle_app_web_work(req)
         local work_items = all_work_items
 
         -- Filter out unneeded tracks and resources
+        local available = plan.default_supply
         if track ~= 'All' then
                 local filters = {Select.make_track_filter(track)}
                 work_items = Select.apply_filters(all_work_items, filters)
+
+                -- TODO: Look up available by track assignment
+                available = {}
         end
+        -- Come up with feasible line
+        feasible_line = Work.find_feasible_line(work_items, available)
 
         -- Create list of work items above or equal to "triage"
         local triage_filter = Select.make_downto_triage_filter(triage)
         local triage_work_items = Select.apply_filters(work_items,
                                                            {triage_filter})
+        -- Convert to num people
+        available = plan:to_num_people(available)
         local demand = plan:to_num_people(Work.sum_demand(triage_work_items))
         local skills = func.get_table_keys(demand)
 
@@ -79,15 +87,12 @@ function handle_app_web_work(req)
         result.tracks = Select.gather_tracks(all_work_items)
 
         -- TODO: Come up with number of people assigned
-        local available = {}
         local net_left = {}
         for _, skill in ipairs(skills) do
                 local avail = available[skill] or 0
                 net_left[skill] = avail - demand[skill]
         end
 
-        -- TODO: Come up with feasible line
-        feasible_line = 10
 
         result.staffing_stats = {
                 ["skills"]= skills,

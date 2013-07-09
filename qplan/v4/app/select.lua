@@ -94,7 +94,7 @@ function Select.make_track_filter(t)
         result = function(work_item)
                 for _, track in pairs(tracks) do
                         local search_term = track:lower():split(" ")[1]
-                        if work_item.tags.track:lower():find(search_term) then
+                        if work_item.tags.track:lower():find("^" .. search_term) then
                                 return true
                         end
                 end
