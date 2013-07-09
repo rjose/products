@@ -82,6 +82,7 @@ end
 
 
 -- Filters on one or more track labels
+-- TODO: Rename items to make them more generic
 function Select.make_track_filter(t)
         local tracks = {}
         if type(t) == "table" then

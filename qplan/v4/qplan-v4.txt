@@ -26,7 +26,7 @@ Implementation
 . Add tracks page [X][X][][][][][]
 . Refactor into select/filter/format [X][X][X][X][X][X][X]
 . Refactor web.lua to select/filter/format [X][X][X][X][X]
-. Revise Web UI [][][][][]
+. Revise Web UI [X][X][X][X][X]<X><X><X><X>
 . Add readline support [][][][][]
 . Add cls syntax [][][][][][][][][][]
 
@@ -221,7 +221,7 @@ Alright, let's rewrite our people awk script to add assignment tags. After
 that, we'll hook up the selection of people by track and then feed that into
 the endpoint response. Maybe we can move the triage control back up.
 
-We might also highlight Skill headings that are short.
+Next, bring new styling over
 
 Thoughts
 --------
@@ -233,3 +233,4 @@ Here are some things I wanted to do:
 - Review memory management in our C files
 - Add readline support
 - Think about how multiple apps (QPlan, Scheduler, etc.) should interact.
+- Highlight skill headings that are short

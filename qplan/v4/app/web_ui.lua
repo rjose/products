@@ -65,8 +65,9 @@ function handle_app_web_work(req)
                 local filters = {Select.make_track_filter(track)}
                 work_items = Select.apply_filters(all_work_items, filters)
 
-                -- TODO: Look up available by track assignment
-                available = {}
+                -- Look up available by track assignment
+                local track_staff = Select.apply_filters(staff, filters)
+                available = Person.sum_bandwidth(track_staff, plan.num_weeks)
         end
         -- Come up with feasible line
         feasible_line = Work.find_feasible_line(work_items, available)
@@ -86,12 +87,14 @@ function handle_app_web_work(req)
         -- TODO: These should come in a different call
         result.tracks = Select.gather_tracks(all_work_items)
 
-        -- TODO: Come up with number of people assigned
+        -- Come up with number of people assigned
         local net_left = {}
         for _, skill in ipairs(skills) do
                 local avail = available[skill] or 0
                 net_left[skill] = avail - demand[skill]
         end
+
+        -- TODO: Add staff by skill
 
 
         result.staffing_stats = {
