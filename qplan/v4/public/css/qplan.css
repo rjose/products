@@ -91,6 +91,10 @@ section#staff {
         padding: 1em 2em;
 }
 
+#staff h3.enough-staff-false {
+        color: red;
+}
+
 /* ============================================================================
  * Slider
  */
