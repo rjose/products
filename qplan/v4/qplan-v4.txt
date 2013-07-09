@@ -219,9 +219,10 @@ of web layout].
 
 Alright, let's rewrite our people awk script to add assignment tags. After
 that, we'll hook up the selection of people by track and then feed that into
-the endpoint response. Maybe we can move the triage control back up.
+the endpoint response. OK, I added the computation of resources available.
+Let's add the track staff by skill next.
 
-Next, bring new styling over
+Maybe we can move the triage control back up. Next, bring new styling over
 
 Thoughts
 --------

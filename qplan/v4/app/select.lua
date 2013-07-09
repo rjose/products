@@ -153,6 +153,18 @@ end
 
 -- GROUPING FUNCTIONS ---------------------------------------------------------
 --
+function Select.group_by_skill(items)
+        -- TODO: Handle multiple skills
+        local get_skill = function(item)
+                for skill, frac in pairs(item.skills) do
+                        -- Just return the first one way find
+                        return skill
+                end
+        end
+
+        return func.group_items(items, get_skill)
+end
+
 function Select.group_by_track(work_items)
         local get_track = function(w) return w.tags.track end
 

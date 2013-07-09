@@ -42,6 +42,7 @@ function handle_app_web_staff(req)
 end
 
 
+-- TODO: See if I can push the detail down into well-defined steps
 function handle_app_web_work(req)
         -- Get track and triage from request
         local track = 'All'
@@ -60,15 +61,17 @@ function handle_app_web_work(req)
         local work_items = all_work_items
 
         -- Filter out unneeded tracks and resources
+        local track_staff = staff
         local available = func.shallow_copy(plan.default_supply)
         if track ~= 'All' then
                 local filters = {Select.make_track_filter(track)}
                 work_items = Select.apply_filters(all_work_items, filters)
 
                 -- Look up available by track assignment
-                local track_staff = Select.apply_filters(staff, filters)
+                track_staff = Select.apply_filters(staff, filters)
                 available = Person.sum_bandwidth(track_staff, plan.num_weeks)
         end
+
         -- Come up with feasible line
         feasible_line = Work.find_feasible_line(work_items, available)
 
@@ -94,8 +97,8 @@ function handle_app_web_work(req)
                 net_left[skill] = avail - demand[skill]
         end
 
-        -- TODO: Add staff by skill
-
+        -- Add staff list
+        result.staff_by_skill = Select.group_by_skill(track_staff)
 
         result.staffing_stats = {
                 ["skills"]= skills,

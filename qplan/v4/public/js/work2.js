@@ -11,6 +11,7 @@ function WorkCtrl($scope, $http) {
                 feasible_line: 100
         };
         $scope.work_items = [];
+        $scope.staff_by_skill = {};
 
         $scope.update = function() {
                 console.log("Update: " + $scope.triage + " " + $scope.selected_track);
@@ -23,6 +24,7 @@ function WorkCtrl($scope, $http) {
                                         $scope.tracks = tmp.concat(res.data.tracks);
                                         $scope.staffing_stats = res.data.staffing_stats;
                                         $scope.work_items = res.data.work_items;
+                                        $scope.staff_by_skill = res.data.staff_by_skill;
                                 },
                                 function(res) {
                                         console.log("Ugh.");
