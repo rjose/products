@@ -93,7 +93,8 @@ function Select.make_track_filter(t)
         local result
         result = function(work_item)
                 for _, track in pairs(tracks) do
-                        if (work_item.tags.track:lower():find(track:lower())) then
+                        local search_term = track:lower():split(" ")[1]
+                        if work_item.tags.track:lower():find(search_term) then
                                 return true
                         end
                 end
@@ -178,6 +179,16 @@ function Select.group_people_by_skill(people)
 	table.sort(skill_tags)
 
         return people_by_skill, skill_tags
+end
+
+-- MISC FUNCTIONS -------------------------------------------------------------
+--
+function Select.gather_tracks(work_items)
+        local track_hash = {}
+        for _, w in ipairs(work_items) do
+                track_hash[w.tags.track] = 1
+        end
+        return func.get_table_keys(track_hash)
 end
 
 return Select

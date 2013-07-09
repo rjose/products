@@ -43,24 +43,26 @@ end
 
 
 function handle_app_web_work(req)
+        -- Get track and triage from request
         local track = 'All'
         if req.qparams['track'] then
                 track = req.qparams['track'][1]
+                track = string.gsub(track, "%%20", " ")
         end
 
         local triage = 1.5
         if req.qparams['triage'] then
                 triage = req.qparams['triage'][1] + 0
         end
-        print(triage)
 
         -- Select work items
-        local work_items = Select.all_work(plan)        
+        local all_work_items = Select.all_work(plan)
+        local work_items = all_work_items
 
-        -- Filter out unneeded tracks
+        -- Filter out unneeded tracks and resources
         if track ~= 'All' then
                 local filters = {Select.make_track_filter(track)}
-                work_items = Select.apply_filters(work_items, filters)
+                work_items = Select.apply_filters(all_work_items, filters)
         end
 
         -- Create list of work items above or equal to "triage"
@@ -70,10 +72,11 @@ function handle_app_web_work(req)
         local demand = plan:to_num_people(Work.sum_demand(triage_work_items))
         local skills = func.get_table_keys(demand)
 
+        -- Construct result
         local result = {}
 
         -- TODO: These should come in a different call
-        result.tracks = {"Contacts", "Austin"}
+        result.tracks = Select.gather_tracks(all_work_items)
 
         -- TODO: Come up with number of people assigned
         local available = {}
