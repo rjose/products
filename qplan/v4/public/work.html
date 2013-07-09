@@ -88,7 +88,7 @@
                                 <div ng-repeat='skill in staffing_stats.skills'>
                                         <h3 class='enough-staff-{{staffing_stats.net_left[skill] > 0}}'>{{skill}}</h3>
                                         <ol>
-                                                <li ng-repeat='person in staff_by_skill[skill]'>{{person.name}}</li>
+                                                <li ng-repeat='person in staff_by_skill[skill]'>{{person}}</li>
                                         </ol>
                                 </div>
                         </section>

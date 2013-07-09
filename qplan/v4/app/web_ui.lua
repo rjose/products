@@ -98,7 +98,17 @@ function handle_app_web_work(req)
         end
 
         -- Add staff list
-        result.staff_by_skill = Select.group_by_skill(track_staff)
+        result.staff_by_skill = {}
+        local staff_by_skill = Select.group_by_skill(track_staff)
+        for skill, people in pairs(staff_by_skill) do
+                local names = {}
+                for _, p in ipairs(people) do
+                        names[#names+1] = p.name
+                end
+                table.sort(names)
+                result.staff_by_skill[skill] = names
+        end
+
 
         result.staffing_stats = {
                 ["skills"]= skills,
