@@ -27,6 +27,7 @@ link:https://github.com/rjose/products/tree/98c7b/qplan/v4[
 . Add tracks page [X][X][][][][][]
 . Refactor into select/filter/format [X][X][X][X][X][X][X]
 . Refactor web.lua to select/filter/format [X][X][X][X][X]
+. Add cls syntax [][][][][][][][][][]
 . Add readline support [][][][][]
 . Add index page [][][][][][]
 
