@@ -25,7 +25,7 @@
 
                 <div id='main-content' class="wrapper">
                         <section id='main'>
-                                <h2>Work</h2>
+                                <h2>{{selected_track}} Work</h2>
 
                                 <h3>Staffing Stats</h3>
                                 <div id='triage-slider'>
@@ -84,7 +84,7 @@
                         </section>
 
                         <section id='staff'>
-                                <h2>Staff</h2>
+                                <h2>{{selected_track}} Staff</h2>
                                 <div ng-repeat='skill in staffing_stats.skills'>
                                         <h3 class='enough-staff-{{staffing_stats.net_left[skill] > 0}}'>{{skill}}</h3>
                                         <ol>
