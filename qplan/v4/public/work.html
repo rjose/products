@@ -12,14 +12,8 @@
         <body ng-controller="WorkCtrl">
                 <div class="wrapper">
                         <h1 id='main-heading'>QPlan</h1>
-                        <nav id='main-nav'>
-                                <ul>
-                                        <li class='selected'><a href="/work.html">Work</a></li><li><a href="#">Staff</a></li>
-                                </ul>
-                        </nav>
 
                         <section id='track-selector'>
-                        <h3>Tracks </h3>
                         <ul>
                                 <li ng-repeat='track in tracks' class='selected-{{selected_track == track}}'>
                                         <a href='' ng-click='selectTrack(track)'>{{track}}</a>

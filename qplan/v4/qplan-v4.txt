@@ -211,8 +211,17 @@ OK, let's start by having our server return the mocked data. Now, let's see if
 we can parse out the track and the triage. Done. Alright, let's write/call a
 function to get all the work items in a given track.
 
-I think we should incorporate the staff into the same page as the work view. We
-should make this a third column. It can be narrower than the work column.
+I think we should incorporate the staff into the same page as the work view.
+We should make this a third column. It can be narrower than the work column.
+Alright, this is in
+link:https://github.com/rjose/prototypes/tree/9c5729/web_layout/proto5[proto5
+of web layout].
+
+Alright, let's rewrite our people awk script to add assignment tags. After
+that, we'll hook up the selection of people by track and then feed that into
+the endpoint response. Maybe we can move the triage control back up.
+
+We might also highlight Skill headings that are short.
 
 Thoughts
 --------
