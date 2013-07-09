@@ -31,7 +31,9 @@ function tags_to_string(tags, sep)
 
         local result = ""
 	for _, key in ipairs(keys) do
-                result = result .. string.format("%s:%s" .. sep, key, tags[key])
+                if tags[key] and tags[key] ~= '' then
+                        result = result .. string.format("%s:%s" .. sep, key, tags[key])
+                end
         end
 
         -- Strip trailing comma

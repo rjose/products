@@ -43,27 +43,68 @@ end
 
 
 function handle_app_web_work(req)
---        -- Select work items
---        local work = plan:get_work_items()
---
---        -- Format results
---        local result_str = JsonFormat.format_rrt(work, plan, staff)
+        local track = 'All'
+        if req.qparams['track'] then
+                track = req.qparams['track'][1]
+        end
+
+        local triage = 1.5
+        if req.qparams['triage'] then
+                triage = req.qparams['triage'][1] + 0
+        end
+        print(triage)
+
+        -- Select work items
+        local work_items = Select.all_work(plan)        
+
+        -- Filter out unneeded tracks
+        if track ~= 'All' then
+                local filters = {Select.make_track_filter(track)}
+                work_items = Select.apply_filters(work_items, filters)
+        end
+
+        -- Create list of work items above or equal to "triage"
+        local triage_filter = Select.make_downto_triage_filter(triage)
+        local triage_work_items = Select.apply_filters(work_items,
+                                                           {triage_filter})
+        local demand = plan:to_num_people(Work.sum_demand(triage_work_items))
+        local skills = func.get_table_keys(demand)
 
         local result = {}
-        result.tracks = {"Track 1", "Track 2"}
-        result.staffing_stats = {
-                ["skills"]= {'Apps', 'Native', 'Web'},
-                ["required"]= {['Apps']= 11, ['Native']= 2, ['Web']= 2},
-                ["available"]= {['Apps']= 4, ['Native']= 3, ['Web']= 2},
-                ["net_left"]= {['Apps']= -7, ['Native']= 1, ['Web']= 0},
-                ["feasible_line"]= 2
-        }
-        result.work_items ={                {["rank"] = 5, ["triage"] = 1, ["track"] = 'Track Alpha', ["name"] = 'Something to do', ["estimate"] = 'Apps = Q, Native = 3S, Web = M'},
-        {["rank"] = 8, ["triage"] = 1, ["track"] = 'Track Alpha', ["name"] = 'Something to do', ["estimate"] = 'Apps = Q, Native = 3S, Web = M'},
-        {["rank"] = 15, ["triage"] = 1.5, ["track"] = 'Track Alpha', ["name"] = 'Something to do', ["estimate"] = 'Apps = Q, Native = 3S, Web = M'},
-        {["rank"] = 22, ["triage"] = 2, ["track"] = 'Track Alpha', ["name"] = 'Something to do', ["estimate"] = 'Apps = Q, Native = 3S, Web = M'}
-} 
 
+        -- TODO: These should come in a different call
+        result.tracks = {"Contacts", "Austin"}
+
+        -- TODO: Come up with number of people assigned
+        local available = {}
+        local net_left = {}
+        for _, skill in ipairs(skills) do
+                local avail = available[skill] or 0
+                net_left[skill] = avail - demand[skill]
+        end
+
+        -- TODO: Come up with feasible line
+        feasible_line = 10
+
+        result.staffing_stats = {
+                ["skills"]= skills,
+                ["required"]= func.map_table(format_number, demand),
+                ["available"]= func.map_table(format_number, available),
+                ["net_left"]= func.map_table(format_number, net_left),
+                ["feasible_line"]= feasible_line
+        }
+
+        -- TODO: Move to formatting function
+        result.work_items = {}
+        for _, w in ipairs(work_items) do
+                local new_item = {}
+                new_item.rank = w.rank
+                new_item.triage = w:merged_triage()
+                new_item.name = w.name
+                new_item.track = w.tags.track
+                new_item.estimate = Writer.tags_to_string(w.estimates, ", ")
+                result.work_items[#result.work_items+1] = new_item
+        end
 
         -- Return response
         return RequestRouter.construct_response(

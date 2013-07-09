@@ -103,6 +103,30 @@ function Select.make_track_filter(t)
         return result
 end
 
+function Select.make_downto_triage_filter(triage)
+        local result = function(work_item)
+                return Work.downto_triage_filter(triage, work_item)
+        end
+        return result
+end
+
+function Select.make_triage_filter(triage)
+        local result
+
+        -- Check for 1 vs 1.5, e.g.
+        fractional_part = triage % 1
+        if fractional_part > 0 then
+                result = function(work_item)
+                        return Work.triage_xx_filter(triage - fractional_part, work_item)
+                end
+        else
+                result = function(work_item)
+                        return Work.triage_filter(triage, work_item)
+                end
+        end
+        return result
+end
+
 -- "triage" is optional. If "t" is a number, then only return triage filter.
 function Select.get_track_and_triage_filters(t, triage)
         local result = {}
@@ -118,17 +142,7 @@ function Select.get_track_and_triage_filters(t, triage)
 
         -- Make a triage filter, if necessary
         if triage then
-                -- Check for 1 vs 1.5, e.g.
-                fractional_part = triage % 1
-                if fractional_part > 0 then
-                        result[#result+1] = function(work_item)
-                                return Work.triage_xx_filter(triage - fractional_part, work_item)
-                        end
-                else
-                        result[#result+1] = function(work_item)
-                                return Work.triage_filter(triage, work_item)
-                        end
-                end
+                result[#result+1] = Select.make_triage_filter(triage)
         end
 
         return result
