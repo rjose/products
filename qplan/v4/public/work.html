@@ -4,31 +4,89 @@
         <head>
                 <title>QPlan Work</title>
                 <script src="./js/angular.min.js"></script>
-                <script src="./js/work.js"></script>
+                <script src="./js/work2.js"></script>
                 <link rel="stylesheet" href="./css/qplan.css">
         </head>
 
-        <body>
-                <nav ng-include="'./partials/nav.html'"></nav>
-                <div ng-controller="WorkCtrl">
-                        <table>
+        <body ng-controller="WorkCtrl">
+                <div class="wrapper">
+                        <h1 id='main-heading'>QPlan</h1>
+                        <nav id='main-nav'>
+                                <ul>
+                                        <li class='selected'><a href="/work.html">Work</a></li><li><a href="#">Staff</a></li>
+                                </ul>
+                        </nav>
+
+                        <section id='track-selector'>
+                        <h3>Tracks </h3>
+                        <ul>
+                                <li ng-repeat='track in tracks' class='selected-{{selected_track == track}}'>
+                                        <a href='' ng-click='selectTrack(track)'>{{track}}</a>
+                                </li>
+                        </ul>
+                        </section>
+
+                </div>
+
+                <div id='main-content' class="wrapper">
+                        <section id='main'>
+                        <h2>Work</h2>
+
+                        <h3>Staffing Stats</h3>
+                        <div id='triage-slider'>
+                                <span>Triage: </span>
+                                <input type='range' min='1' max='3' step='0.5' ng-model='triage' ng-change='update()'>
+                                <span>{{triage}}</span>
+                        </div>
+                        <table class='stats'>
                                 <tr>
-                                        <th>Rank</th>
-                                        <th>Track</th>
-                                        <th>Item</th>
-                                        <th>Estimates</th>
-                                        <th>Net avail</th>
+                                        <th></th>
+                                        <th ng-repeat='skill in staffing_stats.skills' class='col-head'>
+                                                {{skill}}
+                                        </th>
                                 </tr>
-                                <tr class="is-feasible-{{w.rank < work_data.feasible_line}} above-cutline-{{w.rank < work_data.cutline}}"
-                                        ng-repeat="w in work_data.work">
-                                        <td>#{{w.rank}}</td>
-                                        <td>{{w.tags.track}}</td>
-                                        <td>{{w.name}}</td>
-                                        <td>{{tags_to_string(w.estimates)}}</td>
-                                        <td>{{tags_to_string(work_data.net_totals[$index])}}</td>
+                                <tr>
+                                        <th class='row-head'>Required</th>
+                                        <td ng-repeat='skill in staffing_stats.skills'>
+                                                {{staffing_stats.required[skill]}}
+                                        </td>
+                                </tr>
+                                <tr>
+                                        <th class='row-head'>Available</th>
+                                        <td ng-repeat='skill in staffing_stats.skills'>
+                                                {{staffing_stats.available[skill]}}
+                                        </td>
+                                </tr>
+                                <tr class='net-left'>
+                                        <th class='row-head'>Net Left</th>
+                                        <td ng-repeat='skill in staffing_stats.skills'
+                                                class='understaffed-{{staffing_stats.net_left[skill] <= 0}}'>
+                                                {{staffing_stats.net_left[skill]}}
+                                        </td>
                                 </tr>
                         </table>
+
+                        <h3>Work Details</h3>
+                        <table class='work-details'>
+                                <tr>
+                                        <th class='field-rank'>Rank</th>
+                                        <th class='field-triage'>Tri.</th>
+                                        <th class='field-track'>Track</th>
+                                        <th class='field-item'>Item</th>
+                                        <th class='field-estimates'>Estimates</th>
+                                </tr>
+
+                                <tr ng-repeat='work in work_items'
+                                        class='feasible-{{$index + 1 <= staffing_stats.feasible_line}}'>
+                                        <td class='field-rank'>#{{work.rank}}</td>
+                                        <td class='field-triage'>{{work.triage}}</td>
+                                        <td class='field-track'>{{work.track}}</td>
+                                        <td class='field-item'>{{work.name}}</td>
+                                        <td class='field-estimates'>{{work.estimate}}</td>
+                                </tr>
+                        </table>
+
+                        </section>
                 </div>
         </body>
 </html>
-
