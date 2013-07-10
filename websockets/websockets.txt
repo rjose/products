@@ -56,6 +56,12 @@ Alright, I have the test set up. Let's copy stuff from our proto1.m file. The
 first thing I need to do is search our request string for "Upgrade:
 websocket". Done.
 
+2 - Construct websocket handshake (server)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Assuming that we have a valid ws handshake request, we need to get the
+Sec-Websocket-Key and construct the Sec-WebSocket-Accept value. We need to
+check the fields of the response string.
+
 Thoughts
 --------
 I think I'll symlink the websockets directory into the project that needs it

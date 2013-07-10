@@ -33,14 +33,14 @@ static const char non_ws_request_string[] =
 
 int main()
 {
-        char *message = "HOWDY";
-        char *old_message;
-
         START_SET("Is websocket handshake");
 
-        pass(1 == ws_is_handshake(valid_ws_request_string), "Check start of handshake");
-        pass(0 == ws_is_handshake(invalid_ws_request_string), "Check start of handshake");
-        pass(0 == ws_is_handshake(non_ws_request_string), "Check start of handshake");
+        pass(1 == ws_is_handshake(valid_ws_request_string),
+                                                    "Check start of handshake");
+        pass(0 == ws_is_handshake(invalid_ws_request_string),
+                                                    "Check start of handshake");
+        pass(0 == ws_is_handshake(non_ws_request_string),
+                                                    "Check start of handshake");
 
         END_SET("Is websocket handshake");
         
