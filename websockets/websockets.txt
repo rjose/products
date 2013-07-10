@@ -1,0 +1,54 @@
+WebSockets Module
+=================
+Rino Jose <@rjose>
+v1, July 10, 2013: Initial version
+
+
+Overview
+--------
+About a month ago, we
+link:https://github.com/rjose/prototypes/tree/master/serve_ws[prototyped] a
+number of areas related to websockets. What I'd like to do now is to use that
+work to do TDD on a websockets module that we can use in apps like QPlan. We
+should be able to integrate this into the "handle_request_routine". Somewhere
+in that routine should be a call to check if the request is the start of a
+websocket handshake (that's something that we'll need to implement here). If
+so, it should try to establish a websocket connection; if not, it should
+handle the HTTP request. All of this should happen within the same request
+handling thread.
+
+Once the connection is established, the thread will continue to run until the
+connection is closed. We'll have to make sure we do this efficiently. If this
+hasn't been prototyped properly, we should do so first.
+
+We'll need some way to associate a websocket channel with something in the
+app. For instance, one channel is publishing content to people in a meeting
+while another channel is providing data to a hub app. We need to keep these
+straight within each app.
+
+
+Implementation
+--------------
+. Check if request is start of websocket handshake
+. Complete websocket handshake (server)
+. Construct short message
+. Construct medium message
+. Construct long message
+. Read short message
+. Read medium message
+. Read long message
+. Close channel
+. Handle close channel
+. Construct PING/PONG messages
+. Read PING/PONG message
+
+. Start websocket handshake (as a client)
+. Complete websocket handshake (as a client)
+
+
+1 - Check if request is start of websocket handshake
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The first step is to get some initial empty tests to run.
+
+Thoughts
+--------
