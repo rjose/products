@@ -143,7 +143,7 @@ const unsigned char *ws_make_text_frame(const char *message, const char *mask)
 {
         int i;
         size_t message_len;
-        uchar byte0, byte1;
+        uchar byte0, byte1;     /* First two bytes of the frame */
         uchar *result = NULL;
 
         /* We know this is a text frame */
@@ -158,13 +158,13 @@ const unsigned char *ws_make_text_frame(const char *message, const char *mask)
         if (message_len <= SHORT_MESSAGE_LEN) {
                 byte0 |= WS_FRAME_FIN;
                 byte1 |= message_len;
+
                 if ((result = malloc(2 + message_len)) == NULL)
                         err_abort(-1, "Can't allocate memory for ws_make_text_frame");
-
                 result[0] = byte0;
                 result[1] = byte1;
+                // TODO: Handle masking
                 for (i = 0; i < message_len; i++) {
-                        // TODO: Handle masking
                         result[i+2] = message[i];
                 }
         }
