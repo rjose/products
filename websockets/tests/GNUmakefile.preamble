@@ -1,1 +1,1 @@
-#test1_C_FILES += ../list.c
+test1_C_FILES += ../ws.c

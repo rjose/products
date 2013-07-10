@@ -49,7 +49,9 @@ Implementation
 1 - Check if request is start of websocket handshake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The first step is to get some initial empty tests to run. I'll copy what I did
-for link:https://github.com/rjose/products/tree/master/algoc[algoc].
+for link:https://github.com/rjose/products/tree/master/algoc[algoc]. Done!
+Now, let's get some HTTP request strings and see if we can tell if they're
+websocket requests or not. I'll start with the first example in the spec.
 
 Thoughts
 --------
