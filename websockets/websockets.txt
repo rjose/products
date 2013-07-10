@@ -48,7 +48,10 @@ Implementation
 
 1 - Check if request is start of websocket handshake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The first step is to get some initial empty tests to run.
+The first step is to get some initial empty tests to run. I'll copy what I did
+for link:https://github.com/rjose/products/tree/master/algoc[algoc].
 
 Thoughts
 --------
+I think I'll symlink the websockets directory into the project that needs it
+and compile everything into one executable.
