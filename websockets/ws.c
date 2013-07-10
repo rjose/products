@@ -12,6 +12,22 @@
 #define SEC_WEBSOCKET_KEY_LEN 17
 #define BUF_LENGTH 200
 
+#define SHORT_MESSAGE_LEN 125
+
+/* Byte 0 of websocket frame */
+#define WS_FRAME_FIN 0x80
+#define WS_FRAME_OP_CONT 0x00
+#define WS_FRAME_OP_TEXT 0x01
+#define WS_FRAME_OP_BIN 0x02
+#define WS_FRAME_OP_CLOSE 0x08
+#define WS_FRAME_OP_PING 0x09
+#define WS_FRAME_OP_PONG 0x0A
+
+/* Byte 1 of websocket frame */
+#define WS_FRAME_MASK 0x80
+
+typedef unsigned char uchar;
+
 /*
  * Declare static functions
  */
@@ -120,4 +136,39 @@ error:
         if (websocket_accept != NULL)
                 free(websocket_accept);
         return NULL;
+}
+
+
+const unsigned char *ws_make_text_frame(const char *message, const char *mask)
+{
+        int i;
+        size_t message_len;
+        uchar byte0, byte1;
+        uchar *result = NULL;
+
+        /* We know this is a text frame */
+        byte0 = WS_FRAME_OP_TEXT;
+
+        /* If a mask is specified, set the mask bit */
+        byte1 = 0;
+        if (mask)
+                byte1 = WS_FRAME_MASK;
+
+        message_len = strlen(message);
+        if (message_len <= SHORT_MESSAGE_LEN) {
+                byte0 |= WS_FRAME_FIN;
+                byte1 |= message_len;
+                if ((result = malloc(2 + message_len)) == NULL)
+                        err_abort(-1, "Can't allocate memory for ws_make_text_frame");
+
+                result[0] = byte0;
+                result[1] = byte1;
+                for (i = 0; i < message_len; i++) {
+                        // TODO: Handle masking
+                        result[i+2] = message[i];
+                }
+        }
+        // TODO: Handle other message sizes
+
+        return result;
 }
