@@ -31,7 +31,7 @@ Implementation
 --------------
 . Check if request is start of websocket handshake [X][X][][]
 . Complete websocket handshake (server) [X][X][X][X][X][X]
-. Construct short message [][][][][]
+. Construct short message [X][X][][][]
 . Construct medium message
 . Construct long message
 . Read short message
@@ -71,7 +71,10 @@ need to prototype these first to feel comfortable with them.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Alright, let's see if we can construct a short message. In order to construct
 a short message, we have to construct a frame and mask the message. I'll do
-this in a test. 
+this in a test. Alright, I was able to construct a "Hello" message text frame.
+I should test the empty string and the 125 char string next.
+
+After that, we should test masking the message.
 
 Thoughts
 --------
