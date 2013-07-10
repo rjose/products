@@ -1,7 +1,7 @@
 WebSockets Module
 =================
 Rino Jose <@rjose>
-v1, July 10, 2013: Initial version
+v1, July 10, 2013: Finished step 1
 
 
 Overview
@@ -29,8 +29,8 @@ straight within each app.
 
 Implementation
 --------------
-. Check if request is start of websocket handshake [X][][][]
-. Complete websocket handshake (server)
+. Check if request is start of websocket handshake [X][X][][]
+. Complete websocket handshake (server) [][]
 . Construct short message
 . Construct medium message
 . Construct long message
@@ -54,7 +54,7 @@ Now, let's get some HTTP request strings and see if we can tell if they're
 websocket requests or not. I'll start with the first example in the spec.
 Alright, I have the test set up. Let's copy stuff from our proto1.m file. The
 first thing I need to do is search our request string for "Upgrade:
-websocket".
+websocket". Done.
 
 Thoughts
 --------
