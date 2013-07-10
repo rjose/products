@@ -30,7 +30,7 @@ straight within each app.
 Implementation
 --------------
 . Check if request is start of websocket handshake [X][X][][]
-. Complete websocket handshake (server) [][]
+. Complete websocket handshake (server) [X][X][X][][][]
 . Construct short message
 . Construct medium message
 . Construct long message
@@ -60,7 +60,12 @@ websocket". Done.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Assuming that we have a valid ws handshake request, we need to get the
 Sec-Websocket-Key and construct the Sec-WebSocket-Accept value. We need to
-check the fields of the response string.
+check the fields of the response string. Alright, I set up the test and got it
+to fail. The next step is constructing the response. We need to extract the
+Sec-WebSocket-Key from the response. Alright, I need to do the base64
+encoding/decoding. I'll grab some functions from
+link:http://doctrina.org/Base64-With-OpenSSL-C-API.html[here]. I think I'll
+need to prototype these first to feel comfortable with them.
 
 Thoughts
 --------
