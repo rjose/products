@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #include <openssl/sha.h>
 
@@ -25,8 +26,6 @@
 
 /* Byte 1 of websocket frame */
 #define WS_FRAME_MASK 0x80
-
-typedef unsigned char uchar;
 
 /*
  * Declare static functions
@@ -93,7 +92,7 @@ const char *ws_complete_handshake(const char *req_str)
 {
         char buf[BUF_LENGTH];
         char websocket_key[MAX_WEBSOCKET_KEY_LEN];
-	unsigned char sha_digest[SHA_DIGEST_LENGTH];
+	uint8_t sha_digest[SHA_DIGEST_LENGTH];
         char *websocket_accept = NULL;
         static char response_template[] = 
                 "HTTP/1.1 101 Switching Protocols\r\n"
@@ -117,7 +116,7 @@ const char *ws_complete_handshake(const char *req_str)
 
 	strncpy(buf, websocket_key, BUF_LENGTH/2);
 	strncat(buf, ws_magic_string, BUF_LENGTH/2);
-	SHA1((const unsigned char*)buf, strlen(buf), sha_digest);
+	SHA1((const uint8_t*)buf, strlen(buf), sha_digest);
 
         if (base64_encode(&websocket_accept, sha_digest) != 0)
                 goto error;
@@ -139,12 +138,12 @@ error:
 }
 
 
-const unsigned char *ws_make_text_frame(const char *message, const char *mask)
+const uint8_t *ws_make_text_frame(const char *message, const char *mask)
 {
         int i;
         size_t message_len;
-        uchar byte0, byte1;     /* First two bytes of the frame */
-        uchar *result = NULL;
+        uint8_t byte0, byte1;     /* First two bytes of the frame */
+        uint8_t *result = NULL;
 
         /* We know this is a text frame */
         byte0 = WS_FRAME_OP_TEXT;

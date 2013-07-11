@@ -8,16 +8,16 @@
 
 #include "base64.h"
 
-static int calcDecodeLength(const char *);
+static int calcDecodeLength(const uint8_t *);
 
 
 
-int base64_encode(char **dst, const char* src)
+int base64_encode(uint8_t **dst, const uint8_t* src)
 {
          BIO *bio, *b64;
          FILE* stream;
          int encodedSize = 4*ceil((double)strlen(src)/3);
-         *dst = (char *)malloc(encodedSize+1);
+         *dst = (uint8_t *)malloc(encodedSize+1);
          
          stream = fmemopen(*dst, encodedSize+1, "w");
          b64 = BIO_new(BIO_f_base64());
@@ -33,7 +33,7 @@ int base64_encode(char **dst, const char* src)
 }
 
  
-static int calcDecodeLength(const char* b64input)
+static int calcDecodeLength(const uint8_t* b64input)
 {
         int len = strlen(b64input);
         int padding = 0;
@@ -46,12 +46,12 @@ static int calcDecodeLength(const char* b64input)
         return (int)len*0.75 - padding;
 }
  
-int base64_decode(char **dst, const char *b64_src)
+int base64_decode(uint8_t **dst, const uint8_t *b64_src)
 {
         BIO *bio, *b64;
         int decodeLen = calcDecodeLength(b64_src),
             len = 0;
-        *dst = (char*)malloc(decodeLen+1);
+        *dst = (uint8_t*)malloc(decodeLen+1);
         FILE* stream = fmemopen(b64_src, strlen(b64_src), "r");
 
         b64 = BIO_new(BIO_f_base64());
