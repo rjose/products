@@ -6,13 +6,9 @@
 #include <errno.h>
 
 #include "../ws.h"
-
+#include "test_util.h"
 #import "Testing.h"
 
-/* ============================================================================
- * Static declarations
- */
-static void load_data(uint8_t *, size_t, const char *);
 
 /* ============================================================================
  * Test data
@@ -28,31 +24,6 @@ static char long66000[66000 + 1];
 /* ============================================================================
  * Main
  */
-
-/*
- * NOTE: Assuming dst has enough capacity for len + 1
- */
-static void load_data(uint8_t *dst, size_t len, const char *filename)
-{
-        FILE *file;
-
-        if ((file = fopen(filename, "r")) == NULL) {
-                printf(strerror(errno));
-                exit(errno);
-        }
-
-        if (fread((void *)dst, sizeof(char), len, file) != len)
-                exit(-1);
-
-        if (fclose(file) != 0) {
-                printf(strerror(errno));
-                exit(errno);
-        }
-
-        dst[len] = '\0';
-
-        return;
-}
 
 int main()
 {

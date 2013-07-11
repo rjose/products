@@ -104,7 +104,7 @@ messages together.
 6 - Extract medium and long message
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 We'll cheat a little here and use the results from Step 5 as the input for
-these tests.
+these tests. OK, let's start by moving the load_data function to test_util.
 
 
 Thoughts

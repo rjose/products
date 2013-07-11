@@ -1,5 +1,9 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <errno.h>
+
 #include "test_util.h"
 
 int check_response(const char* response_str, const char *accept_key)
@@ -38,4 +42,30 @@ int check_frame(const uint8_t *expected, size_t len, const uint8_t *actual)
                         return 0;
         }
         return 1;
+}
+
+
+/*
+ * NOTE: Assuming dst has enough capacity for len + 1
+ */
+void load_data(uint8_t *dst, size_t len, const char *filename)
+{
+        FILE *file;
+
+        if ((file = fopen(filename, "r")) == NULL) {
+                printf(strerror(errno));
+                exit(errno);
+        }
+
+        if (fread((void *)dst, sizeof(char), len, file) != len)
+                exit(-1);
+
+        if (fclose(file) != 0) {
+                printf(strerror(errno));
+                exit(errno);
+        }
+
+        dst[len] = '\0';
+
+        return;
 }
