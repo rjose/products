@@ -73,11 +73,10 @@ Alright, let's see if we can construct a short message. In order to construct
 a short message, we have to construct a frame and mask the message. I'll do
 this in a test. Alright, I was able to construct a "Hello" message text frame.
 Before we go on, let's use uint8_t instead of unsigned char everywhere for
-data.
+data. Next, let's test the boundary cases for short messages: empty message
+and 125 char message. Done!
 
-I should test the empty string and the 125 char string next.
-
-After that, we should test masking the message.
+Next, let's try short messages with a mask.
 
 Thoughts
 --------

@@ -40,12 +40,15 @@ static char big_short_message[] =
  *
  * Byte 1: 00000101 
  *      Bit 0    (Mask):        0     (unmasked)
- *      Bits 1-7 (Payload len): 5
+ *      Bits 1-7 (Payload len): 0x05
  *
  * Bytes 2-6: Payload           'H', 'e', 'l', 'l', 'o'
  */
 uchar hello_message_frame[] = {0x81, 0x05, 0x48, 0x65, 0x6c, 0x6c, 0x6f};
 
+uchar empty_message_frame[] = {0x81, 0x00};
+
+uchar big_short_frame_start[] = {0x81, 0x7d}; 
 
 
 static int check_frame(const uchar *expected, size_t len, const uchar *actual)
@@ -70,9 +73,21 @@ int main()
          * Build frame for small message
          */
         START_SET("Build small message");
-        frame = ws_make_text_frame("Hello", NULL);
-        pass(1 == check_frame(hello_message_frame, 7, frame),
-                                             "Check unmasked 'Hello' message");
+        frame = ws_make_text_frame(hello_message, NULL);
+        pass(1 == check_frame(hello_message_frame, 7, frame), "Hello message");
+        free(frame);
+
+        frame = ws_make_text_frame(empty_message, NULL);
+        pass(1 == check_frame(empty_message_frame, 2, frame), "'' message");
+        free(frame);
+
+        frame = ws_make_text_frame(big_short_message, NULL);
+        pass(1 == check_frame(big_short_frame_start, 2, frame), "big short message");
+        // Check first and last chars of message body
+        pass(0x4e == frame[2], "First letter should be 'N'");
+        pass(0x21 == frame[126], "Last letter should be '!'");
+        free(frame);
+
         END_SET("Build small message");
 
         return 0;
