@@ -34,7 +34,7 @@
  */
 static void err_abort(int, const char *);
 static int get_ws_key(char *, size_t, const char *);
-static uint8_t mask_if_needed(uint8_t, size_t, const uint8_t [4]);
+static uint8_t toggle_mask(uint8_t, size_t, const uint8_t [4]);
 
 static char ws_magic_string[] = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
@@ -140,7 +140,7 @@ error:
         return NULL;
 }
 
-static uint8_t mask_if_needed(uint8_t c, size_t index, const uint8_t mask[4])
+static uint8_t toggle_mask(uint8_t c, size_t index, const uint8_t mask[4])
 {
         uint8_t result = c;
         if (mask)
@@ -185,7 +185,7 @@ const uint8_t *ws_make_text_frame(const char *message, const uint8_t mask[4])
                                 result[2+i] = mask[i];
 
                 for (i = 0; i < message_len; i++) {
-                        result[2 + mask_len + i] = mask_if_needed(message[i], i, mask);
+                        result[2 + mask_len + i] = toggle_mask(message[i], i, mask);
                 }
         }
         // TODO: Handle other message sizes
@@ -226,7 +226,7 @@ const uint8_t *ws_extract_message(const uint8_t *frame)
                              "Couldn't allocate result for ws_extract_message");
 
                 for (i = 0; i < message_len; i++)
-                        result[i] = mask_if_needed(frame[message_start+i], i, mask);
+                        result[i] = toggle_mask(frame[message_start+i], i, mask);
         }
         // TODO: Handle medium and long messages
 
