@@ -32,11 +32,13 @@ Implementation
 . Check if request is start of websocket handshake [X][X][][]
 . Complete websocket handshake (server) [X][X][X][X][X][X]
 . Construct short message [X][X][X][X][]
-. Read short message [][][][]
+. Extract short message body [X][][][]
 . Construct medium message
 . Construct long message
 . Read medium message
 . Read long message
+. Construct fragmented message
+. Read fragmented message
 . Close channel
 . Handle close channel
 . Construct PING/PONG messages
@@ -77,6 +79,22 @@ data. Next, let's test the boundary cases for short messages: empty message
 and 125 char message. Done! Next, let's try short messages with a mask. I
 think masking the hello message is sufficient. Done.
 
+4 - Extract short message body
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+OK, let's try reading a short message. We'll read all of the messages from
+Step 3 above. Hmmm...I think I need to understand how messages with multiple
+frames are handled before I go too much further. Let's do that now. OK, I see.
+Fragmented messages are meant to be concatenated in order. Messages may not be
+interleaved (in one direction), but control frames may appear in between.
+For this part, let's just write a low level function that can extract
+message bodies from a frame. We'll have higher level functions that can
+combine these message bodies if needed.
+
+I'm going to assume that callers of the extract function have given us a valid
+websocket frame (see Thoughts below for more).
+
+Also need to check if something is a text frame.
+
 
 Thoughts
 --------
@@ -84,3 +102,8 @@ I think I'll symlink the websockets directory into the project that needs it
 and compile everything into one executable.
 
 I need to do the masked and unmasked versions.
+
+We'll need to write some logic into our socket reading to act on input one
+byte at a time. I.e., to manage the framing. NOTE: These functions have to do
+the super diligent checking to make sure the websocket frames are valid,
+especially that they have the appropriate length.

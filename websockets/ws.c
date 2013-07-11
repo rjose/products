@@ -15,6 +15,8 @@
 
 #define SHORT_MESSAGE_LEN 125
 
+#define MASK_OFFSET 2
+
 /* Byte 0 of websocket frame */
 #define WS_FRAME_FIN 0x80
 #define WS_FRAME_OP_CONT 0x00
@@ -32,6 +34,7 @@
  */
 static void err_abort(int, const char *);
 static int get_ws_key(char *, size_t, const char *);
+static uint8_t mask_if_needed(uint8_t, size_t, const uint8_t [4]);
 
 static char ws_magic_string[] = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
@@ -186,6 +189,50 @@ const uint8_t *ws_make_text_frame(const char *message, const uint8_t mask[4])
                 }
         }
         // TODO: Handle other message sizes
+
+        return result;
+}
+
+const uint8_t *ws_extract_message(const uint8_t *frame)
+{
+        uint8_t byte0;
+        uint8_t byte1;
+        uint64_t message_len;
+        uint8_t *mask = NULL;
+        uint64_t i;
+        uint8_t message_start;
+        uint8_t *result;
+
+        /* Only handling TEXT or BIN frames */
+        byte0 = frame[0];
+        if (!(byte0 | WS_FRAME_OP_TEXT || byte0 | WS_FRAME_OP_BIN))
+                return NULL;
+
+        /* Check mask and length */
+        byte1 = frame[1];
+        message_len = byte1 & ~WS_FRAME_MASK;
+
+        /* Handle short messages */
+        if (message_len <= SHORT_MESSAGE_LEN) {
+                message_start = 2;      /* After first 2 bytes */
+
+                if (byte1 & WS_FRAME_MASK) {
+                        mask = frame[MASK_OFFSET];
+                        message_start = 6;      /* Starts after mask */
+                }
+
+                if ((result = (uint8_t *)malloc(message_len + 1)) == NULL)
+                        err_abort(-1,
+                             "Couldn't allocate result for ws_extract_message");
+
+                for (i = 0; i < message_len; i++)
+                        result[i] = mask_if_needed(frame[message_start+i], i, mask);
+        }
+        // TODO: Handle medium and long messages
+
+        /* Add NUL if text frame */
+        if (byte0 | WS_FRAME_OP_TEXT)
+                result[message_len] = '\0';
 
         return result;
 }
