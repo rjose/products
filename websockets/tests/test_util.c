@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <string.h>
 #include "test_util.h"
 
@@ -25,5 +26,16 @@ int check_response(const char* response_str, const char *accept_key)
         if (strstr(response_str, accept_key) == NULL)
                 return 0;
 
+        return 1;
+}
+
+
+int check_frame(const uint8_t *expected, size_t len, const uint8_t *actual)
+{
+        int i;
+        for (i = 0; i < len; i++) {
+                if (*expected++ != *actual++)
+                        return 0;
+        }
         return 1;
 }

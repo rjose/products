@@ -4,14 +4,9 @@
 #include <stdint.h>
 
 #include "../ws.h"
-
+#include "test_util.h"
 #import "Testing.h"
 
-
-/* ============================================================================
- * Static functions
- */
-static int check_frame(const uint8_t *, size_t, const uint8_t *);
 
 
 /* ============================================================================
@@ -68,19 +63,6 @@ uint8_t masked_hello_frame[] = {0x81, 0x85,
                                 0x7f, 0x9f, 0x4d, 0x51, 0x58};
 
 
-
-/* ============================================================================
- * Helper functions
- */
-static int check_frame(const uint8_t *expected, size_t len, const uint8_t *actual)
-{
-        int i;
-        for (i = 0; i < len; i++) {
-                if (*expected++ != *actual++)
-                        return 0;
-        }
-        return 1;
-}
 
 /* ============================================================================
  * Main
