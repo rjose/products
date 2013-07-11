@@ -217,7 +217,7 @@ const uint8_t *ws_extract_message(const uint8_t *frame)
                 message_start = 2;      /* After first 2 bytes */
 
                 if (byte1 & WS_FRAME_MASK) {
-                        mask = frame[MASK_OFFSET];
+                        mask = frame + MASK_OFFSET;
                         message_start = 6;      /* Starts after mask */
                 }
 

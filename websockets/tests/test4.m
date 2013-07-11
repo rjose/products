@@ -27,8 +27,6 @@ uint8_t hello_message_frame[] = {0x81, 0x05,
 
 uint8_t empty_message_frame[] = {0x81, 0x00};
 
-uint8_t big_short_frame_start[] = {0x81, 0x7d}; 
-
 /*
  * Byte 0: 10000001
  *      Bit 0    (FIN):         1     (final fragment)
@@ -53,15 +51,6 @@ static char empty_message[] = "";
 
 static char hello_message[] = "Hello";
 
-/* 125 chars is the biggest short message we can handle */
-static char big_short_message[] =
-        "Now is the time for all good men to come to to the aid of their "
-        "party. How many more characters will it take to reach 125 !!!"
-;
-
-
-
-
 /* ============================================================================
  * Main
  */
@@ -76,23 +65,23 @@ int main()
         START_SET("Extract small message");
         message_body = ws_extract_message(hello_message_frame);
         pass(0 == strcmp(message_body, hello_message), "Hello message");
-//        free(message_body);
+        free(message_body);
 
-        // TODO: Add other tests
-
-
+        message_body = ws_extract_message(empty_message_frame);
+        pass(0 == strcmp(message_body, empty_message), "Empty message");
+        free(message_body);
         END_SET("Extract small message");
 
-//        /*
-//         * Read small, masked message
-//         */
-//        START_SET("Extract small, masked message");
-//
-//        uint8_t mask[] = {0x37, 0xfa, 0x21, 0x3d};
-//        frame = ws_make_text_frame(hello_message, mask);
-//        pass(1 == check_frame(masked_hello_frame, 11, frame), "Masked hello");
-//
-//        END_SET("Extract small, masked message");
+        /*
+         * Read small, masked message
+         */
+        START_SET("Extract small, masked message");
+
+        message_body = ws_extract_message(masked_hello_frame);
+        pass(0 == strcmp(message_body, hello_message), "Masked message");
+        free(message_body);
+
+        END_SET("Extract small, masked message");
 
         return 0;
 }

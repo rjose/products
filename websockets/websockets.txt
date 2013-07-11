@@ -32,7 +32,7 @@ Implementation
 . Check if request is start of websocket handshake [X][X][][]
 . Complete websocket handshake (server) [X][X][X][X][X][X]
 . Construct short message [X][X][X][X][]
-. Extract short message body [X][][][]
+. Extract short message body [X][X][X][]
 . Construct medium message
 . Construct long message
 . Read medium message
@@ -91,7 +91,8 @@ message bodies from a frame. We'll have higher level functions that can
 combine these message bodies if needed.
 
 I'm going to assume that callers of the extract function have given us a valid
-websocket frame (see Thoughts below for more).
+websocket frame (see Thoughts below for more). OK, the hello message worked.
+Let's try the empty message. Done. Let's add the masked message.
 
 Also need to check if something is a text frame.
 
