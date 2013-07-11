@@ -1,17 +1,17 @@
 #include <err.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "../ws.h"
 
 #import "Testing.h"
 
-typedef unsigned char uchar;
 
 /* ============================================================================
  * Static functions
  */
-static int check_frame(const uchar *, size_t, const uchar *);
+static int check_frame(const uint8_t *, size_t, const uint8_t *);
 
 
 /* ============================================================================
@@ -44,14 +44,35 @@ static char big_short_message[] =
  *
  * Bytes 2-6: Payload           'H', 'e', 'l', 'l', 'o'
  */
-uchar hello_message_frame[] = {0x81, 0x05, 0x48, 0x65, 0x6c, 0x6c, 0x6f};
+uint8_t hello_message_frame[] = {0x81, 0x05,
+                                 0x48, 0x65, 0x6c, 0x6c, 0x6f};
 
-uchar empty_message_frame[] = {0x81, 0x00};
+uint8_t empty_message_frame[] = {0x81, 0x00};
 
-uchar big_short_frame_start[] = {0x81, 0x7d}; 
+uint8_t big_short_frame_start[] = {0x81, 0x7d}; 
+
+/*
+ * Byte 0: 10000001
+ *      Bit 0    (FIN):         1     (final fragment)
+ *      Bits 4-7 (OPCODE):      00001 (text frame)
+ *
+ * Byte 1: 10000101 
+ *      Bit 0    (Mask):        1     (masked)
+ *      Bits 1-7 (Payload len): 0x05
+ *
+ * Bytes 2-5: Mask bytes        0x37, 0xfa, 0x21, 0x3d
+ * Bytes 6-10: Payload          (masked "Hello")
+ */
+uint8_t masked_hello_frame[] = {0x81, 0x85,
+                                0x37, 0xfa, 0x21, 0x3d,
+                                0x7f, 0x9f, 0x4d, 0x51, 0x58};
 
 
-static int check_frame(const uchar *expected, size_t len, const uchar *actual)
+
+/* ============================================================================
+ * Helper functions
+ */
+static int check_frame(const uint8_t *expected, size_t len, const uint8_t *actual)
 {
         int i;
         for (i = 0; i < len; i++) {
@@ -67,12 +88,13 @@ static int check_frame(const uchar *expected, size_t len, const uchar *actual)
 
 int main()
 {
-        const uchar *frame = NULL;
+        const uint8_t *frame = NULL;
 
         /*
          * Build frame for small message
          */
         START_SET("Build small message");
+
         frame = ws_make_text_frame(hello_message, NULL);
         pass(1 == check_frame(hello_message_frame, 7, frame), "Hello message");
         free(frame);
@@ -89,6 +111,17 @@ int main()
         free(frame);
 
         END_SET("Build small message");
+
+        /*
+         * Build frame for small masked message
+         */
+        START_SET("Build small masked message");
+
+        uint8_t mask[] = {0x37, 0xfa, 0x21, 0x3d};
+        frame = ws_make_text_frame(hello_message, mask);
+        pass(1 == check_frame(masked_hello_frame, 11, frame), "Masked hello");
+
+        END_SET("Build small masked message");
 
         return 0;
 }

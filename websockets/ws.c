@@ -137,11 +137,21 @@ error:
         return NULL;
 }
 
+static uint8_t mask_if_needed(uint8_t c, size_t index, const uint8_t mask[4])
+{
+        uint8_t result = c;
+        if (mask)
+                result = c ^ mask[index % 4];
 
-const uint8_t *ws_make_text_frame(const char *message, const char *mask)
+        return result;
+}
+
+
+const uint8_t *ws_make_text_frame(const char *message, const uint8_t mask[4])
 {
         int i;
         size_t message_len;
+        size_t mask_len = 0;
         uint8_t byte0, byte1;     /* First two bytes of the frame */
         uint8_t *result = NULL;
 
@@ -150,21 +160,29 @@ const uint8_t *ws_make_text_frame(const char *message, const char *mask)
 
         /* If a mask is specified, set the mask bit */
         byte1 = 0;
-        if (mask)
+        if (mask) {
                 byte1 = WS_FRAME_MASK;
+                mask_len = 4;
+        }
 
         message_len = strlen(message);
         if (message_len <= SHORT_MESSAGE_LEN) {
                 byte0 |= WS_FRAME_FIN;
                 byte1 |= message_len;
 
-                if ((result = malloc(2 + message_len)) == NULL)
+                if ((result = malloc(2 + mask_len + message_len)) == NULL)
                         err_abort(-1, "Can't allocate memory for ws_make_text_frame");
+
                 result[0] = byte0;
                 result[1] = byte1;
-                // TODO: Handle masking
+
+                /* Add mask */
+                if (mask)
+                        for (i = 0; i < mask_len; i++)
+                                result[2+i] = mask[i];
+
                 for (i = 0; i < message_len; i++) {
-                        result[i+2] = message[i];
+                        result[2 + mask_len + i] = mask_if_needed(message[i], i, mask);
                 }
         }
         // TODO: Handle other message sizes

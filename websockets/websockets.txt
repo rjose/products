@@ -31,7 +31,7 @@ Implementation
 --------------
 . Check if request is start of websocket handshake [X][X][][]
 . Complete websocket handshake (server) [X][X][X][X][X][X]
-. Construct short message [X][X][][][]
+. Construct short message [X][X][X][X][]
 . Construct medium message
 . Construct long message
 . Read short message
@@ -76,7 +76,8 @@ Before we go on, let's use uint8_t instead of unsigned char everywhere for
 data. Next, let's test the boundary cases for short messages: empty message
 and 125 char message. Done!
 
-Next, let's try short messages with a mask.
+Next, let's try short messages with a mask. I think masking the hello message
+is sufficient.
 
 Thoughts
 --------
