@@ -1,127 +1,73 @@
 #include <err.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 
 #include "../ws.h"
 
 #import "Testing.h"
 
-
-/* ============================================================================
+/*
  * Static functions
  */
-static int check_frame(const uint8_t *, size_t, const uint8_t *);
+static int check_response(const char *, const char *);
 
-
-/* ============================================================================
+/*
  * Test data
  */
-static char empty_message[] = "";
-
-static char hello_message[] = "Hello";
-
-/* 125 chars is the biggest short message we can handle */
-static char big_short_message[] =
-        "Now is the time for all good men to come to to the aid of their "
-        "party. How many more characters will it take to reach 125 !!!"
-;
-
-
-/* ============================================================================
- * Expected results
- */
+static const char valid_ws_request_string[] = 
+        "GET /chat HTTP/1.1\r\n"
+        "Host: server.example.com\r\n"
+        "Upgrade: websocket\r\n"
+        "Connection: Upgrade\r\n"
+        "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n"
+        "Origin: http://example.com\r\n"
+        "Sec-WebSocket-Protocol: chat, superchat\r\n"
+        "Sec-WebSocket-Version: 13\r\n"
+        "\r\n";
 
 
-/*
- * Byte 0: 10000001
- *      Bit 0    (FIN):         1     (final fragment)
- *      Bits 4-7 (OPCODE):      00001 (text frame)
- *
- * Byte 1: 00000101 
- *      Bit 0    (Mask):        0     (unmasked)
- *      Bits 1-7 (Payload len): 0x05
- *
- * Bytes 2-6: Payload           'H', 'e', 'l', 'l', 'o'
- */
-uint8_t hello_message_frame[] = {0x81, 0x05,
-                                 0x48, 0x65, 0x6c, 0x6c, 0x6f};
-
-uint8_t empty_message_frame[] = {0x81, 0x00};
-
-uint8_t big_short_frame_start[] = {0x81, 0x7d}; 
-
-/*
- * Byte 0: 10000001
- *      Bit 0    (FIN):         1     (final fragment)
- *      Bits 4-7 (OPCODE):      00001 (text frame)
- *
- * Byte 1: 10000101 
- *      Bit 0    (Mask):        1     (masked)
- *      Bits 1-7 (Payload len): 0x05
- *
- * Bytes 2-5: Mask bytes        0x37, 0xfa, 0x21, 0x3d
- * Bytes 6-10: Payload          (masked "Hello")
- */
-uint8_t masked_hello_frame[] = {0x81, 0x85,
-                                0x37, 0xfa, 0x21, 0x3d,
-                                0x7f, 0x9f, 0x4d, 0x51, 0x58};
-
-
-
-/* ============================================================================
- * Helper functions
- */
-static int check_frame(const uint8_t *expected, size_t len, const uint8_t *actual)
+static int check_response(const char* response_str, const char *accept_key)
 {
-        int i;
-        for (i = 0; i < len; i++) {
-                if (*expected++ != *actual++)
-                        return 0;
-        }
+        if (response_str == NULL)
+                return 0;
+
+        if (strcasestr(response_str, "101 Switching Protocols") == NULL)
+                return 0;
+
+        if (strcasestr(response_str, "Upgrade: websocket") == NULL)
+                return 0;
+
+        if (strcasestr(response_str, "Connection: upgrade") == NULL)
+                return 0;
+
+        if (strcasestr(response_str, "Sec-WebSocket-Accept:") == NULL)
+                return 0;
+
+        /*
+         * NOTE: Should really check that the accept_key is the value of
+         * Sec-WebSocket-key, but this is good enough.
+         */
+        if (strstr(response_str, accept_key) == NULL)
+                return 0;
+
         return 1;
 }
 
-/* ============================================================================
- * Main
- */
-
 int main()
 {
-        const uint8_t *frame = NULL;
+        const char *response_str = NULL;
 
         /*
-         * Build frame for small message
+         * Complete handshake
          */
-        START_SET("Build small message");
+        START_SET("Complete handshake");
+        response_str = ws_complete_handshake(valid_ws_request_string);
+        pass(1 == check_response(response_str,
+                   "s3pPLMBiTxaQ9kYGzzhZRbK+xOo="), "Check handshake response");
 
-        frame = ws_make_text_frame(hello_message, NULL);
-        pass(1 == check_frame(hello_message_frame, 7, frame), "Hello message");
-        free(frame);
-
-        frame = ws_make_text_frame(empty_message, NULL);
-        pass(1 == check_frame(empty_message_frame, 2, frame), "'' message");
-        free(frame);
-
-        frame = ws_make_text_frame(big_short_message, NULL);
-        pass(1 == check_frame(big_short_frame_start, 2, frame), "big short message");
-        // Check first and last chars of message body
-        pass(0x4e == frame[2], "First letter should be 'N'");
-        pass(0x21 == frame[126], "Last letter should be '!'");
-        free(frame);
-
-        END_SET("Build small message");
-
-        /*
-         * Build frame for small masked message
-         */
-        START_SET("Build small masked message");
-
-        uint8_t mask[] = {0x37, 0xfa, 0x21, 0x3d};
-        frame = ws_make_text_frame(hello_message, mask);
-        pass(1 == check_frame(masked_hello_frame, 11, frame), "Masked hello");
-
-        END_SET("Build small masked message");
-
+        if (response_str != NULL)
+                free(response_str);
+        END_SET("Complete handshake");
+        
         return 0;
 }

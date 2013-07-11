@@ -1,3 +1,4 @@
 test1_C_FILES += ../ws.c ../base64.c
 test2_C_FILES += ../ws.c ../base64.c
+test3_C_FILES += ../ws.c ../base64.c
 ADDITIONAL_TOOL_LIBS = -lssl -lm

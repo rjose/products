@@ -85,18 +85,5 @@ int main()
                                                     "Check start of handshake");
         END_SET("Is websocket handshake");
 
-
-        /*
-         * Complete handshake
-         */
-        START_SET("Complete handshake");
-        response_str = ws_complete_handshake(valid_ws_request_string);
-        pass(1 == check_response(response_str,
-                   "s3pPLMBiTxaQ9kYGzzhZRbK+xOo="), "Check handshake response");
-
-        if (response_str != NULL)
-                free(response_str);
-        END_SET("Complete handshake");
-        
         return 0;
 }
