@@ -121,3 +121,7 @@ We'll need to write some logic into our socket reading to act on input one
 byte at a time. I.e., to manage the framing. NOTE: These functions have to do
 the super diligent checking to make sure the websocket frames are valid,
 especially that they have the appropriate length.
+
+Need to write higher level functions that help coordinate the ws function
+calls. For example, clearing the FIN bit or seeing if we need to wait for
+extra length bytes before we start building up a message.
