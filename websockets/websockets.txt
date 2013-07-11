@@ -34,7 +34,7 @@ Implementation
 . Construct short message [X][X][X][X][]
 . Extract short message body [X][X][X][]
 . Construct medium and long messages [X][X][X][X][X]
-. Extract medium and long message [][][][][]
+. Extract medium and long message [X][X][X][][]
 . Construct fragmented message
 . Get frame type and if fragmented
 . Close channel
@@ -105,6 +105,9 @@ messages together.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 We'll cheat a little here and use the results from Step 5 as the input for
 these tests. OK, let's start by moving the load_data function to test_util.
+Done. Now, let's try to read in a medium message. I wrangled this around until
+it looked pretty simple. Medium and long messages just worked. Pretty awesome.
+Let's check in.
 
 
 Thoughts

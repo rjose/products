@@ -17,9 +17,9 @@
 #define MED_MESSAGE_LEN 0xFFFF 
 #define MED_MESSAGE_KEY 126
 #define LONG_MESSAGE_KEY 127
-
-
-#define MASK_OFFSET 2
+#define NUM_MED_LEN_BYTES 2
+#define NUM_LONG_LEN_BYTES 8
+#define MASK_LEN 4
 
 /* Byte 0 of websocket frame */
 #define WS_FRAME_FIN 0x80
@@ -232,40 +232,67 @@ const uint8_t *ws_make_text_frame(const char *message, const uint8_t mask[4])
 
 const uint8_t *ws_extract_message(const uint8_t *frame)
 {
+        uint64_t i;
         uint8_t byte0;
         uint8_t byte1;
         uint64_t message_len;
-        uint8_t *mask = NULL;
-        uint64_t i;
         uint8_t message_start;
+        uint8_t *mask;
         uint8_t *result;
+        uint8_t num_len_bytes;
 
         /* Only handling TEXT or BIN frames */
         byte0 = frame[0];
         if (!(byte0 | WS_FRAME_OP_TEXT || byte0 | WS_FRAME_OP_BIN))
                 return NULL;
 
-        /* Check mask and length */
         byte1 = frame[1];
+
+        /*
+         * Compute message length
+         */
         message_len = byte1 & ~WS_FRAME_MASK;
-
-        /* Handle short messages */
         if (message_len <= SHORT_MESSAGE_LEN) {
-                message_start = 2;      /* After first 2 bytes */
-
-                if (byte1 & WS_FRAME_MASK) {
-                        mask = frame + MASK_OFFSET;
-                        message_start = 6;      /* Starts after mask */
-                }
-
-                if ((result = (uint8_t *)malloc(message_len + 1)) == NULL)
-                        err_abort(-1,
-                             "Couldn't allocate result for ws_extract_message");
-
-                for (i = 0; i < message_len; i++)
-                        result[i] = toggle_mask(frame[message_start+i], i, mask);
+                num_len_bytes = 0;
         }
-        // TODO: Handle medium and long messages
+        else if (message_len == MED_MESSAGE_KEY) {
+                num_len_bytes = 2;
+                message_len = 0;
+        }
+        else if (message_len == LONG_MESSAGE_KEY) {
+                num_len_bytes = 8;
+                message_len = 0;
+        }
+        else {
+                /* Should never get here */
+                return NULL;
+        }
+
+        /* This does anything for medium and long messages */
+        for (i = 0; i < num_len_bytes; i++) {
+                message_len <<= 8;
+                message_len += frame[2 + i];
+        }
+
+        /*
+         * Figure out where message and mask start.
+         */
+        mask = NULL;
+        message_start = 2 + num_len_bytes;
+        if (byte1 & WS_FRAME_MASK) {
+                mask = frame + 2 + num_len_bytes;
+                message_start = 2 + num_len_bytes + MASK_LEN;
+        }
+        
+        /*
+         * Allocate memory and fill in the message.
+         */
+        if ((result = (uint8_t *)malloc(message_len + 1)) == NULL)
+                err_abort(-1,
+                     "Couldn't allocate result for ws_extract_message");
+
+        for (i = 0; i < message_len; i++)
+                result[i] = toggle_mask(frame[message_start+i], i, mask);
 
         /* Add NUL if text frame */
         if (byte0 | WS_FRAME_OP_TEXT)

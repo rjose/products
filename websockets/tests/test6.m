@@ -33,12 +33,26 @@ int main()
         START_SET("Extract medium message");
         load_data(med126, 126, med126txt);
         frame = ws_make_text_frame(med126, NULL);
+        
+        message_body = ws_extract_message(frame);
+        pass(0 == strcmp(med126, message_body), "Extract medium");
+
         free(frame);
+        free(message_body);
         END_SET("Extract medium message");
 
-//        START_SET("Extract long message");
-//        load_data(long66000, 66000, long66000txt);
-//        frame = ws_make_text_frame(long66000, NULL);
-//        END_SET("Extract long message");
+
+
+        START_SET("Extract long message");
+        load_data(long66000, 66000, long66000txt);
+        frame = ws_make_text_frame(long66000, NULL);
+        
+        message_body = ws_extract_message(frame);
+        pass(0 == strcmp(long66000, message_body), "Extract long");
+
+        free(frame);
+        free(message_body);
+
+        END_SET("Extract long message");
         return 0;
 }
