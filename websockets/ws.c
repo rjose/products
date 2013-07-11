@@ -161,7 +161,7 @@ static uint8_t toggle_mask(uint8_t c, size_t index, const uint8_t mask[4])
 const uint8_t *ws_make_text_frame(const char *message, const uint8_t mask[4])
 {
         uint64_t i;
-        size_t message_len;
+        uint64_t message_len;
         size_t mask_len;
         size_t num_len_bytes; /* Number of extended payload len bytes */
         uint8_t byte0, byte1;     /* First two bytes of the frame */
@@ -213,7 +213,7 @@ const uint8_t *ws_make_text_frame(const char *message, const uint8_t mask[4])
         tmp = message_len;
         for (i = num_len_bytes; i > 0; i--) {
                 result[2 + i - 1] = tmp & 0xFF;
-                tmp = message_len >> 8;
+                tmp >>= 8;
         }
         
         /* Write mask */
