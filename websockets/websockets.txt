@@ -33,12 +33,10 @@ Implementation
 . Complete websocket handshake (server) [X][X][X][X][X][X]
 . Construct short message [X][X][X][X][]
 . Extract short message body [X][X][X][]
-. Construct medium message
-. Construct long message
-. Read medium message
-. Read long message
+. Construct and extract medium message [][][][]
+. Construct and extract long message
 . Construct fragmented message
-. Read fragmented message
+. Get frame type and if fragmented
 . Close channel
 . Handle close channel
 . Construct PING/PONG messages
@@ -94,7 +92,12 @@ I'm going to assume that callers of the extract function have given us a valid
 websocket frame (see Thoughts below for more). OK, the hello message worked.
 Let's try the empty message. Done. Let's add the masked message.
 
-Also need to check if something is a text frame.
+5 - Construct and extract medium message
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The main challenge here is setting up the tests. I think I'll have to create
+some test data files for this part. If I can get the mask logic between small
+and medium, I'll just need to focus on the length computation (and the end
+results for the common case).
 
 
 Thoughts
