@@ -35,12 +35,7 @@ Implementation
 . Extract short message body [X][X][X][]
 . Construct medium and long messages [X][X][X][X][X]
 . Extract medium and long message [X][X][X][][]
-. Construct fragmented message
-. Get frame type and if fragmented
-. Close channel
-. Handle close channel
-. Construct PING/PONG messages
-. Read PING/PONG message
+. Make PING, PONG, and CLOSE frames
 
 . Start websocket handshake (as a client)
 . Complete websocket handshake (as a client)
@@ -109,6 +104,11 @@ Done. Now, let's try to read in a medium message. I wrangled this around until
 it looked pretty simple. Medium and long messages just worked. Pretty awesome.
 Let's check in.
 
+7 - Make PING, PONG, and CLOSE frames
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This should be pretty straightforward. The beginning should be similar to
+ws_make_text_frame -- and that's all there is to this.
+
 
 Thoughts
 --------
@@ -120,8 +120,12 @@ I need to do the masked and unmasked versions.
 We'll need to write some logic into our socket reading to act on input one
 byte at a time. I.e., to manage the framing. NOTE: These functions have to do
 the super diligent checking to make sure the websocket frames are valid,
-especially that they have the appropriate length.
+especially that they have the appropriate length. This should be part of a
+websocket state machine. I'll write a separate spec on that.
 
 Need to write higher level functions that help coordinate the ws function
 calls. For example, clearing the FIN bit or seeing if we need to wait for
 extra length bytes before we start building up a message.
+
+Need to do a prototype on a randomizer. For now, we can have a function that
+always returns the same numbers.

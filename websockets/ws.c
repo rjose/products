@@ -6,6 +6,7 @@
 #include <openssl/sha.h>
 
 #include "ws.h"
+#include "base64.h"
 
 #define MAX_HANDSHAKE_RESPONSE_LEN 300
 #define MAX_WEBSOCKET_KEY_LEN 40
@@ -125,7 +126,8 @@ const char *ws_complete_handshake(const char *req_str)
 	strncat(buf, ws_magic_string, BUF_LENGTH/2);
 	SHA1((const uint8_t*)buf, strlen(buf), sha_digest);
 
-        if (base64_encode(&websocket_accept, sha_digest) != 0)
+        if (base64_encode(&websocket_accept, sha_digest,
+                                                  SHA_DIGEST_LENGTH) != 0)
                 goto error;
 
         /*
@@ -268,7 +270,7 @@ const uint8_t *ws_extract_message(const uint8_t *frame)
                 return NULL;
         }
 
-        /* This does anything for medium and long messages */
+        /* This only does anything for medium and long messages */
         for (i = 0; i < num_len_bytes; i++) {
                 message_len <<= 8;
                 message_len += frame[2 + i];
