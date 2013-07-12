@@ -232,6 +232,63 @@ const uint8_t *ws_make_text_frame(const char *message, const uint8_t mask[4])
         return result;
 }
 
+const uint8_t *ws_make_close_frame()
+{
+        uint8_t byte0, byte1;     /* First two bytes of the frame */
+        uint8_t *result = NULL;
+
+        byte0 = WS_FRAME_OP_CLOSE;
+        byte0 |= WS_FRAME_FIN;
+
+        byte1 = 0;
+
+        if ((result = (uint8_t *)malloc(2)) == NULL)
+                err_abort(-1, "Can't allocate memory for ws_make_close_frame");
+
+        result[0] = byte0;
+        result[1] = byte1;
+
+        return result;
+}
+
+const uint8_t *ws_make_ping_frame()
+{
+        uint8_t byte0, byte1;     /* First two bytes of the frame */
+        uint8_t *result = NULL;
+
+        byte0 = WS_FRAME_OP_PING;
+        byte0 |= WS_FRAME_FIN;
+
+        byte1 = 0;
+
+        if ((result = (uint8_t *)malloc(2)) == NULL)
+                err_abort(-1, "Can't allocate memory for ws_make_close_frame");
+
+        result[0] = byte0;
+        result[1] = byte1;
+
+        return result;
+}
+
+const uint8_t *ws_make_pong_frame()
+{
+        uint8_t byte0, byte1;     /* First two bytes of the frame */
+        uint8_t *result = NULL;
+
+        byte0 = WS_FRAME_OP_PONG;
+        byte0 |= WS_FRAME_FIN;
+
+        byte1 = 0;
+
+        if ((result = (uint8_t *)malloc(2)) == NULL)
+                err_abort(-1, "Can't allocate memory for ws_make_close_frame");
+
+        result[0] = byte0;
+        result[1] = byte1;
+
+        return result;
+}
+
 const uint8_t *ws_extract_message(const uint8_t *frame)
 {
         uint64_t i;

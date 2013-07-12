@@ -35,7 +35,7 @@ Implementation
 . Extract short message body [X][X][X][]
 . Construct medium and long messages [X][X][X][X][X]
 . Extract medium and long message [X][X][X][][]
-. Make PING, PONG, and CLOSE frames
+. Make PING, PONG, and CLOSE frames [X]
 
 . Start websocket handshake (as a client)
 . Complete websocket handshake (as a client)
@@ -107,7 +107,8 @@ Let's check in.
 7 - Make PING, PONG, and CLOSE frames
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This should be pretty straightforward. The beginning should be similar to
-ws_make_text_frame -- and that's all there is to this.
+ws_make_text_frame -- and that's all there is to this. Alright, I can make each
+of these frames.
 
 
 Thoughts
@@ -129,3 +130,5 @@ extra length bytes before we start building up a message.
 
 Need to do a prototype on a randomizer. For now, we can have a function that
 always returns the same numbers.
+
+At some point, I should figure out how to write the sha1 function.
