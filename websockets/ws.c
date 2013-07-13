@@ -359,3 +359,138 @@ const uint8_t *ws_extract_message(const uint8_t *frame)
 
         return result;
 }
+
+/* ============================================================================ 
+ * WebsocketFrame functions
+ */
+
+int ws_init_frame(WebsocketFrame *frame)
+{
+        frame->buf = NULL;
+        frame->buf_len = 0;
+        frame->num_to_read = 2;
+        frame->num_read = 0;
+        frame->read_state = WSF_START;
+
+        ws_extend_frame_buf(frame, frame->num_to_read);
+        return 0;
+}
+
+/*
+ * Returns 1 if there's still more to read; 0 if no more to read; -1 if
+ * something went wrong (which probably means we should close the websocket
+ * connection).
+ */
+int ws_update_read_state(WebsocketFrame *frame)
+{
+        size_t i;
+        uint8_t byte1;
+        size_t message_len;
+        int mask_len;
+        int num_len_bytes;
+
+        /* If there's more to read, then come back when it's done */
+        if (frame->num_to_read > 0)
+                return 1;
+
+        /* 
+         * At this point, all the reading we were planning to do is done. Now we
+         * have to figure out what (if anything) to do next. 
+         */
+
+
+        /* If we're done reading the message, we're done with this frame. */
+        if (frame->read_state == WSF_READ)
+                return 0;
+
+
+        /*
+         * If we're at the beginning, we need to check to see if there's a mask
+         * to read and if there are any more length bytes to read. If it's just
+         * a short message, we know exactly what's left to read for the frame. 
+         */
+        if (frame->read_state == WSF_START) {
+                byte1 = frame->buf[1];
+                mask_len = (byte1 & WS_FRAME_MASK) ? 4 : 0;
+                message_len = byte1 & ~WS_FRAME_MASK;
+
+                if (message_len <= SHORT_MESSAGE_LEN) {
+                       frame->num_to_read = message_len + mask_len;
+                       frame->read_state = WSF_READ;
+                }
+                else if (message_len == MED_MESSAGE_KEY) {
+                        frame->num_to_read = NUM_MED_LEN_BYTES + mask_len;
+                        frame->read_state = WSF_READ_MED_LEN;
+                }
+                else if (message_len == LONG_MESSAGE_KEY) {
+                        frame->num_to_read = NUM_LONG_LEN_BYTES + mask_len;
+                        frame->read_state = WSF_READ_LONG_LEN;
+                }
+                else {
+                        return -1;
+                }
+                ws_extend_frame_buf(frame, frame->num_to_read);
+                return 1;
+        }
+
+        /*
+         * If we're not ready the medium or long length bytes, I'm not sure how
+         * we got here.
+         */
+        if (frame->read_state != WSF_READ_MED_LEN &&
+                        frame->read_state != WSF_READ_LONG_LEN)
+                return -1;
+
+        /*
+         * At this point, we can figure out how long the rest of the frame is
+         * for the medium and long messages. Once this is done, we can extend
+         * the frame buffer to the right length and go into WSF_READ mode.
+         */
+        if (frame->read_state == WSF_READ_MED_LEN)
+                num_len_bytes = NUM_MED_LEN_BYTES;
+        else
+                num_len_bytes = NUM_LONG_LEN_BYTES;
+
+        message_len = 0;
+        for (i = 0; i < num_len_bytes; i++) {
+                message_len <<= 8;
+                message_len += frame->buf[2 + i];
+        }
+
+        byte1 = frame->buf[1];
+        mask_len = (byte1 & WS_FRAME_MASK) ? 4 : 0;
+
+        frame->num_to_read = message_len + mask_len;
+        frame->read_state = WSF_READ;
+        ws_extend_frame_buf(frame, frame->num_to_read);
+        return 1;
+}
+
+
+
+int ws_extend_frame_buf(WebsocketFrame *frame, size_t more_len)
+{
+        if ((frame->buf =
+             (uint8_t *)realloc(frame->buf, frame->buf_len + more_len)) == NULL)
+                err_abort(-1, "Can't realloc in ws_extend_frame_buf");
+
+        frame->buf_len += more_len;
+        return 0;
+}
+
+int ws_append_bytes(WebsocketFrame *frame, uint8_t *src, size_t n)
+{
+        size_t i;
+        if (frame->num_read + n > frame->buf_len)
+                return -1;
+
+        for (i = 0; i < n; i++) {
+                frame->buf[frame->num_read++] = src[i];
+                frame->num_to_read--;
+        }
+
+        if (frame->num_to_read < 0)
+                return -1;
+
+        return 0;
+}
