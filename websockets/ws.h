@@ -45,7 +45,6 @@ const uint8_t *ws_extract_message(const uint8_t *frame);
  */
 int ws_init_frame(WebsocketFrame *frame);
 int ws_update_read_state(WebsocketFrame *frame);
-int ws_extend_frame_buf(WebsocketFrame *frame, size_t more_len);
 int ws_append_bytes(WebsocketFrame *frame, uint8_t *src, size_t n);
 
 #endif

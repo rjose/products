@@ -34,12 +34,13 @@
 /* Byte 1 of websocket frame */
 #define WS_FRAME_MASK 0x80
 
-/*
- * Declare static functions
+/* ============================================================================ 
+ * Static declarations
  */
 static void err_abort(int, const char *);
 static int get_ws_key(char *, size_t, const char *);
 static uint8_t toggle_mask(uint8_t, size_t, const uint8_t [4]);
+static int ws_extend_frame_buf(WebsocketFrame *frame, size_t more_len);
 
 static char ws_magic_string[] = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
@@ -468,7 +469,7 @@ int ws_update_read_state(WebsocketFrame *frame)
 
 
 
-int ws_extend_frame_buf(WebsocketFrame *frame, size_t more_len)
+static int ws_extend_frame_buf(WebsocketFrame *frame, size_t more_len)
 {
         if ((frame->buf =
              (uint8_t *)realloc(frame->buf, frame->buf_len + more_len)) == NULL)
