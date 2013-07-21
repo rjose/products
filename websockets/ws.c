@@ -125,7 +125,10 @@ const char *ws_complete_handshake(const char *req_str)
 
 	strncpy(buf, websocket_key, BUF_LENGTH/2);
 	strncat(buf, ws_magic_string, BUF_LENGTH/2);
-	SHA1((const uint8_t*)buf, strlen(buf), sha_digest);
+        SHA_CTX ctx;
+        SHA1_Init(&ctx);
+        SHA1_Update(&ctx, buf, strlen(buf));
+        SHA1_Final(sha_digest, &ctx);
 
         if (base64_encode(&websocket_accept, sha_digest,
                                                   SHA_DIGEST_LENGTH) != 0)
