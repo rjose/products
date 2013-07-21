@@ -20,3 +20,6 @@ work4.txt
 work5.txt
 tests.sum
 tests.log
+obj
+oldtests.*
+*/tests/GNUmakefile
