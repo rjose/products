@@ -25,7 +25,12 @@ typedef struct WebsocketFrame_ {
  * Public API
  */
 
+/* 
+ * Websocket handshake
+ * -------------------
+ */
 int ws_is_handshake(const char* req_str);
+const char *ws_complete_handshake(const char *req_str);
 
 /* 
  * Writing websocket frames
