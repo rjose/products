@@ -28,23 +28,23 @@ typedef struct WebsocketFrame_ {
 int ws_is_handshake(const char* req_str);
 
 /* 
- * Frame construction
- * ------------------
+ * Writing websocket frames
+ * ------------------------
  */
-const uint8_t *ws_make_text_frame(const char *message,
-                                                    const uint8_t mask[4]);
+const uint8_t *ws_make_text_frame(const char *message, const uint8_t mask[4]);
 const uint8_t *ws_make_close_frame();
 const uint8_t *ws_make_ping_frame();
 const uint8_t *ws_make_pong_frame();
 
-const uint8_t *ws_extract_message(const uint8_t *frame);
 
 /* 
- * WebsocketFrame functions
+ * Reading websocket frames
  * ------------------------
  */
 int ws_init_frame(WebsocketFrame *frame);
 int ws_update_read_state(WebsocketFrame *frame);
 int ws_append_bytes(WebsocketFrame *frame, uint8_t *src, size_t n);
+
+const uint8_t *ws_extract_message(const uint8_t *frame);
 
 #endif

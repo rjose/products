@@ -293,79 +293,19 @@ const uint8_t *ws_make_pong_frame()
         return result;
 }
 
-const uint8_t *ws_extract_message(const uint8_t *frame)
-{
-        uint64_t i;
-        uint8_t byte0;
-        uint8_t byte1;
-        uint64_t message_len;
-        uint8_t message_start;
-        uint8_t *mask;
-        uint8_t *result;
-        uint8_t num_len_bytes;
-
-        /* Only handling TEXT or BIN frames */
-        byte0 = frame[0];
-        if (!(byte0 | WS_FRAME_OP_TEXT || byte0 | WS_FRAME_OP_BIN))
-                return NULL;
-
-        byte1 = frame[1];
-
-        /*
-         * Compute message length
-         */
-        message_len = byte1 & ~WS_FRAME_MASK;
-        if (message_len <= SHORT_MESSAGE_LEN) {
-                num_len_bytes = 0;
-        }
-        else if (message_len == MED_MESSAGE_KEY) {
-                num_len_bytes = 2;
-                message_len = 0;
-        }
-        else if (message_len == LONG_MESSAGE_KEY) {
-                num_len_bytes = 8;
-                message_len = 0;
-        }
-        else {
-                /* Should never get here */
-                return NULL;
-        }
-
-        /* This only does anything for medium and long messages */
-        for (i = 0; i < num_len_bytes; i++) {
-                message_len <<= 8;
-                message_len += frame[2 + i];
-        }
-
-        /*
-         * Figure out where message and mask start.
-         */
-        mask = NULL;
-        message_start = 2 + num_len_bytes;
-        if (byte1 & WS_FRAME_MASK) {
-                mask = frame + 2 + num_len_bytes;
-                message_start = 2 + num_len_bytes + MASK_LEN;
-        }
-        
-        /*
-         * Allocate memory and fill in the message.
-         */
-        if ((result = (uint8_t *)malloc(message_len + 1)) == NULL)
-                err_abort(-1,
-                     "Couldn't allocate result for ws_extract_message");
-
-        for (i = 0; i < message_len; i++)
-                result[i] = toggle_mask(frame[message_start+i], i, mask);
-
-        /* Add NUL if text frame */
-        if (byte0 | WS_FRAME_OP_TEXT)
-                result[message_len] = '\0';
-
-        return result;
-}
 
 /* ============================================================================ 
- * WebsocketFrame functions
+ * Reading websocket frames
+ * ------------------------
+ *
+ * When we're reading websocket frames in from a socket connection, we have to
+ * be careful not to read only the number of bytes that are part of the frame.
+ * To do this, we set up a little state machine. We update the number of bytes
+ * to read using "ws_update_read_state" and "ws_append_bytes". When
+ * "ws_update_read_state" returns 0, we have a valid websocket frame.
+ *
+ * If the websocket frame has a message in it, we can use "ws_extract_message"
+ * to retrieve it.
  */
 
 int ws_init_frame(WebsocketFrame *frame)
@@ -384,6 +324,8 @@ int ws_init_frame(WebsocketFrame *frame)
  * Returns 1 if there's still more to read; 0 if no more to read; -1 if
  * something went wrong (which probably means we should close the websocket
  * connection).
+ *
+ * This function is idempotent.
  */
 int ws_update_read_state(WebsocketFrame *frame)
 {
@@ -482,6 +424,11 @@ static int ws_extend_frame_buf(WebsocketFrame *frame, size_t more_len)
         return 0;
 }
 
+/*
+ * This function appends bytes read from a socket to a frame that's being read
+ * in. The number of bytes to read should have been computed prior to calling
+ * this either by "ws_init_frame" or "ws_update_read_state".
+ */
 int ws_append_bytes(WebsocketFrame *frame, uint8_t *src, size_t n)
 {
         size_t i;
@@ -497,4 +444,76 @@ int ws_append_bytes(WebsocketFrame *frame, uint8_t *src, size_t n)
                 return -1;
 
         return 0;
+}
+
+
+const uint8_t *ws_extract_message(const uint8_t *frame)
+{
+        uint64_t i;
+        uint8_t byte0;
+        uint8_t byte1;
+        uint64_t message_len;
+        uint8_t message_start;
+        uint8_t *mask;
+        uint8_t *result;
+        uint8_t num_len_bytes;
+
+        /* Only handling TEXT or BIN frames */
+        byte0 = frame[0];
+        if (!(byte0 | WS_FRAME_OP_TEXT || byte0 | WS_FRAME_OP_BIN))
+                return NULL;
+
+        byte1 = frame[1];
+
+        /*
+         * Compute message length
+         */
+        message_len = byte1 & ~WS_FRAME_MASK;
+        if (message_len <= SHORT_MESSAGE_LEN) {
+                num_len_bytes = 0;
+        }
+        else if (message_len == MED_MESSAGE_KEY) {
+                num_len_bytes = 2;
+                message_len = 0;
+        }
+        else if (message_len == LONG_MESSAGE_KEY) {
+                num_len_bytes = 8;
+                message_len = 0;
+        }
+        else {
+                /* Should never get here */
+                return NULL;
+        }
+
+        /* This only does anything for medium and long messages */
+        for (i = 0; i < num_len_bytes; i++) {
+                message_len <<= 8;
+                message_len += frame[2 + i];
+        }
+
+        /*
+         * Figure out where message and mask start.
+         */
+        mask = NULL;
+        message_start = 2 + num_len_bytes;
+        if (byte1 & WS_FRAME_MASK) {
+                mask = frame + 2 + num_len_bytes;
+                message_start = 2 + num_len_bytes + MASK_LEN;
+        }
+        
+        /*
+         * Allocate memory and fill in the message.
+         */
+        if ((result = (uint8_t *)malloc(message_len + 1)) == NULL)
+                err_abort(-1,
+                     "Couldn't allocate result for ws_extract_message");
+
+        for (i = 0; i < message_len; i++)
+                result[i] = toggle_mask(frame[message_start+i], i, mask);
+
+        /* Add NUL if text frame */
+        if (byte0 | WS_FRAME_OP_TEXT)
+                result[message_len] = '\0';
+
+        return result;
 }
