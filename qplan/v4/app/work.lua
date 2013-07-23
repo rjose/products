@@ -150,7 +150,7 @@ function Work.translate_estimate(est_string)
         return scalar * units[unit]
 end
 
--- This converts the estimat table for a work item into a table with week
+-- This converts the estimate table for a work item into a table with week
 -- estimates as values.
 function Work:get_skill_demand()
         local result = {}
