@@ -34,3 +34,8 @@ an HTTP request or a websocket. A websocket might be the way to go if we needed
 to make decisions on what data to ask for based on some initial data from the
 server -- in effect, if we needed the client and server to have a conversation
 before getting the final data.
+
+Thoughts
+--------
+We should use link:https://github.com/burnash/gspread[gspread] to grab source
+data from google docs.
