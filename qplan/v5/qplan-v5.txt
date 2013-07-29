@@ -38,8 +38,8 @@ before getting the final data.
 Implementation
 --------------
 . Write google doc spreadsheet to stdout [X][X][][]
-. Condition data and pipe into mocked up qplan client [][][]
-. Add a route that can replace qplan data [][][][][]
+. Condition data and pipe into mocked up qplan client [X][X][X]<X><X><X><X><X>
+. Get minimal qplan server running based on v4 [][][][][][]
 . Qplan client can update a qplan server [][][][][][][][]
 . rbt is implemented as series of pipes [][][][][]
 
@@ -74,9 +74,40 @@ worksheet index, and type. We should be able to pipe this into gcat.py and
 have it do the extractions. Done. Let's check in. Before we go on, let's
 specify the sections to read in in the source.ini file itself.
 
+Next up is conditioning the work data a la workify. We want to gather all work
+data together. Let's start by handling different sections. I'm going to pipe
+this into a file so I don't have to keep grabbing data. Now, let's see if we
+can see the Work section.
+
+After this, we'll handle staff data. The staff data is somewhat interesting. I
+think I'll try to read the tracks out of the spreadsheet instead of hardcoding
+them. Alright, I wrote the staff parsing code by hand. It's much more
+resilient now.  Let's check this in.
+
+The last piece here is writing the qplan client. Should we write this in
+python, lua, or zsh? Let's do this in python. I want to split the data into
+work data and staff data. After that, I'll strip off the headers and make two
+requests to a server to update the data. I guess we can do a POST to
+/work_items and one to /assignments.
+
+Actually, I think we should do this in lua. That way, if I decide to go with
+websockets for the communication with the server, I can use the code I'm
+developing now. Also, I'm going to have an explicit updater app instead of a
+generic client. Also, what I'll do is make the POST requests to a nonexistent
+server and then in the next part bring over the code to run the server.
+
+
+NOTE: Why did this take so long? Part of this was dealing with non-ASCII data from
+the spreadsheet. Part of it was rewriting the staff parsing logic. Part of it
+was just debugging.
+
 
 
 Thoughts
 --------
 We should use link:https://github.com/burnash/gspread[gspread] to grab source
 data from google docs.
+
+I need to document the scripts so they can describe what's expected of them.
+
+I also want to figure out how to test the pieces and the pipeline.
