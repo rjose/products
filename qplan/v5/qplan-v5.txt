@@ -38,7 +38,7 @@ before getting the final data.
 Implementation
 --------------
 . Write google doc spreadsheet to stdout [X][X][][]
-. Condition data and pipe into mocked up qplan client [][][]
+. Condition data and pipe into mocked up qplan client [X][][]
 . Add a route that can replace qplan data [][][][][]
 . Qplan client can update a qplan server [][][][][][][][]
 . rbt is implemented as series of pipes [][][][][]
@@ -73,6 +73,11 @@ Let's start by creating a qplan_source.ini file that lists spreadsheet key,
 worksheet index, and type. We should be able to pipe this into gcat.py and
 have it do the extractions. Done. Let's check in. Before we go on, let's
 specify the sections to read in in the source.ini file itself.
+
+Next up is conditioning the work data a la workify. We want to gather all work
+data together. Let's start by handling different sections.
+
+After this, we'll handle staff data.
 
 
 

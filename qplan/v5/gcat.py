@@ -19,6 +19,9 @@ source_info = ConfigParser.ConfigParser()
 source_info.readfp(sys.stdin)
 sections = source_info.sections()
 
+def removeNonAscii(s):
+        return "".join(filter(lambda x: ord(x) < 128, s))
+
 def cat_tables(section):
         print "=====%s" % section
         for p in source_info.items(section):
@@ -27,8 +30,9 @@ def cat_tables(section):
                 worksheet = spreadsheet.get_worksheet(int(worksheet_index))
                 list_of_lists = worksheet.get_all_values()
                 for row in list_of_lists:
-                        print '\t'.join(row)
+                        print removeNonAscii('\t'.join(row))
         return
 
+# Print out data
 for s in sections:
         cat_tables(s)
