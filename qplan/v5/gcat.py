@@ -17,6 +17,7 @@ gc = gspread.login(user, password)
 # Read in spreadsheet source info
 source_info = ConfigParser.ConfigParser()
 source_info.readfp(sys.stdin)
+sections = source_info.sections()
 
 def cat_tables(section):
         print "=====%s" % section
@@ -29,6 +30,5 @@ def cat_tables(section):
                         print '\t'.join(row)
         return
 
-sections = ['Work', 'Staff']
 for s in sections:
         cat_tables(s)

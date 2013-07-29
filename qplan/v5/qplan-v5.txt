@@ -71,9 +71,9 @@ we could just use curl to make the request for us?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Let's start by creating a qplan_source.ini file that lists spreadsheet key,
 worksheet index, and type. We should be able to pipe this into gcat.py and
-have it do the extractions. Done. Let's check in.
+have it do the extractions. Done. Let's check in. Before we go on, let's
+specify the sections to read in in the source.ini file itself.
 
-Next, let's parse this and pull the spreadsheet data down.
 
 
 Thoughts
