@@ -35,6 +35,24 @@ to make decisions on what data to ask for based on some initial data from the
 server -- in effect, if we needed the client and server to have a conversation
 before getting the final data.
 
+Implementation
+--------------
+. Write google doc spreadsheet to stdout [X][][][]
+. Condition data and simulate piping into qplan client [][][]
+. Add a route that can replace qplan data [][][][][]
+. Qplan client can update a qplan server [][][][][][][][]
+. rbt is implemented as series of pipes [][][][][]
+
+1 - Write google doc spreadsheet to stdout
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Let's see if we can just get something to work. I'll hardcode my password to
+begin with -- I have to remember not to check this version in! The first step
+is getting gspread to work. Let's see if we can get the sample working with
+our google doc spreadsheet. OK, I got the spreadsheet data out (and tab
+separated!). Let's move my username and password to a config file that only I
+can read. I'll call this .gcat.conf. Let's see if I can add my info to this
+and read it in. Done! Let's check this in.
+
 Thoughts
 --------
 We should use link:https://github.com/burnash/gspread[gspread] to grab source
