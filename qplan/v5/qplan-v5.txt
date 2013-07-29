@@ -38,7 +38,7 @@ before getting the final data.
 Implementation
 --------------
 . Write google doc spreadsheet to stdout [X][X][][]
-. Condition data and pipe into mocked up qplan client [X][][]
+. Condition data and pipe into mocked up qplan client [X][X][X]<X><X><X>
 . Add a route that can replace qplan data [][][][][]
 . Qplan client can update a qplan server [][][][][][][][]
 . rbt is implemented as series of pipes [][][][][]
@@ -75,9 +75,16 @@ have it do the extractions. Done. Let's check in. Before we go on, let's
 specify the sections to read in in the source.ini file itself.
 
 Next up is conditioning the work data a la workify. We want to gather all work
-data together. Let's start by handling different sections.
+data together. Let's start by handling different sections. I'm going to pipe
+this into a file so I don't have to keep grabbing data. Now, let's see if we
+can see the Work section.
 
-After this, we'll handle staff data.
+After this, we'll handle staff data. The staff data is somewhat interesting. I
+think I'll try to read the tracks out of the spreadsheet instead of hardcoding
+them.
+
+Alright, I wrote the staff parsing code by hand. It's much more resilient now.
+Let's check this in.
 
 
 
