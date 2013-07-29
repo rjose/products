@@ -38,7 +38,7 @@ before getting the final data.
 Implementation
 --------------
 . Write google doc spreadsheet to stdout [X][X][][]
-. Condition data and simulate piping into qplan client [][][]
+. Condition data and pipe into mocked up qplan client [][][]
 . Add a route that can replace qplan data [][][][][]
 . Qplan client can update a qplan server [][][][][][][][]
 . rbt is implemented as series of pipes [][][][][]
@@ -65,6 +65,16 @@ data from various file types and then write them out in sections.
 Our qplan_client could just make an HTTP request to the qplan_server with the
 data. We'll need to add support for this to qplan (and a route). I wonder if
 we could just use curl to make the request for us?
+
+
+2 - Condition data and pipe into mocked up qplan_client
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Let's start by creating a qplan_source.ini file that lists spreadsheet key,
+worksheet index, and type. We should be able to pipe this into gcat.py and
+have it do the extractions. Done. Let's check in.
+
+Next, let's parse this and pull the spreadsheet data down.
+
 
 Thoughts
 --------

@@ -1,5 +1,8 @@
+#!/usr/bin/env python
+
 import ConfigParser
 import os
+import sys
 import gspread
 
 # Read config info
@@ -11,12 +14,21 @@ user = config.get('User info', 'user')
 password = config.get('User info', 'password')
 gc = gspread.login(user, password)
 
-# Get data
-# TODO: Read this from stdin (another ini format)
-spreadsheet = gc.open_by_key('0AvCMfDyA42UTdFJldVh0dkREWjBzSHdwbVZMR0luekE')
-worksheet = spreadsheet.get_worksheet(0)
-list_of_lists = worksheet.get_all_values()
+# Read in spreadsheet source info
+source_info = ConfigParser.ConfigParser()
+source_info.readfp(sys.stdin)
 
-# Print to stdout
-for row in list_of_lists:
-        print '\t'.join(row)
+def cat_tables(section):
+        print "=====%s" % section
+        for p in source_info.items(section):
+                [spreadsheet_key, worksheet_index] = p[1].split(":")
+                spreadsheet = gc.open_by_key(spreadsheet_key)
+                worksheet = spreadsheet.get_worksheet(int(worksheet_index))
+                list_of_lists = worksheet.get_all_values()
+                for row in list_of_lists:
+                        print '\t'.join(row)
+        return
+
+sections = ['Work', 'Staff']
+for s in sections:
+        cat_tables(s)
