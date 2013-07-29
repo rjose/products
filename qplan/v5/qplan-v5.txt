@@ -37,7 +37,7 @@ before getting the final data.
 
 Implementation
 --------------
-. Write google doc spreadsheet to stdout [X][][][]
+. Write google doc spreadsheet to stdout [X][X][][]
 . Condition data and simulate piping into qplan client [][][]
 . Add a route that can replace qplan data [][][][][]
 . Qplan client can update a qplan server [][][][][][][][]
@@ -52,6 +52,19 @@ our google doc spreadsheet. OK, I got the spreadsheet data out (and tab
 separated!). Let's move my username and password to a config file that only I
 can read. I'll call this .gcat.conf. Let's see if I can add my info to this
 and read it in. Done! Let's check this in.
+
+Before we go on too much further, let's think about how we want to deal with
+multiple spreadsheets. We could store two invocations of gcat in two variables
+and then manipulate the data separately, but it would be really nice if we
+could just store the immediate results directly at any point in the pipeline.
+We'd have to include some header info that described the type of data from
+each file. I'll look through the load.sh script to see how hard it would be to
+incorprate this...I think we could have a single awk script that could store
+data from various file types and then write them out in sections.
+
+Our qplan_client could just make an HTTP request to the qplan_server with the
+data. We'll need to add support for this to qplan (and a route). I wonder if
+we could just use curl to make the request for us?
 
 Thoughts
 --------
