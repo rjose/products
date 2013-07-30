@@ -6,7 +6,7 @@ BEGIN {
 
 $0 == "=====Work" {
         type = "WORK"
-        start_record = NR + 3
+        start_record = NR + 2
 }
 
 $0 == "=====Staff" {
@@ -16,13 +16,24 @@ $0 == "=====Staff" {
 }
 
 type == "WORK" && NR >= start_record {
+        # Prod Priority: $1
+        # Eng Priority: $2
+        # Merged Priority: $3
+        # Track: $4
+        # Name: $5
+        # Requesting team: $6
+        # Dependencies: $7
+        # Native weeks: $8
+        # Web weeks: $9
+        # Apps weeks: $10
+
         work_items[num_work_items++] = \
              sprintf("%d\t%s\tNative:%s,Web:%s,Apps:%s\t"\
-               "ProdTriage:%s,EngTriage:%s,Triage:%s\ttrack:%s,Description:%s,"\
-                                "RequestingTeam:%s,Dependencies:%s,Notes:%s",\
-             num_work_items, $5, $10, $11, $12,\
-             $1, $2, $3, $4, $6,\
-             $7, $8, $13)
+               "ProdTriage:%s,EngTriage:%s,Triage:%s\ttrack:%s,"\
+                                "RequestingTeam:%s,Dependencies:%s",\
+             num_work_items + 1, $5, $8, $9, $10,\
+             $1, $2, $3, $4,\
+             $6, $7)
 }
 
 
@@ -67,8 +78,8 @@ type == "STAFF" && NR >= start_record {
                 # assignment
                 if ($i && $i !~ /Hole/)
                         assignments[num_assignments++] = \
-                                                  sprintf("%d\t%s\t%s:%.1f\t%s",
-                                                     num_assignments, $i, skill,
+                                                  sprintf("%d\t%s\t%s:%.1f\ttrack:%s",
+                                                     num_assignments+1, $i, skill,
                                                      factor,
                                                      track_titles[i])
         }
@@ -82,13 +93,13 @@ END {
         print("=====Work")
         print("ID\tName\tEstimate\tTriage\tTags");
         print("-----");
-        for (i = 1; i < num_work_items; i++)
+        for (i = 0; i < num_work_items; i++)
                 print work_items[i];
 
         # Print staff items
         print("=====Staff")
         printf("ID\tName\tSkills\tTags\n");
         printf("-----\n");
-        for (i = 1; i < num_assignments; i++)
+        for (i = 0; i < num_assignments; i++)
                 print assignments[i]
 }

@@ -39,8 +39,7 @@ Implementation
 --------------
 . Write google doc spreadsheet to stdout [X][X][][]
 . Condition data and pipe into mocked up qplan client [X][X][X]<X><X><X><X><X>
-. Get minimal qplan server running based on v4 [][][][][][]
-. Qplan client can update a qplan server [][][][][][][][]
+. Get minimal qplan server running [X][X][X][X][X][X]
 . rbt is implemented as series of pipes [][][][][]
 
 1 - Write google doc spreadsheet to stdout
@@ -100,6 +99,44 @@ server and then in the next part bring over the code to run the server.
 NOTE: Why did this take so long? Part of this was dealing with non-ASCII data from
 the spreadsheet. Part of it was rewriting the staff parsing logic. Part of it
 was just debugging.
+
+3 - Get minimal qplan server running
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+OK, the next step is to get a minimal qplan server to run. We *don't* want it
+to load any data files. That should come from cat-ing data into the
+qplan_updater. We'll bring files over one at a time and comment out any data
+loading. Alright, I got something running. Let's see if we can print out that
+we got a request. Hmmm...it looks like I'm not storing the body right now. At
+the first "\r\n", we stop reading. Need to check the content length. OK, read
+in a body now and passing it along to the handler.
+
+Some of the code that I'm adding feels prototype-y. I feel like I'm cutting a
+corner by trying to get it in so quickly. Not sure what the right level of
+testing I need to be doing right now.
+
+Anyways...let's see if I can hook the init code that parses work and staff to
+the resource router. This is in the app/data.lua and app/reader.lua. I'm going
+to create an array of work items in the handler and then figure out where to
+move the function. OK, I can construct work items. Next, let's construct staff
+and then create a plan. Hmmm...creating a plan kind of needs the work and
+staff items together. I'll get past this by having a global work_items
+variable. Going forward, websockets seems to be a better way of handling this.
+
+Alright, the last step here is updating the plan. I think I'll just do a POST
+with an empty body to "/plan" and have the router set things up for now. There
+are things about the plan (like the cutline) that are starting to make less
+sense now.
+
+Aargh! Running into newlines that are present in some of the columns. I think
+I'll have to go back up to gcat and just select the columns that don't have
+text that people are messing with.
+
+Hey, it worked! Let me add one more thing before I stop. I want to only
+highlight in red the items that are truly short of resources (not just below a
+feasible line).
+
+I really need to add some tests.
+
 
 
 

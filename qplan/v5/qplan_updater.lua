@@ -33,6 +33,8 @@ local staff_body = table.concat(staff_data, "\n")
 
 local url = "http://localhost:8888"
 
-local response, code = http.request(url .. "/work_items", work_body)
-local response, code = http.request(url .. "/assignments", staff_body)
+local response, code
+response, code = http.request(url .. "/work_items", work_body)
+response, code = http.request(url .. "/assignments", staff_body)
+response, code = http.request(url .. "/plan", "")
 
