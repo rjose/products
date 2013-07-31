@@ -12,6 +12,7 @@
 
 #include "tcp_io.h"
 #include "web.h"
+#include "ws.h"
 
 extern void err_abort(int status, const char *message);
 
@@ -22,9 +23,16 @@ extern void err_abort(int status, const char *message);
 
 #define CONTENT_LENGTH_KEY_LEN 16
 
+/*
+ * Static declarations
+ */
 static const char content_length_key[] = "content-length: ";
 
 static void *handle_request_routine(void *);
+static int read_request_string(int, char **, size_t *);
+static int read_request_body(int, const char *, char **, size_t *);
+static int handle_http_request(int, QPlanContext *, const char *, size_t,
+                                                    const char *, size_t);
 
 
 // TODO: Allow port to be configured
@@ -94,29 +102,84 @@ void *web_routine(void *arg)
 }
 
 
+
+static int handle_websocket_request(int connfd, QPlanContext *context,
+                                                const char* request_string)
+{
+        const char *res_str;
+
+        res_str = ws_complete_handshake(request_string);
+        my_writen(connfd, res_str, strlen(res_str));
+
+        free((char *)res_str);
+
+        // TODO: At this point, we'll hold the connection open for our websocket
+        // conversation.
+
+        return 0;
+}
+
+
+
 /*
  * Every web request is handled in its own thread. In general, this requires
  * access to the main lua state. The web routing and handling code is written in
  * lua and is also in the main lua state within the "web" module.
+ *
+ * NOTE: The req_context passed in as "arg" needs to be freed by this function.
  */
 static void *handle_request_routine(void *arg)
 {
         WebHandlerContext *req_context = (WebHandlerContext *)arg;
-        char *request_string;
-	char buf[MAXLINE];
         int connfd = req_context->connfd;
-        int cur_len;
-        int str_capacity;
-        int req_len = 0;
-        lua_State *L_main = req_context->context->main_lua_state;
-        int i;
-        size_t res_len;
-        const char *tmp;
-        char *s;
-        char *res_str;
+
+        char *request_string;
+        size_t req_len;
+
         char *body = NULL;
-        int error;
-        long int content_length = 0;
+        size_t body_len = 0;
+
+        /*
+         * Read in requst string and body (if needed)
+         */
+        if (read_request_string(connfd, &request_string, &req_len) < 0)
+                goto error;
+
+        if (read_request_body(connfd, request_string, &body, &body_len) < 0)
+                goto error;
+
+        /*
+         * Handle request (either http or websocket)
+         */
+        if (ws_is_handshake(request_string))
+                handle_websocket_request(connfd, req_context->context, request_string);
+        else
+                handle_http_request(connfd, req_context->context,
+                                     request_string, req_len, body, body_len);
+
+error:
+        close(connfd);
+        free(request_string);
+        free(body);
+        free(req_context);
+        return NULL;
+}
+
+/*
+ * Reads in a request string. This may be a regular HTTP request or the
+ * beginning of a websocket handshake.
+ *
+ * NOTE: Callers of this function are responsible for freeing "request_string"
+ */
+static int read_request_string(int connfd,
+                               char **request_string_p, size_t *req_len_p)
+{
+	char buf[MAXLINE];
+        int str_capacity;
+        int cur_len;
+        char *request_string;
+        size_t req_len = 0;
+        int i;
 
         if ((request_string = malloc(sizeof(char) * MAXLINE)) == NULL)
                 err_abort(-1, "Couldn't allocate memory");
@@ -145,48 +208,106 @@ static void *handle_request_routine(void *arg)
         request_string[req_len] = '\0';
 
         /*
+         * Store results
+         */
+        *request_string_p = request_string;
+        *req_len_p = req_len;
+
+        return 0;
+}
+
+
+/*
+ * This reads in the body of a request based on the "Content-length" header in
+ * the "request_string".
+ *
+ * NOTE: Callers of this function are responsible for freeing "body".
+ */
+static int read_request_body(int connfd, const char *request_string,
+                                           char **body_p, size_t *body_len_p)
+{
+        char *s;
+        char *body = NULL;
+        size_t body_len = 0;
+
+        /*
          * Read in body (if any)
          */
         if ((s = strcasestr(request_string, "Content-Length: "))) {
-                content_length = strtol(s + CONTENT_LENGTH_KEY_LEN, NULL, 0);
+                body_len = strtol(s + CONTENT_LENGTH_KEY_LEN, NULL, 0);
 
-                if ((body = malloc(content_length + 1)) == NULL)
+                if ((body = malloc(body_len + 1)) == NULL)
                         err_abort(-1, "Couldn't allocate memory");
 
-                if (my_buffered_read(connfd, body, content_length) < 0)
+                if (my_buffered_read(connfd, body, body_len) < 0)
                         goto error;
         }
 
+        /*
+         * Store results
+         */
+        *body_p = body;
+        *body_len_p = body_len;
+
+        return 0;
+
+error:
+        free(body);
+        return -1;
+}
+
+
+/*
+ * This calls out to lua to generate the response for the given request string
+ * and body. This also writes the response back out.
+ *
+ * NOTE: It's up to the caller of this function to close the connection.
+ */
+static int handle_http_request(int connfd, QPlanContext *context,
+                                    const char *request_string, size_t req_len,
+                                              const char *body, size_t body_len)
+{
+        int error;
+        lua_State *L_main = context->main_lua_state;
+        char *res_str = NULL;
+        size_t res_len = 0;
+        const char *tmp = NULL;
+        int result = 0;
+
+        lock_main(context);
 
         /*
-         * Call request handler
+         * Call "handle_request" from lua
          */
-        lock_main(req_context->context);
         lua_getglobal(L_main, "WebUI"); // This is set when requiring qplan.lua
         lua_pushstring(L_main, "handle_request");
         lua_gettable(L_main, -2);
         lua_pushlstring(L_main, request_string, req_len);
-        lua_pushlstring(L_main, body, content_length);
+        lua_pushlstring(L_main, body, body_len);
         error = lua_pcall(L_main, 2, 1, 0);
         if (error) {
                 fprintf(stderr, "%s\n", lua_tostring(L_main, -1));
                 lua_pop(L_main, 1);
+                result = -1;
                 goto error;
         }
 
-        /* Copy result string */
+        /*
+         * Get response string from lua
+         */
         tmp = lua_tolstring(L_main, -1, &res_len);
         if ((res_str = (char *)malloc(sizeof(char)*res_len)) == NULL)
                 err_abort(-1, "Couldn't allocate memory");
         strncpy(res_str, tmp, res_len);
         lua_pop(L_main, 1);
+
+        /*
+         * Write response out
+         */
         my_writen(connfd, res_str, res_len);
 
 error:
-        unlock_main(req_context->context);
-        close(connfd);
-        free(request_string);
-        free(body);
-        free(req_context);
-        return NULL;
+        unlock_main(context);
+        free(res_str);
+        return result;
 }
