@@ -310,10 +310,13 @@ const uint8_t *ws_make_pong_frame()
  *
  * If the websocket frame has a message in it, we can use "ws_extract_message"
  * to retrieve it.
+ *
+ * NOTE: This frees any memory in the buffer
  */
 
 int ws_init_frame(WebsocketFrame *frame)
 {
+        free(frame->buf);
         frame->buf = NULL;
         frame->buf_len = 0;
         frame->num_to_read = 2;
@@ -520,4 +523,23 @@ const uint8_t *ws_extract_message(const uint8_t *frame)
                 result[message_len] = '\0';
 
         return result;
+}
+
+
+/*
+ * Just checks the first byte for the CLOSE bit.
+ */
+int ws_is_close_frame(const uint8_t* frame_str)
+{
+        return (frame_str[0] & 0xf) == WS_FRAME_OP_CLOSE;
+}
+
+int ws_is_ping_frame(const uint8_t* frame_str)
+{
+        return (frame_str[0] & 0xf) == WS_FRAME_OP_PING;
+}
+
+int ws_is_text_frame(const uint8_t* frame_str)
+{
+        return (frame_str[0] & 0xf) == WS_FRAME_OP_TEXT;
 }

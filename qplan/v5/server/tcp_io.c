@@ -118,7 +118,7 @@ my_buffered_read(int fd, char *ptr, size_t maxlen)
 			err(1, "Problem with pthread_setspecific");
 	}
 
-	for (n=1; n < maxlen; n++) {
+	for (n=1; n <= maxlen; n++) {
 		if ( (rc = my_read(tsd, fd, &c)) == 1) {
 			*ptr++ = c;
 		}
@@ -131,7 +131,7 @@ my_buffered_read(int fd, char *ptr, size_t maxlen)
 	}
 
 	*ptr = 0;
-	return n;
+	return n - 1;
 }
 
 ssize_t

@@ -52,4 +52,12 @@ int ws_append_bytes(WebsocketFrame *frame, uint8_t *src, size_t n);
 
 const uint8_t *ws_extract_message(const uint8_t *frame);
 
+/*
+ * Understanding websocket frames
+ * ------------------------------
+ */
+int ws_is_close_frame(const uint8_t* frame_str);
+int ws_is_ping_frame(const uint8_t* frame_str);
+int ws_is_text_frame(const uint8_t* frame_str);
+
 #endif

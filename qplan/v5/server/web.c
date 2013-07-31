@@ -107,16 +107,78 @@ static int handle_websocket_request(int connfd, QPlanContext *context,
                                                 const char* request_string)
 {
         const char *res_str;
+        const uint8_t *frame_message = NULL;
+	char buf[MAXLINE+1];
+        int num_to_read;
+        int num_read;
+        int result = 0;
+        const uint8_t *response_frame = NULL;
 
+        /*
+         * Complete handshake to establish connection
+         */
         res_str = ws_complete_handshake(request_string);
         my_writen(connfd, res_str, strlen(res_str));
-
         free((char *)res_str);
 
-        // TODO: At this point, we'll hold the connection open for our websocket
-        // conversation.
+        // TODO: If any of this is general, we should move it to ws.c
+        /*
+         * Set up frame and then loop to read and handle messages
+         */
+        WebsocketFrame frame;
+        frame.buf = NULL;
 
-        return 0;
+        while (1) {
+                // TODO: Move this to a read frame function
+                ws_init_frame(&frame);
+
+                /*
+                 * Read frame in
+                 */
+                do {
+                        num_to_read = frame.num_to_read;
+                        if (num_to_read > MAXLINE)
+                                num_to_read = MAXLINE;
+
+                        if (num_to_read == 0)
+                                continue;
+
+                        if ((num_read = my_buffered_read(connfd, buf, num_to_read)) < 0) {
+                                result = -1;
+                                goto error;
+                        }
+
+                        ws_append_bytes(&frame, (uint8_t *)buf, num_read);
+                }
+                while (ws_update_read_state(&frame) == 1);
+
+                /*
+                 * Handle frame
+                 */
+                if (ws_is_close_frame(frame.buf)) {
+                        break;
+                }
+                else if (ws_is_ping_frame(frame.buf)) {
+                        // TODO: Need to return length as well as msg pointer
+                        response_frame = ws_make_pong_frame();
+                        my_writen(connfd, response_frame, 2);
+                        free((uint8_t *)response_frame);
+                }
+                else if (ws_is_text_frame(frame.buf)) {
+                        frame_message = ws_extract_message(frame.buf);
+                        printf("Got a message: %s\n", frame_message);
+
+                        // Echo response, then close
+                        // TODO: Need to return length as well as msg pointer
+                        response_frame = ws_make_text_frame((char *)frame_message, NULL);
+                        my_writen(connfd, response_frame, strlen((char *)response_frame));
+                        free((uint8_t *)response_frame);
+                }
+        }
+
+error:
+        free(frame.buf);
+        return result;
 }
 
 

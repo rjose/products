@@ -41,7 +41,7 @@ Implementation
 . Condition data and pipe into mocked up qplan client [X][X][X]<X><X><X><X><X>
 . Get minimal qplan server running [X][X][X][X][X][X]
 . Establish websocket connection with server [X][X][X][X][][]
-. Handle websocket PING and CLOSE and echo [][][][]
+. Handle websocket PING, CLOSE, and echo [X][X][X][X][X][][]
 . Push output of rbt to a browser [][][][][][]
 . rbt is implemented as series of pipes [][][][][]
 
@@ -179,6 +179,45 @@ then let the connection close. It worked! Let's check this piece in. Actually,
 we're done with this piece. Let's rebase and tag.
 
 
+5 - Handle websocket PING, CLOSE, and echo
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Let's start by reading in the frame. Once we have that, we should be able to
+check what kind of frame it is. We'll have to use our same buffered read
+function. I'm going to add some websocket-y code in web.c (for gathering
+frames, etc.), but if I can make this generic, this should be pulled out.
+Hmmm...this will take a little longer than I thought because I have to write
+the code that gathers the frames. Let's do echo first, since I think that's
+the easiest. Let's see if we can at least extract a message.
+
+Hmmm...I'm running into an issue with the second byte being NULL. I wonder if
+I'm nulling out the result. Nope, it was a fencepost error in
+my_buffered_read. Aargh.
+
+There's a couple of things going on in my head right now. The first is that I
+need to implement the websockets code in the websockets module. The second is
+that I should use wireshark to debug the communication between client and
+server. The third is that I want to set up my git repo a bit better for this.
+
+Let's see how hard it is to set up Wireshark. I'll give it 1 pomodoro. The
+good news is that *yum install wireshark* just worked. Well almost. I also had
+to do a *yum install wireshark-gnome*. OK, I did the echo and see the
+exchange. Cool. I can see the data I sent over. The echoed message is correct.
+After the echo, I see that the client sent over "88 82 d0 ec f2 0f d3 04".
+Let's see if I can figure this out. The first byte means "final and CLOSE".
+The second byte means "is masked with length of 2". Not sure what the message
+body is. Let's try to handle the CLOSE frame and see if that cleans things up.
+Yup, that was it. I'll check this in and then try to handle PONG. Alright, it
+turns out that my PONG frame is incomplete. I'm only sending 1 byte. I need to
+be sending 2.
+
+OK, found another bug. I need to return an explicit length when constructing
+the websocket frames -- strlen will stop at the first 0x0 byte. This will
+break the tests... I think what I'll do is fix the PONG case and then circle
+back to the websocket library when I work on that in earnest. Alright, I was
+able to get the PING/PONG to work. Technically, I'm done so let's check in and
+then rethink my git strategy.
+
+
 
 
 Thoughts
@@ -195,3 +234,5 @@ date. I guess we could use that, too.
 
 Refactoring takes a while sometimes, especially when there are variables that
 aren't well separated.
+
+Need to handle message fragments. This should be in websockets.

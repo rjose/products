@@ -1,10 +1,9 @@
 var WebSocket = require('ws');
-//var ws = new WebSocket('ws://echo.websocket.org');
 var ws = new WebSocket('ws://localhost:8888');
 
 ws.on('open', function() {
         console.log("Got a connection!");
-        ws.send("Hello");
+        ws.ping();
 });
 
 ws.on('close', function() {
@@ -19,4 +18,9 @@ ws.on('message', function(data, flags) {
        console.dir(flags);
        console.dir(data); 
        ws.close();
+});
+
+ws.on('pong', function(data, flags) {
+      console.dir(flags);
+      console.dir(data); 
 });
