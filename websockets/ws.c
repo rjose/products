@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -91,7 +93,9 @@ static int get_ws_key(char *dst, size_t n, const char *req_str)
 }
 
 /*
- * We're assuming req_str is a valid handshake string.
+ * This generates a response string appropriate for completing the websocket handshake.
+ *
+ * NOTE: We're assuming req_str is a valid handshake string.
  *
  * NOTE: This function allocates memory for the response, so the caller must
  * free it when done.
@@ -497,7 +501,7 @@ const uint8_t *ws_extract_message(const uint8_t *frame)
         mask = NULL;
         message_start = 2 + num_len_bytes;
         if (byte1 & WS_FRAME_MASK) {
-                mask = frame + 2 + num_len_bytes;
+                mask = (uint8_t *)frame + 2 + num_len_bytes;
                 message_start = 2 + num_len_bytes + MASK_LEN;
         }
         

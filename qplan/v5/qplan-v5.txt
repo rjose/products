@@ -40,6 +40,9 @@ Implementation
 . Write google doc spreadsheet to stdout [X][X][][]
 . Condition data and pipe into mocked up qplan client [X][X][X]<X><X><X><X><X>
 . Get minimal qplan server running [X][X][X][X][X][X]
+. Establish websocket connection with server [X][X][X][X][][]
+. Handle websocket PING and CLOSE and echo [][][][]
+. Push output of rbt to a browser [][][][][][]
 . rbt is implemented as series of pipes [][][][][]
 
 1 - Write google doc spreadsheet to stdout
@@ -138,6 +141,44 @@ feasible line).
 I really need to add some tests.
 
 
+4 - Establish websocket connection with server
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Alright, what I want to do is write a client that can establish a websocket
+connection. Let's start with just that. It looks like there's a lua
+link:https://github.com/lipp/lua-websockets/blob/master/src/websocket/handshake.lua[websockets
+module]. Looking through the source code, it looks pretty good. Let me see if
+I can get this running. Hmmm...got a build failure.
+
+I wonder if we could use node.js instead? Let me investigate. OK, I'll give
+link:https://github.com/einaros/ws[ws] a try. Install worked fine. Let's open
+a connection to a sample websocket site. OK, that worked just fine. Cool. This
+looks pretty nice. Since I have a reference implementation, I should be able
+to get my websocket version to work. Let's do this next. Actually, let's see
+what happens if I just try to create a connection. Got an error (as expected).
+
+Alright, let's see if we can hook up the websocket code to deal with the
+websocket request. I'm going to symlink the websocket files and try to do a
+build. Files built, but I got missing references to SHA1. Let's revise our
+GNUMakefile similar to what's in our websockets subdir. OK, that worked. Let's
+clean up our warnings and then check in. Alright, I cleaned up the warnings
+and all the tests passed!
+
+Now, we should be able to hook the functions in. Let's see if we can recognize
+a websocket request. We want to use "ws_is_handshake". Alright, I can
+distinguish these. Awesome. Let's split the "handle_request_routine" into an
+http handler and a websocket handler next. OK, I started in on this, but it
+looks too tangly. Let's back out what we've done and rethink this. Let's try
+splitting the variables into pre read request and post. Let's write a function
+to read the request string and one to read the body next. OK, I can read
+a request string and a body using separate functions now.
+
+So, now we're back to splitting the http and websocket handling. We need to be
+careful about unlocking the lua context mutex. Alright, this is done. Next up
+is adding the websocket handling function. I'll complete the handshake and
+then let the connection close. It worked! Let's check this piece in. Actually,
+we're done with this piece. Let's rebase and tag.
+
+
 
 
 Thoughts
@@ -148,3 +189,9 @@ data from google docs.
 I need to document the scripts so they can describe what's expected of them.
 
 I also want to figure out how to test the pieces and the pipeline.
+
+I looked through how the node.js ws module starts a handshake. They just use a
+date. I guess we could use that, too.
+
+Refactoring takes a while sometimes, especially when there are variables that
+aren't well separated.

@@ -112,7 +112,7 @@ int base64_encode(char **dst, const uint8_t *src, size_t len)
          */
         result[res_index++] = '\0';
 
-        *dst = result;
+        *dst = (char *)result;
         return 0;
 }
 
@@ -141,8 +141,9 @@ int base64_decode(uint8_t **dst, const char *src, size_t *data_len)
         size_t res_index;
         size_t res_len;
         size_t src_len;
-        uint8_t cur, leftover;
-        uint8_t *result;
+        uint8_t cur;
+        uint8_t leftover = 0;
+        uint8_t *result = NULL;
 
         /*
          * First, we have to figure out how much memory we need and then
