@@ -218,8 +218,6 @@ able to get the PING/PONG to work. Technically, I'm done so let's check in and
 then rethink my git strategy.
 
 
-
-
 Thoughts
 --------
 We should use link:https://github.com/burnash/gspread[gspread] to grab source
